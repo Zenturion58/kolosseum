@@ -91,7 +91,12 @@ Für Version 0.1 ist verbindlich vorgesehen, dass Nutzer nur `Colosseum.mrc` man
 1. Nutzer lädt `Colosseum.mrc`.
 2. Der Bootstrap lädt die `.als`-Dateien, damit alle Helper-Aliase vor der Initialisierung verfügbar sind.
 3. Der Bootstrap lädt `System.mrc`, `Character.mrc` und `Battle.mrc` als Remote-Skripte.
-4. Erst nach dem vollständigen Laden wird initialisiert: Übersetzung und erforderliche Datendateien prüfen, Laufzeitstatus vorbereiten und den Schlachtzyklus starten.
+4. Erst nach dem vollständigen Laden beginnt die Startprüfung. Für Version 0.1 ist `data/Translation.dat` erforderlich; wird sie vermisst oder kann sie nicht gelesen bzw. vorbereitet werden, wird der Start kontrolliert abgebrochen.
+5. Der Schlachtzyklus wird erst gestartet, wenn alle für diese Version erforderlichen Module und Daten erfolgreich geprüft und initialisiert wurden.
+
+**Fehlerbehandlung beim Start:** Bei einer fehlenden oder fehlerhaften Pflichtdatei gibt Colosseum eine technische Diagnose im mIRC-Statusfenster aus und startet keine Schlacht-Timer. Die Diagnose muss auch dann möglich sein, wenn `Translation.dat` selbst fehlt; dafür darf eine minimale technische Statusmeldung direkt im Bootstrap stehen. Das ist keine Spieler-Nachricht im IRC-Kanal.
+
+`System.dat` ist in Version 0.1 noch nicht Bestandteil des Releases. Die Zeiten bleiben fest vorgegeben; daher darf ein fehlendes `System.dat` in Version 0.1 keinen Startfehler auslösen. Sobald `System.dat` in einer späteren Version eingeführt wird, wird es als Pflichtdatei geprüft, bevor Timer gestartet werden. Ein Konfigurations-Check liest und validiert seine Werte und schreibt sie in globale mIRC-Variablen, auf die andere Module zugreifen können.
 
 Die Hauptdatei kann in späteren Versionen zusätzliche Aufgaben erhalten. Für Version 0.1 bleibt ihre Hauptaufgabe jedoch das zuverlässige Laden und Initialisieren des Systems; umfangreiche Spiellogik gehört nicht hinein.
 
@@ -117,6 +122,8 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 5. Exakte Schadensformel und Werte der fünf Startmonster.
 6. Wie ein Neustart während einer laufenden Instanz behandelt wird.
 7. Ob die erste Ankündigung sofort oder nach dem ersten 3-Minuten-Intervall erfolgt (spätere Zyklen starten 3 Minuten nach Kampfende bzw. leerer Beitrittsphase).
+8. Exaktes Format und Validierungsregeln für `Translation.dat`; außerdem welche Startfehler wie detailliert protokolliert werden.
+9. Wenn `System.dat` in einer späteren Version eingeführt wird: Pflichtschlüssel, Wertevalidierung und Verhalten bei fehlenden/ungültigen Einstellungen.
 
 ## 8. Vorgesehener nächster Schritt
 
