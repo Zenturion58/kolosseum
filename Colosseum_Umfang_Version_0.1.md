@@ -300,11 +300,16 @@ Vorgeschlagene Zuordnung:
 
 Die genauen Schlüsselnamen und Variablennamen für neu ergänzte Werte sind noch zu bestätigen. Eine Abweichung muss vor der Implementierung aufgelöst werden: Im vorgelegten Endversion-Helfer hat `TimeBetweenBattles` den Standardwert `120`, während die geplante Regel für v0.1 `180` Sekunden vorsieht.
 
-Fehlt `System.dat`, legt der V0.1-Helfer die Datei selbst mit Standardwerten an. Fehlen einzelne Einstellungen, werden sie ebenfalls ergänzt, bevor die Konfiguration validiert und in globale Variablen übernommen wird. Das Vorgehen soll sich am versionsabhängigen Standardwertprinzip des Endversion-Helfers (`SystemDatVersion`) orientieren, aber für V0.1 vereinfacht werden. Bereits vorhandene ungültige Werte werden erkannt; ob sie automatisch auf Standardwerte zurückgesetzt werden oder einen Startfehler auslösen, ist noch offen. Wenn Erzeugung, Schreiben, erneutes Einlesen oder Validierung scheitern, startet kein Schlacht-Timer.
+Fehlt `System.dat`, legt der V0.1-Helfer die Datei selbst mit Standardwerten an. Fehlen einzelne Einstellungen, werden sie ebenfalls ergänzt, bevor die Konfiguration validiert und in globale Variablen übernommen wird. Das Vorgehen soll sich am versionsabhängigen Standardwertprinzip des Endversion-Helfers (`SystemDatVersion`) orientieren, aber für V0.1 vereinfacht werden. Bereits vorhandene ungültige Werte werden durch die vorgesehenen Standardwerte ersetzt. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert; danach setzt der Helfer die Startprüfung fort. Wenn Erzeugung, Schreiben, erneutes Einlesen oder Validierung scheitern, startet kein Schlacht-Timer.
 
 
 ## Bestätigte Entscheidung: System.dat bei Neuinstallation automatisch anlegen
 
 V0.1 setzt nicht voraus, dass `System.dat` schon mitgeliefert oder vor dem Start von Hand erstellt wurde. Der Helfer legt die Datei bei Bedarf mit den vorgesehenen Standardwerten an und ergänzt fehlende Einträge in vorhandenen Dateien. Die Werte werden anschließend validiert und in globalen mIRC-Variablen bereitgestellt. Nur nach erfolgreicher Gesamtprüfung beginnt der Schlachtzyklus.
 
-Diese Ausnahme gilt nur für `System.dat`. Fehlende `Translation.dat`, Pflichtmodule oder erforderliche Spieldaten verhindern weiterhin den Start. Der Umgang mit bereits vorhandenen, aber ungültigen Konfigurationswerten ist noch offen und wird vor der Implementierung beschlossen.
+Diese Ausnahme gilt nur für `System.dat`. Fehlende `Translation.dat`, Pflichtmodule oder erforderliche Spieldaten verhindern weiterhin den Start. Bereits vorhandene ungültige Konfigurationswerte werden durch ihre vorgesehenen Standardwerte ersetzt. Der Helfer meldet die Korrektur im mIRC-Statusfenster, schreibt die aktualisierte `System.dat` und setzt die Prüfung fort. Wenn das Schreiben oder die anschließende Validierung scheitert, startet kein Schlacht-Timer.
+
+
+## Bestätigte Entscheidung: ungültige System.dat-Einstellungen auf Standardwerte zurücksetzen
+
+Enthält eine vorhandene `System.dat` eine Einstellung mit einem ungültigen Wert, ersetzt der V0.1-Helfer den Wert durch den für diese Einstellung vorgesehenen Standardwert. Er meldet die Korrektur im mIRC-Statusfenster und speichert die Änderung in `System.dat`. Anschließend wird die korrigierte Konfiguration erneut geprüft und die restliche Startprüfung fortgesetzt. Der Schlacht-Timer startet nur dann, wenn das Speichern, die erneute Validierung und sämtliche anderen Pflichtprüfungen erfolgreich sind.
