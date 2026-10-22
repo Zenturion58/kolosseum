@@ -79,7 +79,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 5. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
 6. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
 7. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-8. Endgültige Schlüsselnamen und Wertebereiche festlegen; außerdem die Abweichung `TimeBetweenBattles` (Endversion 120 Sekunden, v0.1 bislang 180 Sekunden) auflösen.
+8. Zulässige Wertebereiche für die sechs bestätigten System.dat-Einstellungen sowie weitere für den Prototyp notwendige Prüfungen festlegen. Für V0.1 ist `TimeBetweenBattles = 180` Sekunden bestätigt; der Endversions-Standardwert von 120 Sekunden wird hierfür nicht übernommen.
 9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
@@ -129,7 +129,7 @@ In Version 0.1 werden die bereits besprochenen sechs Laufzeitwerte aus `System.d
 | Übersprungene Spielerzüge bis zur Niederlage | `MaxIdleTurns` (bereits im Endversion-Helfer vorhanden) | `2` | `%maxIdleTurns` |
 | Belohnung für einen Sieg mit überlebendem Spieler | `VictoryOrbReward` (neu vorgeschlagen) | `10` rote Kugeln | `%victoryOrbReward` |
 
-Die genaue Benennung der neu vorgeschlagenen Schlüssel und Variablen muss vor der Implementierung noch bestätigt werden. Insbesondere enthält der übergebene Endversion-Helfer für `TimeBetweenBattles` den Standardwert `120`, während die bisher beschlossene v0.1-Regel eine nächste Ankündigung nach `180` Sekunden vorsieht. Diese Abweichung darf bei der Anpassung für v0.1 nicht unbemerkt übernommen werden.
+Die sechs Schlüssel, globalen Variablen und Standardwerte in dieser Tabelle sind für Version 0.1 bestätigt. Der übergebene Endversion-Helfer verwendet für `TimeBetweenBattles` den Wert `120`; für den Prototyp gilt ausdrücklich `180` Sekunden.
 
 ### Initialisierung und Validierung
 
@@ -160,3 +160,19 @@ Der vom Nutzer gezeigte `system_defaults_check` ist der Helfer für die angestre
 Für V0.1 wird ein eigener, reduzierter Systemhelfer entworfen. Er bearbeitet nur Einstellungen, Module, Verzeichnisse und Datenbestände, die der kleine Prototyp tatsächlich benötigt. Endversionspezifische Funktionen (beispielsweise Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons, zusätzliche Events und alte Datenbereinigungen) werden nicht allein deshalb übernommen, weil sie im Endversion-Helfer stehen.
 
 Nächster Planungsschritt ist eine vollständige V0.1-Standardwertliste: jeden benötigten Eintrag festlegen, vorhandene Schlüssel aus dem Endversion-Helfer wiederverwenden, wo passend, neue Schlüssel nur bei Bedarf ergänzen und alle übrigen Endversion-Einträge explizit aus dem V0.1-Umfang ausschließen. Es werden weiterhin keine produktiven Skript- oder Datendateien angelegt.
+
+
+## Bestätigte Standardwerte für V0.1: sechs Laufzeit-Einstellungen
+
+Die folgende Liste ist nicht mehr nur ein Vorschlag. Alle sechs Einstellungen werden in Version 0.1 aus `System.dat` gelesen, validiert und in globalen mIRC-Variablen gespeichert. Die Timer- und Kampfmodule nutzen diese Variablen statt eigener fest codierter Laufzeitwerte.
+
+| Schlüssel in `System.dat` | Globale Variable | Standardwert | Bedeutung |
+|---|---|---:|---|
+| `TimeBeforeFirstBattle` | `%timeBeforeFirstBattle` | `180` Sekunden | Wartezeit nach erfolgreichem `on CONNECT` und abgeschlossener Startprüfung bis zur ersten Schlachtankündigung |
+| `TimeToEnter` | `%timeToEnter` | `120` Sekunden | Beitrittsfrist für eine angekündigte Schlacht |
+| `TimeBetweenBattles` | `%timeBetweenBattles` | `180` Sekunden | Wartezeit bis zur nächsten Schlachtankündigung nach leerer Beitrittsphase oder Kampfende |
+| `TimeForIdle` | `%timeForIdle` | `180` Sekunden | Zeitlimit für einen Spielerzug |
+| `MaxIdleTurns` | `%maxIdleTurns` | `2` | Anzahl übersprungener Spielerzüge bis zur Niederlage |
+| `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln | Belohnung für einen Sieg, sofern der Spieler überlebt |
+
+**Abweichung zur Endversion:** Der gezeigte Endversion-Helfer setzt `TimeBetweenBattles` auf `120` Sekunden. Für Colosseum V0.1 ist der Standardwert verbindlich `180` Sekunden. Diese V0.1-Entscheidung darf nicht durch den Endversion-Wert ersetzt werden.
