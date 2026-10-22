@@ -247,4 +247,20 @@ Der vorhandene `system_defaults_check` gehört zur Endversion. Er ist eine Refer
 
 Für den Prototyp wird ein eigener, kleiner `$system_default_check` spezifiziert. Er verwaltet nur die Einstellungen und Prüfungen, die Colosseum V0.1 tatsächlich benötigt. Endversionspezifische Verzeichnisse, Module, Datenmigrationen und Bereinigungen für Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons, Sonderereignisse oder weitere spätere Systeme gehören nicht automatisch hinein.
 
-Die konkrete V0.1-Standardwertliste wird als nächster Planungsschritt erstellt. Für jeden Eintrag wird festgehalten: Schlüssel in `System.dat`, Standardwert, erwarteter Datentyp/Wertebereich, globale mIRC-Variable und verwendendes Modul. Bestehende Schlüsselnamen wie `TimeToEnter`, `TimeForIdle` oder `MaxIdleTurns` werden wiederverwendet, wenn Bedeutung und gewünschtes V0.1-Verhalten übereinstimmen. Abweichungen (derzeit insbesondere `TimeBetweenBattles`) werden ausdrücklich entschieden und nicht stillschweigend übernommen.
+Die sechs Schlüssel, globalen Variablen und Standardwerte in der oben dokumentierten V0.1-Liste sind bestätigt. Für die Implementierung werden zusätzlich zulässige Datentypen/Wertebereiche und die genaue Zuordnung zu den verwendenden Modulen festgelegt. Der Endversion-Helfer setzt `TimeBetweenBattles` auf `120`; für V0.1 ist ausdrücklich `180` Sekunden festgelegt, sodass der Endversion-Wert nicht übernommen wird.
+
+
+## Bestätigte V0.1-Konfigurationsschnittstelle: sechs Laufzeitwerte
+
+Die folgenden sechs Einträge sind für V0.1 freigegeben. `$system_default_check` stellt die validierten Werte in den jeweils genannten globalen Variablen bereit. Fachmodule dürfen diese Laufzeitwerte nicht zusätzlich mit abweichenden fest codierten Zahlenwerten versehen.
+
+| `System.dat`-Schlüssel | Globale Variable | Standardwert | Modul-/Zweckzuordnung |
+|---|---|---:|---|
+| `TimeBeforeFirstBattle` | `%timeBeforeFirstBattle` | `180` Sekunden | erster Countdown nach erfolgreicher Verbindung und Startprüfung |
+| `TimeToEnter` | `%timeToEnter` | `120` Sekunden | Beitrittsfenster |
+| `TimeBetweenBattles` | `%timeBetweenBattles` | `180` Sekunden | Countdown zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende |
+| `TimeForIdle` | `%timeForIdle` | `180` Sekunden | Zeitlimit eines Spielerzugs |
+| `MaxIdleTurns` | `%maxIdleTurns` | `2` | übersprungene Spielerzüge bis zur Niederlage |
+| `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln | Siegesbelohnung bei Überleben des Spielers |
+
+Die getrennten Einstellungen `TimeBeforeFirstBattle` und `TimeBetweenBattles` bleiben bewusst eigenständig, obwohl beide zunächst `180` Sekunden betragen. Sie regeln unterschiedliche Phasen des Zyklus. Der Wert `TimeBetweenBattles = 180` ist eine ausdrückliche Abweichung vom Endversion-Helfer, der aktuell `120` verwendet.
