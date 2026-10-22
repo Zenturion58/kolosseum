@@ -206,3 +206,10 @@ Jeder der sechs bekannten Schlüssel darf in der Sektion `[system]` insgesamt nu
 Normale Änderungen an Einstellungen werden über `writeini` vorgenommen. Die Bereinigung bereits manuell eingefügter doppelter Textzeilen ist davon getrennt zu behandeln. Ein Reparaturhelfer muss die Datei tatsächlich zeilenweise auslesen; `$line` liest Zeilen aus einem benutzerdefinierten Fenster und ist kein Datei-Leseverfahren.
 
 Die Originaldatei darf nicht vor dem Neuaufbau gelöscht werden. Die Bereinigung erfolgt zunächst in einer temporären Datei, deren Schreiben, Inhalt und Konfiguration erfolgreich geprüft werden müssen. Erst nach erfolgreicher Prüfung darf sie die Originaldatei ersetzen. Bei einem Fehler bleibt die Originaldatei erhalten und der Schlacht-Timer startet nicht. Die Reparatur soll Kommentare, unbekannte Schlüssel und weitere Sektionen erhalten und nur doppelte bekannte V0.1-Schlüssel normalisieren. Vor einer Implementierung wird das Verhalten in mIRC 7.84 mit Testdateien und Sicherungskopien geprüft.
+
+
+## Prüfergebnis zu einem möglichen System.dat-Cleaner
+
+Ein zeilenweiser Cleaner ist als Ansatz relevant, wird aber nicht ungeprüft übernommen. Die konkrete Form `$read(%file, nt, %i)` liest die angegebene Zeilennummer. Ein brauchbarer Entwurf muss allerdings die betroffenen bekannten Schlüssel ausdrücklich sammeln, doppelte Einträge auch über wiederholte `[system]`-Abschnitte hinweg erkennen und nur die sechs bekannten V0.1-Schlüssel bereinigen. Das bloße Auslassen des späteren Duplikats und anschließender Aufruf einer allgemeinen Standardwertprüfung stellt den Standardwert nicht zuverlässig wieder her.
+
+Der Austausch darf die Originaldatei nicht zuerst löschen und muss bei jedem Schreib- oder Prüfungsfehler die Originaldatei erhalten. Unbekannte Schlüssel, andere Abschnitte und Kommentare bleiben unangetastet. Der Entwurf ist deshalb ein brauchbarer Ausgangspunkt für die Spezifikation, aber noch kein übernahmefähiger Implementierungscode.
