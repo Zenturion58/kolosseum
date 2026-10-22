@@ -108,7 +108,7 @@ Die Skriptstruktur trennt **fachliche Module (`.mrc`)** von **wiederverwendbaren
 
 ### Grundprinzipien
 
-- `Colosseum.mrc` ist der Einstiegspunkt und lädt die benötigten Skript- und Alias-Dateien.
+- `Colosseum.mrc` ist die einzige Datei, die Nutzer in Version 0.1 manuell laden müssen. Sie lädt die benötigten `.als`-Aliasdateien und fachlichen `.mrc`-Module in definierter Reihenfolge und stößt die Initialisierung an. In späteren Versionen kann sie zusätzliche Aufgaben übernehmen, bleibt aber frei von umfangreicher Spiellogik.
 - Befehle und IRC-Ereignisse liegen in dem fachlich zuständigen `.mrc`-Modul, nicht in einer zentralen `Events.mrc`.
 - `Character.mrc` behandelt Charakter-/Profilbefehle und charakterbezogene Ereignisse.
 - `Battle.mrc` behandelt Schlacht- und Kampfbefehle sowie relevante `TEXT`-/`ACTION`-Ereignisse.
