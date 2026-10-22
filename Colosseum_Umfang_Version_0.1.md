@@ -1,109 +1,150 @@
-# Colosseum – Abgrenzung des Umfangs von Version 0.1
+# Colosseum – Umfang und Entscheidungen für Version 0.1
 
-**Status:** Arbeitsgrundlage – bestätigte Entscheidungen und offene Fragen sind ausdrücklich getrennt.
+**Status:** Arbeitsgrundlage mit bestätigten Regeln und offenen Punkten.  
+**Leitlinie:** Das GitHub-Wiki beschreibt das angestrebte Endprodukt. Diese Datei grenzt davon den ersten spielbaren Entwicklungsstand ab.
 
-## 1. Verbindliche Leitlinie
+## 1. Verbindliche Leitlinien
 
-- Das öffentliche GitHub-Wiki beschreibt das angestrebte **Zielprodukt** von Colosseum.
-- **Version 0.1** ist eine erste, kleine und spielbare Ausbaustufe – nicht das vollständige Spiel.
-- Es gibt noch keinen vorhandenen Quellcode, den wir übernehmen. Die Implementierung wird neu entworfen und geschrieben.
-- Die sichtbaren Texte des Bots – Nachrichten, Hilfe, Rückmeldungen und Fehlermeldungen – sollen auf Deutsch sein.
-- Funktionen, die nicht ausdrücklich zum Umfang von Version 0.1 gehören, werden nicht stillschweigend aufgenommen. Sie bleiben für spätere Versionen vorgemerkt.
-- Eine Änderung am Umfang wird erst übernommen, wenn sie gemeinsam besprochen und bestätigt wurde.
+- Es gibt noch keinen vorhandenen Quellcode. Die Implementierung wird neu entworfen und selbst geschrieben.
+- Der Bot und alle für Spieler sichtbaren Nachrichten, Hilfetexte und Fehlermeldungen sollen auf Deutsch sein.
+- Die vollständige Charaktervorlage aus der Dokumentation darf als Grundlage verwendet werden. Version 0.1 liest und verarbeitet aber nur die Felder, die sie tatsächlich benötigt.
+- Funktionen, die nicht ausdrücklich zum Umfang von Version 0.1 gehören, bleiben für spätere Versionen vorgemerkt.
+- Änderungen am Umfang werden gemeinsam besprochen und bestätigt, bevor sie implementiert werden.
 
-## 2. Für Version 0.1 festgelegt
+## 2. Version 0.1: Charakter und Anmeldung
 
-### 2.1 Charakter und Anmeldung
-
-- Spieler können einen neuen Charakter erstellen.
-- Bei der Erstellung wird ein zufälliges Passwort erzeugt und dem Spieler privat mitgeteilt.
-- Spieler können sich beim Bot mit ihrem Passwort authentifizieren.
+- Spieler können einen neuen Charakter erstellen und sich gegenüber dem Bot authentifizieren.
+- Bei der Registrierung wird ein zufälliges Passwort erzeugt und dem Spieler privat mitgeteilt.
 - Ein Passwortwechsel ist vorgesehen.
 - Charakterdaten bleiben nach einem Bot-Neustart erhalten.
+- Die Charaktervorlage orientiert sich an der Dokumentation; nicht benötigte Felder dürfen zunächst ungenutzt bleiben.
 - Neue Charaktere beginnen mit bloßen Fäusten.
+- Neue Charaktere starten mit **0 roten Kugeln**. Da es in Version 0.1 keinen Shop gibt, ist kein Startguthaben erforderlich.
 
-### 2.2 Einfacher rundenbasierter Kampf
+## 3. Version 0.1: Schlachtzyklus und Beitritt
 
-- Der Bot kündigt eine offene Schlacht an.
-- Spieler erhalten ein begrenztes Zeitfenster, um der Schlacht beizutreten.
-- Nach Ende des Beitrittsfensters startet der Kampf mit Gegnern.
-- Der Kampf läuft rundenbasiert ab.
-- Gegner führen ihre Aktionen automatisch aus.
-- In Version 0.1 kann ein Spieler eine einfache Angriffsaktion mit den Fäusten ausführen.
-- Reagiert ein Spieler während seines Zuges nicht innerhalb der festgelegten Frist, wird sein Zug übersprungen.
-- Der Kampf endet, sobald die noch festzulegenden Sieg- bzw. Niederlagebedingungen erfüllt sind.
+- Es gibt zu jedem Zeitpunkt höchstens **eine aktive Kampfinstanz**.
+- Beim Start des Bots wird der automatische Schlachtzyklus aktiviert.
+- Der Bot kündigt im IRC-Kanal eine bevorstehende Schlacht an.
+- Nach der Ankündigung ist das Beitrittsfenster **120 Sekunden (2 Minuten)** geöffnet.
+- Mit `!enter` kann sich ein Spieler für die angekündigte Schlacht anmelden.
+- In Version 0.1 wird pro Schlacht höchstens **ein Spieler** aufgenommen. Weitere Beitrittsversuche werden abgewiesen.
+- Nach Ablauf des Beitrittsfensters wird – sofern ein Spieler beigetreten ist – ein zufälliges normales Monster ausgewählt und der Kampf beginnt.
+- Wenn niemand beigetreten ist, wird keine Kampfinstanz gestartet. Der Bot meldet dies und kündigt die nächste Schlacht in **3 Minuten** an.
+- Nach dem Ende eines Kampfes verarbeitet der Bot zuerst Ergebnis und Belohnung, meldet danach, dass die nächste Schlacht in **3 Minuten** beginnt, und startet den Countdown für die nächste Ankündigung.
+- Es wird kein neuer Kampf gestartet, während der aktuelle Kampf noch läuft.
 
-### 2.3 Belohnungen
+## 4. Version 0.1: Monster und Kampfrunden
 
-- Die erste Version verwendet **rote Kugeln** als Belohnungswährung.
-- Eine Siegesbelohnung gibt es nur nach einem gewonnenen Kampf.
-- Sie erhalten ausschließlich Spieler, die am Ende des gewonnenen Kampfes noch am Leben sind.
-- Die gutgeschriebenen roten Kugeln werden dauerhaft im Charakterdatensatz gespeichert.
+- Es stehen mindestens **fünf verschiedene normale Monster** für die Zufallsauswahl bereit.
+- Bosse sind nicht enthalten.
+- Pro Kampf wird genau ein zufälliges Monster erzeugt.
+- Die Zugreihenfolge richtet sich nach dem Speed-Wert des Spielers und des Monsters.
+- Bei höherem Speed ist die jeweilige Figur zuerst an der Reihe.
+- Bei identischen Speed-Werten wird zufällig entschieden, wer zuerst handelt.
+- Die Monster-KI führt bei jedem eigenen Zug nur einen normalen Nahkampfangriff aus.
+- Der Spieler greift mit bloßen Fäusten an.
+- Beide Angriffsmethoden werden unterstützt: eine IRC-Aktion wie `/me attacks Monster` und ein deutscher Befehl wie `!angriff`. Beide Methoden müssen dieselbe interne Angriffslogik verwenden.
+- Angriffe sind nur zulässig, wenn der Spieler an der Reihe ist.
+- Erreicht das Monster 0 HP, gewinnt der Spieler. Erreicht der Spieler 0 HP, verliert er den Kampf.
+
+## 5. Version 0.1: Zeitlimit bei Inaktivität
+
+- Der Spieler hat **180 Sekunden (3 Minuten)** Zeit für seinen Zug.
+- Läuft das Zeitlimit ab, wird der Zug übersprungen.
+- Nach zwei übersprungenen Spielerzügen wird der Spieler aus dem Kampf entfernt.
+- Der Kampf endet dann sofort als Niederlage; der Spieler erhält keine Siegesbelohnung.
+- Diese Regeln verhindern, dass eine Kampfinstanz durch einen inaktiven Spieler unbegrenzt blockiert wird.
+
+## 6. Version 0.1: Schaden und Kampfwerte
+
+- Die Schadensberechnung ist zunächst fest und enthält keinen Zufallsfaktor: Gleiche Ausgangswerte führen zu gleichem Schaden.
+- Die Stärke des Angreifers bestimmt die Ausgangskraft des Angriffs.
+- Die Verteidigung des Ziels reduziert den erlittenen Schaden.
+- Die eigene Verteidigung des Angreifers reduziert nicht seinen ausgeteilten Schaden; sie schützt ihn vor gegnerischen Angriffen.
+- Ein erfolgreicher normaler Angriff verursacht mindestens **1 Schadenspunkt**.
+- Zusätzliche Modifikatoren wie Rüstung, Augments, Ignition Boosts, Skills, Techniken und Spezialfähigkeiten werden in Version 0.1 noch nicht berücksichtigt.
+- Die genaue mathematische Schadensformel und ihre Zahlenwerte sind noch offen und werden vor der Implementierung gemeinsam festgelegt.
+
+## 7. Version 0.1: Kampfende, Zurücksetzen und Belohnungen
+
+- Nach jedem beendeten Kampf werden die Kampfwerte auf die jeweiligen Grundwerte des Charakters zurückgesetzt – unabhängig davon, ob er gewonnen, verloren oder wegen Inaktivität entfernt wurde.
+- Eine feste Siegesbelohnung beträgt **10 rote Kugeln**.
+- Rote Kugeln werden nur vergeben, wenn der Spieler das Monster besiegt und den Kampf überlebt.
+- Bei einer Niederlage, bei 0 HP des Spielers oder bei Ausschluss wegen Inaktivität gibt es keine Belohnung.
+- Bei einer leeren Beitrittsphase findet kein Kampf statt und es gibt keine Belohnung.
+- Die roten Kugeln werden dauerhaft im Charakterdatensatz gespeichert.
 - Schwarze Kugeln sind in Version 0.1 keine Kampfbelohnung.
+- Der spätere Modus „Players must die“, bei dem Kampfwerte nach einem Kampf nicht automatisch aufgefüllt werden, gehört nicht zu Version 0.1.
 
-## 3. Für später vorgemerkt – nicht Teil von Version 0.1
+## 8. Für spätere Versionen vorgemerkt
 
-Die folgenden Systeme gehören zur langfristigen Vision, sollen aber nicht in den ersten spielbaren Build aufgenommen werden, sofern sie nicht später ausdrücklich vorgezogen werden:
+Diese Funktionen gehören zur langfristigen Vision und sind nicht Teil von Version 0.1:
 
-- Ingame-Shop und Kaufmechaniken
-- weitere Waffen und Waffenwechsel über die Fäuste hinaus
-- Techniken, Skills, Technikpunkte und Zündungs-/Ignition-Systeme
+- Mehrere Spieler in einer gemeinsamen Kampfinstanz
+- Shop und Kaufmechaniken
+- weitere Waffen, Schilde, Rüstung, Zubehör und Waffenwechsel
+- Techniken, Skills, Technikpunkte und Ignition-System
 - Gegenstände und Verbrauchsgegenstände wie Tränke
-- Schilde, Rüstungen, Zubehör, Instrumente und Lieder
-- Stil-System, Stil-Erfahrung und Stilpunkte als Einfluss auf die Belohnung
-- schwarze Kugeln als Belohnung, alliierte Notizen, Odin-Marken und Login-Punkte
-- NPC-/Trust-Systeme, besondere NPC-Aktionen und Mechs
-- Crafting, Verbesserung/Augments und Reparatur
+- Stil-System, Stil-Erfahrung und stilbasierte Belohnungen
+- dynamische Belohnungsformeln und schwarze Kugeln als Belohnung
+- alliierte Notizen, Odin-Marken und Login-Punkte
+- NPC-/Trust-Systeme, Mechs und besondere NPC-Aktionen
+- Crafting, Verbesserungen/Augments und Reparatur
 - Truhen, Auktionshaus und Wetten auf KI-Kämpfe
-- Eroberungen, Dragon Balls, Drachenjagd, Dungeons und weitere besondere Spielmodi
-- umfangreiche Kampfstatistiken, Kampfserien-Speichern/-Laden und sonstige Meta-Systeme
-- erweiterte Statuszustände und spezielle Gegnerverhaltensweisen
-- DCC-exklusive Funktionen, sofern die erste Version sie nicht für den Basiskampf benötigt
+- Eroberungen, Dragon Balls, Drachenjagd, Dungeons und weitere Spielmodi
+- Bosskämpfe, erweiterte Statuszustände und besondere Gegner-KI
+- der Modus „Players must die“
+- umfangreiche Kampfstatistiken, Kampfserien speichern/laden und weitere Meta-Systeme
+- DCC-exklusive Funktionen, sofern sie nicht für den ersten Basiskampf erforderlich sind
+- Konfiguration über `System.dat`; die Beitrittszeit, Zugzeit, Pause bis zur nächsten Schlacht und andere Werte sind in Version 0.1 fest vorgegeben
 
-Diese Liste ist eine vorläufige Abgrenzung; sie besagt nicht, dass die Features aus dem Zielprodukt gestrichen werden.
+Diese Liste bedeutet nicht, dass die Funktionen aus dem Zielprodukt gestrichen werden. Sie werden später ergänzt, nachdem ihre Anforderungen geklärt wurden.
 
-## 4. Architektur-Anforderungen, die früh berücksichtigt werden sollen
+## 9. Architektur-Anforderungen
 
-Auch wenn die zugehörigen Spielfunktionen später kommen, sollte das Grundgerüst Erweiterungen nicht unnötig erschweren:
+Auch wenn die Funktionen zunächst einfach bleiben, soll das Grundgerüst spätere Erweiterungen ermöglichen:
 
-- Charakterdaten, Kampfzustand, Spielinhalte und sichtbare Texte soweit sinnvoll voneinander trennen.
-- Kampfablauf und Belohnungsvergabe in klar abgegrenzte Funktionen aufteilen.
-- Spielerdaten so speichern, dass ein Neustart des Bots sie nicht verliert.
-- Passwörter nicht im Klartext ausgeben oder in allgemein sichtbaren Nachrichten speichern; die konkrete sichere Speicherung wird vor der Implementierung festgelegt.
-- Nutzeranpassungen und mitgelieferte Standarddateien möglichst so organisieren, dass ein Update eigene Konfigurationen nicht unnötig überschreibt.
-- Texte zentral und bearbeitbar halten, damit der Bot durchgehend deutschsprachig ist und spätere Übersetzungen möglich bleiben.
-- Erweiterte Systeme erst hinzufügen, wenn ihre Anforderungen und Abhängigkeiten geklärt sind.
+- Charakterdaten, Kampfzustand, Monsterdaten, Belohnungslogik und sichtbare Texte soweit sinnvoll trennen.
+- Die Angriffsverarbeitung für IRC-Aktion und `!angriff` gemeinsam implementieren.
+- Kampfablauf, Schadensberechnung, Kampfende und Belohnungsvergabe in klar abgegrenzte Funktionen aufteilen.
+- Spielerdaten dauerhaft speichern.
+- Passwörter nicht im Klartext öffentlich ausgeben oder in allgemein sichtbaren Nachrichten speichern; die sichere Speicherung ist vor der Implementierung festzulegen.
+- Monster aus einer Datenliste auswählen, damit neue Monster später ergänzt werden können, ohne die Kampflogik umzuschreiben.
+- Texte zentral und bearbeitbar halten, damit der Bot durchgehend deutschsprachig bleibt.
+- Spätere Erweiterungen nicht durch unnötige Annahmen in der ersten Implementierung erschweren.
 
-## 5. Noch zu entscheiden, bevor der Kampf implementiert wird
+## 10. Noch offen vor der Implementierung
 
-Diese Punkte sind noch **nicht** als Regeln festgelegt:
+1. Die genaue Schadensformel und konkrete Schadenswerte.
+2. Auswahl und Werte der mindestens fünf Startmonster aus der Dokumentation.
+3. Exakte Schreibweise und Aliase aller Registrierungs-, Login-, Passwort- und Statusbefehle.
+4. Einzelheiten der Charaktervorlage, die für Version 0.1 tatsächlich gelesen oder verändert werden müssen.
+5. Technische Zielumgebung (mIRC-Version/IRC-Verhalten) und konkretes Speicherformat der Charakterdateien.
+6. Exakter Wortlaut und Kanal-/Privatnachrichten-Verteilung der deutschen Botmeldungen.
+7. Ein genauer Testplan für Grenzfälle, beispielsweise gleichzeitige Befehle, Bot-Neustart während eines Kampfes und Monster-/Spieler-HP bei 0.
 
-1. Welche konkreten Befehle verwendet die erste Version (inklusive Präfix und Schreibweise)?
-2. Wie lange dauern Beitrittsfenster und Spielerzüge?
-3. Wie viele Spieler sind für eine Schlacht mindestens erforderlich, und kann eine Person allein kämpfen?
-4. Welche Gegner und wie viele davon erscheinen in Version 0.1?
-5. Welche minimalen Charakterwerte braucht der einfache Kampf, und wie werden Angriff und Schaden berechnet?
-6. Wann genau ist der Kampf gewonnen oder verloren, insbesondere wenn mehrere Spieler teilnehmen?
-7. Wie hoch ist die rote Kugel-Belohnung in Version 0.1: ein einfacher fester Betrag oder eine bewusst vereinfachte Formel?
-8. Wie wird die Schlacht im IRC angekündigt und ausgegeben (Kanal, private Nachricht oder beides)?
-9. Welche IRC-/mIRC-Umgebung und welche Art der Datenhaltung werden unterstützt?
-10. Welche Administratorbefehle sind nötig, um den ersten Build zu betreiben und Fehler zu beheben?
+## 11. Akzeptanzkriterien für Version 0.1
 
-## 6. Akzeptanzkriterien für Version 0.1
-
-Version 0.1 gilt erst als erster spielbarer Build, wenn:
+Version 0.1 ist erst spielbar, wenn:
 
 - ein Spieler einen Charakter anlegen und sich authentifizieren kann;
-- der Charakter nach einem Bot-Neustart noch vorhanden ist;
-- der Bot eine Schlacht ankündigt und Spielerbeitritte verarbeitet;
-- ein Kampf mit mindestens einer Spieleraktion und automatischen Gegneraktionen vollständig ablaufen kann;
-- ein untätiger Spielerzug nach der konfigurierten Frist übersprungen wird;
-- Sieg und Niederlage zuverlässig erkannt werden;
-- nach einem Sieg ausschließlich überlebende Teilnehmer rote Kugeln erhalten;
-- die Währung dauerhaft gespeichert wird;
-- die für Spieler sichtbaren Nachrichten auf Deutsch sind;
-- ein Shop oder andere zurückgestellte Systeme nicht versehentlich vorausgesetzt werden.
+- Charakterdaten und rote Kugeln Neustarts überstehen;
+- der automatische Schlachtzyklus mit 3-Minuten-Pause funktioniert;
+- ein Beitrittsfenster von 120 Sekunden startet und höchstens einen Spieler zulässt;
+- ohne Beitritt kein Kampf erzeugt wird;
+- bei Beitritt genau ein zufälliges Monster aus mindestens fünf normalen Monstern ausgewählt wird;
+- Zugreihenfolge nach Speed bestimmt wird und Speed-Gleichstand zufällig entschieden wird;
+- beide Angriffswege dieselbe Kampfaktion auslösen;
+- Monster bei jedem Zug automatisch normal angreifen;
+- der Schaden nach der festgelegten Formel berechnet wird und mindestens 1 beträgt;
+- ein Spielerzug nach 180 Sekunden übersprungen wird und der Kampf nach zwei übersprungenen Zügen als Niederlage endet;
+- Sieg, Niederlage und Belohnung korrekt verarbeitet werden;
+- ausschließlich ein überlebender Sieger 10 rote Kugeln erhält;
+- Kampfwerte nach jedem beendeten Kampf auf Grundwerte zurückgesetzt werden;
+- alle sichtbaren Bottexte auf Deutsch sind;
+- Shop und andere zurückgestellte Systeme nicht für den Basiskampf vorausgesetzt werden.
 
-## 7. Verhältnis zur Wiki
+## 12. Verhältnis zur Wiki
 
-Die Wiki bleibt die Referenz für die angestrebten vollständigen Funktionen. Bevor eine spätere Funktion implementiert wird, prüfen wir ihre Wiki-Beschreibung, besprechen nötige Änderungen und ergänzen den Umfang der betreffenden Version. Unklare oder widersprüchliche Regeln werden markiert, nicht stillschweigend geraten.
+Das GitHub-Wiki beschreibt das vollständige Zielprodukt. Diese Spezifikation beschreibt ausschließlich den freigegebenen Umfang für Version 0.1. Vor jeder späteren Erweiterung prüfen wir die zugehörigen Wiki-Seiten, besprechen nötige Änderungen und ergänzen die Spezifikation für die betreffende Version. Unklare Regeln werden als offen markiert, anstatt stillschweigend geraten zu werden.
