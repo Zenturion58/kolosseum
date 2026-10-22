@@ -253,6 +253,10 @@ Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind f
 - Jeder der sechs bekannten Schlüssel darf über alle `[system]`-Sektionen hinweg nur einmal vorkommen. Wird ein bekannter Schlüssel mehrfach gefunden, gilt er als mehrdeutig: Der Helfer setzt ihn auf den für diesen Schlüssel vorgesehenen Standardwert zurück, entfernt die zusätzlichen Vorkommen und lässt genau einen kanonischen Eintrag bestehen. Er übernimmt in diesem Fall nicht willkürlich den ersten oder letzten Wert.
 - Eine ungültige einzelne Einstellung und ein mehrfach vorkommender bekannter Schlüssel werden im mIRC-Statusfenster gemeldet und korrigiert. Danach wird die Datei gespeichert, erneut eingelesen und noch einmal validiert.
 - Können die Korrekturen nicht zuverlässig gespeichert, erneut gelesen oder validiert werden, bleibt die Initialisierung fehlgeschlagen und der Schlacht-Timer startet nicht.
+- Für normale Änderungen an Einstellungen verwendet der Systemhelfer `writeini`; das erneute Schreiben desselben Abschnitts- und Schlüsselnamens soll den vorhandenen Wert aktualisieren. Die Bereinigung manuell eingefügter doppelter Textzeilen ist ein separater Reparaturfall.
+- Die Reparatur muss die Datei mit einem Datei-Leseverfahren wie `$read` zeilenweise analysieren; `$line` ist ein Bezeichner für Zeilen in einem benutzerdefinierten Fenster und nicht zum Lesen von Dateien geeignet.
+- Die Originaldatei darf niemals vorzeitig gelöscht werden. Die Bereinigung muss zunächst eine temporäre Datei erstellen und erfolgreich schreiben sowie prüfen. Erst danach darf die geprüfte Ersatzdatei die Originaldatei ablösen. Bei einem Fehler bleibt die Originaldatei erhalten und der Schlacht-Timer startet nicht.
+- Die Reparatur soll nur doppelte Vorkommen der sechs bekannten V0.1-Schlüssel normalisieren. Andere Schlüssel, Sektionen und Kommentare dürfen nicht stillschweigend verschwinden oder verändert werden. Vor einer späteren Implementierung sind das Verhalten in mIRC 7.84 und die Ersatzstrategie mit einer Sicherungskopie zu testen.
 
 ### Lade-, Prüf- und Standardwertverhalten
 
