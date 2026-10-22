@@ -265,3 +265,12 @@ Dieser Nachtrag hält Entscheidungen fest, die nach der bisherigen Fassung gemei
 ## Nickname-Bindung – Entscheidung ergänzt
 
 Bei einem zwischenzeitlichen Nickwechsel wird das Konto nicht auf den neuen Nick übertragen, und die gespeicherte Charakterdatei wird nicht automatisch gelöscht. Kehrt der Nutzer zu genau dem ursprünglichen Nickname zurück, darf er sich mit dem bisherigen Passwort wieder anmelden. Die Nickname-Schreibweise und die IRC-netzwerkspezifische Vergleichslogik müssen bei der Implementierung berücksichtigt und getestet werden.
+
+
+## Start des Schlacht-Timers – Entscheidung vom 22.10.2026
+
+- Der Schlacht-Timer startet nicht bereits beim Laden/Starten des mIRC-Skripts.
+- Der Timer wird erst durch das erfolgreiche IRC-Verbindungsereignis (`on CONNECT`) gestartet, nachdem die Pflichtmodule und `Translation.dat` erfolgreich geprüft wurden.
+- Die erste Schlachtankündigung erfolgt nach Ablauf der ersten drei Minuten ab diesem Verbindungsereignis.
+- Die folgenden Zyklen bleiben unverändert: Ankündigung, 120 Sekunden Beitrittsfrist, danach entweder kein Kampf bei null Teilnehmern oder ein Einzelkampf; nach leerer Beitrittsphase bzw. nach Kampfende wird die nächste Ankündigung für drei Minuten später angesetzt.
+- Bei einem Disconnect darf kein aktiver Schlacht-Timer weiterlaufen. Nach erfolgreicher Wiederverbindung wird der Zyklus sauber neu gestartet; doppelte parallele Timer sind zu verhindern.

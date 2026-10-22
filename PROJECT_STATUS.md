@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für die Nickname-Entscheidung: planning/nickname-binding-2026-10-22.
+- Aktueller Arbeitsbranch für den Timer-Start bei IRC-Verbindung: planning/connect-timer-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
@@ -46,6 +46,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 ### Kampfablauf
 
 - Es gibt höchstens eine aktive Kampfinstanz. Version 0.1 nimmt pro Kampf höchstens einen Spieler auf; Mehrspieler-Unterstützung ist für später geplant.
+- Nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) und bestandener Pflichtdateiprüfung startet der Schlacht-Timer. Die erste Ankündigung erfolgt nach drei Minuten; nicht bereits beim Laden/Starten des Skripts.
 - Der automatische Schlachtzyklus kündigt eine Schlacht an; die Beitrittsfrist beträgt 120 Sekunden.
 - Nach leerer Beitrittsphase oder nach Kampfende kündigt der Bot die nächste Schlacht in drei Minuten an.
 - Pro Kampf wird genau ein zufälliges normales Monster ausgewählt. Mindestens fünf eigene Monster sind vorgesehen; Bosse gehören nicht zu Version 0.1.
@@ -72,26 +73,35 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 
 ## Noch offen
 
-1. Erfolgt die erste Schlachtankündigung sofort beim Botstart oder erst nach dem ersten Drei-Minuten-Intervall?
-2. Welche konkreten Argon2id-Parameter verwenden wir? Dies muss bei der Implementierung mit mIRC 7.84 getestet werden.
-3. Welches genaue Format, welche Zeichencodierung und welche Validierung benötigt Translation.dat? Wie behandeln wir fehlende oder doppelte Schlüssel?
-4. Welche endgültigen Argumente und Fehlermeldungen gelten für die Charakterbefehle?
-5. Wie lautet die endgültige Schadensformel, und welche Werte erhalten die fünf eigenen Startmonster?
-6. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
-7. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
-8. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
+1. Welche konkreten Argon2id-Parameter verwenden wir? Dies muss bei der Implementierung mit mIRC 7.84 getestet werden.
+2. Welches genaue Format, welche Zeichencodierung und welche Validierung benötigt Translation.dat? Wie behandeln wir fehlende oder doppelte Schlüssel?
+3. Welche endgültigen Argumente und Fehlermeldungen gelten für die Charakterbefehle?
+4. Wie lautet die endgültige Schadensformel, und welche Werte erhalten die fünf eigenen Startmonster?
+5. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
+6. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
+7. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
+8. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
 
-1. Den Charakterregistrierungsablauf sowie Nickname-Bindung/Login abschließen.
-2. Translation.dat-Format und die Startprüfung konkret spezifizieren.
+1. Den Charakterregistrierungsablauf und die Befehlsdetails weiter konkretisieren.
+2. Translation.dat-Format und die Startprüfung spezifizieren.
 3. Modulschnittstellen und Ladelogik finalisieren.
-4. Diese Planung über einen Pull Request prüfen.
-5. Erst nach ausreichender Planungsfreigabe die produktiven Dateien anlegen.
+4. Die aktualisierte Planung über den Pull Request prüfen.
+5. Erst nach ausreichender Planungsfreigabe produktive Dateien anlegen.
 6. Bootstrap und Registrierung testen, danach einen vollständigen einfachen Monsterkampf implementieren.
 
 
 ## Neue bestätigte Entscheidung: Nickname-Rückkehr
 
 Ein Konto wird nicht auf einen geänderten Nickname übertragen und bei einem Nickwechsel nicht automatisch gelöscht. Kehrt der Nutzer zum ursprünglichen Nickname zurück, kann er sich mit dem bisherigen Passwort anmelden. Die genaue IRC-Case-Mapping-Behandlung bleibt vor der Implementierung zu prüfen.
+
+
+## Neue bestätigte Entscheidung: Timer-Start
+
+Der Schlacht-Timer startet erst nach dem erfolgreichen IRC-Verbindungsereignis (`on CONNECT`) und erfolgreicher Prüfung der Pflichtmodule sowie `Translation.dat`. Drei Minuten nach diesem Verbindungsereignis erscheint die erste Schlachtankündigung. Das Skript-Laden allein startet den Zyklus nicht. Bei Disconnect werden die Timer bereinigt; nach Wiederverbindung darf nur ein sauber neu gestarteter Zyklus laufen.
+
+
+## Verbindliche Ablaufregel: Verbindung und erster Timer
+
+Der erste Schlacht-Timer startet erst nach dem erfolgreichen IRC-Verbindungsereignis (`on CONNECT`) und nachdem Pflichtmodule sowie `Translation.dat` geprüft wurden. Die erste Ankündigung folgt drei Minuten später. Bei Disconnect werden laufende Timer bereinigt, sodass eine spätere Verbindung den Zyklus ohne doppelte Timer neu starten kann.

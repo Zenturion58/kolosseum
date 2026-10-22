@@ -135,7 +135,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 4. Ob und wie das `.chr`- bzw. `.char`-Datenformat aus der Wiki für v0.1 minimal angepasst werden muss.
 5. Exakte Schadensformel und Werte der fünf Startmonster.
 6. Wie ein Neustart während einer laufenden Instanz behandelt wird.
-7. Ob die erste Ankündigung sofort oder nach dem ersten 3-Minuten-Intervall erfolgt (spätere Zyklen starten 3 Minuten nach Kampfende bzw. leerer Beitrittsphase).
+7. Start des Schlacht-Timers: bestätigt ist, dass er erst nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) und bestandener Pflichtdateiprüfung startet. Die erste Ankündigung erfolgt drei Minuten danach; bei Disconnect werden aktive Timer bereinigt und nach Wiederverbindung ohne Duplikate neu gestartet.
 8. Validierungsregeln für `Translation.dat`, einschließlich Pflichtschlüsseln und Behandlung doppelter Schlüssel; außerdem welche Startfehler wie detailliert protokolliert werden.
 9. Wenn `System.dat` in einer späteren Version eingeführt wird: Pflichtschlüssel, Wertevalidierung und Verhalten bei fehlenden/ungültigen Einstellungen.
 
@@ -186,3 +186,10 @@ Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu 
 ## Ergänzte Entscheidung: Rückkehr zum ursprünglichen Nickname
 
 Nach einem zwischenzeitlichen Nickwechsel bleibt der Charakterdatensatz erhalten und an den ursprünglichen Nick gebunden. Bei Rückkehr zu diesem ursprünglichen Nick kann der Nutzer sich mit dem bisherigen Passwort wieder anmelden. Ein Accounttransfer auf den geänderten Nick findet nicht statt.
+
+
+## Bestätigte Entscheidung: Timer-Start bei IRC-Verbindung
+
+Der Timer für den Schlachtzyklus wird nicht beim Laden oder Starten des Skripts gestartet. Erst wenn mIRC das erfolgreiche Verbindungsereignis (`on CONNECT`) auslöst und die Initialisierung einschließlich Pflichtmodulen und `Translation.dat` erfolgreich ist, beginnt der erste Dreiminuten-Countdown. Danach erscheint die erste Schlachtankündigung.
+
+Bei einem Disconnect werden zum Schlachtzyklus gehörende Timer gestoppt bzw. bereinigt. Nach einer erfolgreichen Wiederverbindung startet der Zyklus sauber neu; parallele doppelte Timer dürfen nicht entstehen.
