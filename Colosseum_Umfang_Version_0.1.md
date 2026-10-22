@@ -313,3 +313,12 @@ Diese Ausnahme gilt nur für `System.dat`. Fehlende `Translation.dat`, Pflichtmo
 ## Bestätigte Entscheidung: ungültige System.dat-Einstellungen auf Standardwerte zurücksetzen
 
 Enthält eine vorhandene `System.dat` eine Einstellung mit einem ungültigen Wert, ersetzt der V0.1-Helfer den Wert durch den für diese Einstellung vorgesehenen Standardwert. Er meldet die Korrektur im mIRC-Statusfenster und speichert die Änderung in `System.dat`. Anschließend wird die korrigierte Konfiguration erneut geprüft und die restliche Startprüfung fortgesetzt. Der Schlacht-Timer startet nur dann, wenn das Speichern, die erneute Validierung und sämtliche anderen Pflichtprüfungen erfolgreich sind.
+
+
+## Bestätigte Abgrenzung: System-Defaults für den Prototyp statt Endversion
+
+Der gezeigte `system_defaults_check` ist für die Endversion vorgesehen und wird in V0.1 nicht unverändert übernommen. Er dient als Vorlage für das Grundprinzip: fehlende Einstellungen ergänzen, ungültige Werte anhand definierter Standardwerte korrigieren, Änderungen protokollieren, Konfiguration validieren und gültige Werte in globale Variablen übernehmen.
+
+Der V0.1-Helfer bleibt bewusst klein. Er enthält nur solche Einstellungen, Pfade und Startprüfungen, die für den Prototyp erforderlich sind. Funktionen, Module, Ordner und Alt-Daten-Bereinigungen für Endversionsysteme wie Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons und zusätzliche Ereignisse werden nicht in den V0.1-Umfang gezogen.
+
+Vor der Implementierung wird eine vollständige Standardwertliste für V0.1 beschlossen. Sie enthält für jeden benötigten Eintrag Schlüssel, Standardwert, Datentyp/Wertebereich, globale Variable und Verwendungszweck. Bestehende Schlüssel werden nach Möglichkeit beibehalten, sofern ihre Bedeutung zum Prototyp passt; Unterschiede zwischen der Endversion-Vorgabe und den bestätigten V0.1-Regeln sind explizit festzulegen.
