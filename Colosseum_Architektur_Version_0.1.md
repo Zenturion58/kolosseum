@@ -142,7 +142,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 - Texte, die zu einer Angriffsfähigkeit bzw. Angriffsdefinition gehören, werden nicht als allgemeiner Translation-Schlüssel behandelt, sondern über den dafür vorgesehenen Mechanismus für Angriffs-/Fähigkeitsdaten gelesen. Für den Faustangriff in v0.1 ist dieser konkrete Datenweg noch festzulegen.
 - Da die Werte mIRC-Ausdrücke enthalten können, muss der Übersetzungshelfer diese gezielt und kontrolliert verarbeiten; wir evaluieren nicht blind beliebigen Dateiinhalt als mIRC-Code.
 - Doppelte Schlüssel müssen vor Implementierung aufgelöst werden. Im vorgelegten Beispiel ist `ALREADY_OCCUPIED` zweimal vorhanden; wir behalten nur einen Eintrag oder vergeben für eine tatsächlich andere Meldung einen eigenen eindeutigen Schlüssel.
-- `System.dat` wird in V0.1 bei Bedarf mit Standardwerten angelegt; fehlende Einstellungen werden ergänzt. Vorhandene ungültige Werte werden nicht überschrieben: Die betroffene Funktion wird deaktiviert und eine Diagnose nennt den Schlüssel, den gefundenen Wert und den erwarteten Wert bzw. Wertebereich. Die sechs Laufzeitwerte werden nur dann als gültige Laufzeitwerte bereitgestellt, wenn sie erfolgreich geprüft wurden.
+- `System.dat` wird in V0.1 bei Bedarf mit Standardwerten angelegt; fehlende Einstellungen werden ergänzt. Vorhandene ungültige Werte werden nicht überschrieben: Die betroffene Funktion wird deaktiviert und eine Diagnose nennt den Schlüssel, den gefundenen Wert und den erwarteten Wert bzw. Wertebereich. Die fünf Laufzeitwerte werden nur dann als gültige Laufzeitwerte bereitgestellt, wenn sie erfolgreich geprüft wurden.
 
 ## 8. Noch gemeinsam festzulegen
 
@@ -228,20 +228,14 @@ In Version 0.1 dienen die Einstellungen in `System.dat` als Quelle der konfiguri
 
 | Zweck | Schlüssel in `System.dat` | Standardwert V0.1 | Globale Variable |
 |---|---|---:|---|
-| Erste Schlachtankündigung nach erfolgreicher Startprüfung | `TimeBeforeFirstBattle` | `180` Sekunden | `%timeBeforeFirstBattle` |
 | Beitrittsfenster | `TimeToEnter` | `120` Sekunden | `%timeToEnter` |
-| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` | `180` Sekunden | `%timeBetweenBattles` |
 | Zeitlimit für den Spielerzug | `TimeForIdle` | `180` Sekunden | `%timeForIdle` |
 | Maximal übersprungene Spielerzüge | `MaxIdleTurns` | `2` | `%maxIdleTurns` |
-| Rote Kugeln als Siegesbelohnung | `VictoryOrbReward` | `10` | `%victoryOrbReward` |
 
-Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind für V0.1 bestätigt. Der Endversion-Helfer setzt `TimeBetweenBattles` derzeit auf `120`; für V0.1 ist ausdrücklich `180` Sekunden vorgesehen. Dieser Unterschied ist beabsichtigt, da der Helfer der Endversion nicht unverändert kopiert wird.
 
 ### Verbindliche Wertebereiche für `System.dat`
 
-- `TimeBeforeFirstBattle`, `TimeToEnter`, `TimeBetweenBattles` und `TimeForIdle` müssen ganze Zahlen in Sekunden zwischen `1` und `3600` einschließlich sein. `3600` Sekunden entsprechen einer Stunde und sind die maximale zulässige Warte- bzw. Zugzeit.
 - `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein.
-- `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein.
 - Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb des jeweiligen Bereichs gelten als ungültig. Ein vorhandener ungültiger Wert wird nicht automatisch verändert. Der Systemhelfer meldet den Schlüssel, den vorhandenen Inhalt und den erwarteten Datentyp bzw. Wertebereich im mIRC-Statusfenster und deaktiviert die davon abhängige Funktion, bis die Datei korrigiert und erneut erfolgreich geprüft wurde.
 - Der Schlacht-Timer darf nur starten, wenn die korrigierte Konfiguration erfolgreich gespeichert, erneut eingelesen und validiert wurde.
 
@@ -280,26 +274,46 @@ Der vorhandene `system_defaults_check` gehört zur Endversion. Er ist eine Refer
 
 Für den Prototyp wird ein eigener, kleiner `$system_default_check` spezifiziert. Er verwaltet nur die Einstellungen und Prüfungen, die Colosseum V0.1 tatsächlich benötigt. Endversionspezifische Verzeichnisse, Module, Datenmigrationen und Bereinigungen für Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons, Sonderereignisse oder weitere spätere Systeme gehören nicht automatisch hinein.
 
-Die sechs Schlüssel, globalen Variablen und Standardwerte in der oben dokumentierten V0.1-Liste sind bestätigt. Die zulässigen Wertebereiche sind im Abschnitt „Verbindliche Wertebereiche für `System.dat`“ festgelegt. Die genaue Zuordnung zu den verwendenden Modulen bleibt bei der Schnittstellenplanung zu prüfen. Der Endversion-Helfer setzt `TimeBetweenBattles` auf `120`; für V0.1 ist ausdrücklich `180` Sekunden festgelegt, sodass der Endversion-Wert nicht übernommen wird.
 
 
-## Bestätigte V0.1-Konfigurationsschnittstelle: sechs Laufzeitwerte
+## Bestätigte V0.1-Konfigurationsschnittstelle: fünf Laufzeitwerte
 
 Die folgenden sechs Einträge sind für V0.1 freigegeben. `$system_default_check` stellt die validierten Werte in den jeweils genannten globalen Variablen bereit. Fachmodule dürfen diese Laufzeitwerte nicht zusätzlich mit abweichenden fest codierten Zahlenwerten versehen.
 
 | `System.dat`-Schlüssel | Globale Variable | Standardwert | Modul-/Zweckzuordnung |
 |---|---|---:|---|
-| `TimeBeforeFirstBattle` | `%timeBeforeFirstBattle` | `180` Sekunden | erster Countdown nach erfolgreicher Verbindung und Startprüfung |
 | `TimeToEnter` | `%timeToEnter` | `120` Sekunden | Beitrittsfenster |
-| `TimeBetweenBattles` | `%timeBetweenBattles` | `180` Sekunden | Countdown zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende |
 | `TimeForIdle` | `%timeForIdle` | `180` Sekunden | Zeitlimit eines Spielerzugs |
 | `MaxIdleTurns` | `%maxIdleTurns` | `2` | übersprungene Spielerzüge bis zur Niederlage |
-| `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln | Siegesbelohnung bei Überleben des Spielers |
 
-Die getrennten Einstellungen `TimeBeforeFirstBattle` und `TimeBetweenBattles` bleiben bewusst eigenständig, obwohl beide zunächst `180` Sekunden betragen. Sie regeln unterschiedliche Phasen des Zyklus. Der Wert `TimeBetweenBattles = 180` ist eine ausdrückliche Abweichung vom Endversion-Helfer, der aktuell `120` verwendet.
 
 ## Bestätigte Entscheidung: Ordnerstruktur am Endprodukt ausrichten
 
 Die Ordnerstruktur für V0.1 wird von Beginn an an das vorgesehene Endprodukt angelehnt. Es gibt keinen separaten `scripts/`- oder `data/`-Ordner für die V0.1-Module bzw. die hier beschriebenen Daten. Die Einstiegsdatei, Fachmodule, Alias-Dateien, `System.dat` und `Translation.dat` liegen im Projekt-Hauptordner. Die Datenordner `characters/`, `bosses/`, `monsters/`, `zapped/`, `npcs/`, `summons/` und `help-files/` werden auf der obersten Projektebene vorgesehen, entsprechend den im Endversion-Helfer gezeigten Pfadnamen.
 
 V0.1 nutzt insbesondere `characters/` und `monsters/`. Die übrigen Ordner dürfen für spätere Funktionen vorhanden bzw. im endgültigen Layout vorgesehen sein, ohne dass ihre Endversion-Funktionen bereits implementiert werden. Dadurch sollen spätere Datei- und Ordnerumzüge vermieden werden.
+
+## Verbindliche System.dat-Einstellungen für Version 0.1
+
+Die folgenden fünf Einstellungen sind für Version 0.1 festgelegt. Es werden ausschließlich offizielle Wiki-Schlüsselnamen verwendet. Die Endversion-Wiki beschreibt weiterhin das angestrebte Endprodukt; die hier genannten Wertebereiche und die prototypspezifische Verwendung gelten für Version 0.1.
+
+| Schlüssel | Standardwert für V0.1 | Zulässiger Bereich | Einheit / Bedeutung |
+|---|---:|---|---|
+| `TimeBetweenBattles` | `3` | `1–240` | Minuten; Wartezeit bis zur nächsten Schlachtankündigung im Leerlauf nach leerem Beitrittsfenster oder Kampfende. Bei der Übergabe an einen mIRC-Timer wird der Minutenwert in Sekunden umgerechnet. |
+| `TimeToEnter` | `120` | `30–300` | Sekunden; Dauer des Beitrittsfensters. Der Wert wird nicht erneut umgerechnet. |
+| `TimeForIdle` | `180` | `30–600` | Sekunden; Zeitlimit für einen Spielerzug. |
+| `MaxIdleTurns` | `2` | `1–10` | Ganze Zahl; Anzahl verpasster Spielerzüge, nach der der Spieler aus dem Kampf ausscheidet. |
+| `MaxOrbReward` | `10` | Für V0.1 fest auf `10` gesetzt | Rote Kugeln; im Prototyp als feste Siegesbelohnung verwendet. |
+
+### Inaktivität im Kampf
+
+In Version 0.1 wird die Inaktivität über den gesamten Kampf gezählt. Nach dem ersten abgelaufenen Zuglimit wird der Spielerzug übersprungen und das Monster kann erneut angreifen. Erst wenn der Spieler zum zweiten Mal (bei `MaxIdleTurns=2`) keine Aktion ausführt, scheidet er aus. Ein zwischenzeitlich ausgeführter Angriff setzt den Zähler verpasster Züge nicht zurück. Da V0.1 nur einen Spieler pro Kampf zulässt, endet der Kampf dann als Niederlage ohne Belohnung.
+
+### Belohnung und Wiki-Bedeutung
+
+Das offizielle Wiki beschreibt `MaxOrbReward` als Obergrenze der möglichen Kugelbelohnung vor späteren Modifikatoren wie Skills und Accessoires. Version 0.1 verwendet denselben offiziellen Schlüssel prototypspezifisch für eine feste Belohnung von 10 roten Kugeln bei einem Sieg, sofern der Spieler überlebt. Skills, Styles, Accessoires und weitere Belohnungsmodifikatoren sind in V0.1 nicht vorhanden. Bei Niederlage oder Ausscheiden wegen Inaktivität gibt es keine Belohnung.
+
+### Prüfung der Werte
+
+Zeitwerte müssen ganze Zahlen innerhalb der für den jeweiligen Schlüssel angegebenen Grenzen sein. `MaxIdleTurns` muss eine ganze Zahl zwischen 1 und 10 sein. In Version 0.1 ist `MaxOrbReward` auf 10 festgelegt. Vorhandene ungültige Werte werden nicht automatisch überschrieben: Die Diagnose nennt Schlüssel, gefundenen Wert und erwarteten Bereich; die abhängige Funktion bleibt deaktiviert, bis der Nutzer den Wert korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Fehlende Einstellungen dürfen mit den festgelegten Standardwerten ergänzt werden.
+
