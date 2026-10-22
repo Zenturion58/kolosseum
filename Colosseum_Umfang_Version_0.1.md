@@ -8,8 +8,8 @@
 - Es gibt noch keinen vorhandenen Quellcode. Die Implementierung wird neu entworfen und selbst geschrieben.
 - Der Bot und alle für Spieler sichtbaren Nachrichten, Hilfetexte und Fehlermeldungen sollen standardmäßig auf Deutsch sein.
 - Allgemeine Botmeldungen, System-/Profilmeldungen, Schlachtankündigungen und Belohnungstexte werden von Anfang an aus `Translation.dat` geladen; diese Texte werden nicht direkt in die Spiellogik eingebaut. Die Datei nutzt Abschnitte und Schlüssel in der Form `Schlüssel=Textvorlage`. Übersetzer ändern nur den Text rechts vom `=` und lassen Schlüssel, Platzhalter (z. B. `%user%`, `%file`) und mIRC-Formatierungsbestandteile (z. B. `$chr(3)`, `$chr(15)`, `$chr(2)`, `$+`) unverändert. Texte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden davon getrennt über den Mechanismus für Angriffs-/Fähigkeitsdaten gelesen.
-- Nach erfolgreichem `on CONNECT` ruft das System den Helfer `$system_default_check` auf. Er prüft sämtliche für den Betrieb erforderlichen Module und Datenbestände, darunter `System.dat`, `Translation.dat` sowie die Daten/Definitionen für Monster, Waffen, Techniken, Skills und weitere registrierte Spielinhalte. Fehlt etwas oder ist eine Prüfung negativ, wird die Initialisierung abgebrochen und der Schlacht-Timer startet nicht.
-- `System.dat` ist bereits beim Start von Version 0.1 eine Pflichtdatei. `$system_default_check` liest und validiert die Einstellungen und stellt die zulässigen Werte in globalen Variablen für andere Module bereit. Welche dieser Einstellungen Version 0.1 tatsächlich dynamisch verwendet und welche Zeitwerte vorerst fest bleiben, muss vor Implementierung abschließend abgegrenzt werden.
+- Nach erfolgreichem `on CONNECT` ruft das System den Helfer `$system_default_check` auf. Fehlt `System.dat`, legt er sie mit Standardwerten an; fehlende Einstellungen ergänzt er ebenfalls. Danach prüft er die Konfiguration, `Translation.dat`, Pflichtmodule und erforderliche Datenbestände für Monster, Waffen, Techniken, Skills usw. Nur bei erfolgreicher Gesamtprüfung startet der Schlacht-Timer.
+- Die sechs besprochenen Laufzeitwerte werden aus `System.dat` in globale Variablen eingelesen und von den Modulen verwendet. Kann `System.dat` nicht angelegt, geschrieben oder validiert werden, startet der Schlacht-Timer nicht.
 - Die vollständige Charaktervorlage aus der Dokumentation darf als Grundlage verwendet werden. Version 0.1 liest und verarbeitet aber nur die Felder, die sie tatsächlich benötigt.
 - Funktionen, die nicht ausdrücklich zum Umfang von Version 0.1 gehören, bleiben für spätere Versionen vorgemerkt. Der administrative Passwort-Reset ist eine solche Zukunftsfunktion.
 - Änderungen am Umfang werden gemeinsam besprochen und bestätigt, bevor sie implementiert werden.
@@ -107,7 +107,7 @@ Diese Funktionen gehören zur langfristigen Vision und sind nicht Teil von Versi
 - der Modus „Players must die“
 - umfangreiche Kampfstatistiken, Kampfserien speichern/laden und weitere Meta-Systeme
 - DCC-exklusive Funktionen, sofern sie nicht für den ersten Basiskampf erforderlich sind
-- `System.dat` wird bereits beim Start geprüft und eingelesen; der genaue Umfang der in Version 0.1 tatsächlich konfigurierbaren Werte wird vor Implementierung festgelegt.
+- `System.dat` wird bei fehlender Datei automatisch mit Standardwerten angelegt; fehlende Einträge werden ergänzt, bevor Werte geprüft und in globale Variablen eingelesen werden.
 
 Diese Liste bedeutet nicht, dass die Funktionen aus dem Zielprodukt gestrichen werden. Sie werden später ergänzt, nachdem ihre Anforderungen geklärt wurden.
 
@@ -259,7 +259,7 @@ Dieser Nachtrag hält Entscheidungen fest, die nach der bisherigen Fassung gemei
 - Fachbefehle und zugehörige IRC-Handler liegen in der jeweils zuständigen `.mrc`-Datei. Es ist keine zentrale `Events.mrc` vorgesehen.
 - Wiederverwendbare Helfer liegen in aufgabenbezogenen `.als`-Dateien. Charakterbezogene Speicherung bleibt fachlich bei `Character.mrc` und den Helfern in `Characters.als`; eine separate `Storage.mrc` ist nicht vorgesehen.
 - Allgemeine Spielertexte werden aus `data/Translation.dat` geladen. Angriffstexte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden separat über den dafür vorgesehenen Datenmechanismus verarbeitet.
-- Der Schlacht-Timer darf ausschließlich nach erfolgreichem `on CONNECT` und erfolgreichem Abschluss von `$system_default_check` starten. Pflichtprüfungen umfassen `System.dat`, `Translation.dat`, benötigte Module und die erforderlichen Datenbestände (unter anderem Monster, Waffen, Techniken und Skills). Jeder Fehler verhindert den Timerstart.
+- Der Schlacht-Timer darf ausschließlich nach erfolgreichem `on CONNECT` und erfolgreichem Abschluss von `$system_default_check` starten. Eine fehlende `System.dat` wird automatisch mit Standardwerten angelegt; fehlende Einträge werden ergänzt. Danach werden die Konfiguration, `Translation.dat`, benötigte Module und erforderliche Datenbestände (unter anderem Monster, Waffen, Techniken und Skills) geprüft. Jeder Erzeugungs-, Schreib- oder Prüfungsfehler verhindert den Timerstart.
 - Änderungen an Planung und Spezifikation werden während der Entwicklung in einem separaten GitHub-Branch vorbereitet und über einen Pull Request zur Prüfung vorgelegt. `main` wird nicht ohne Freigabe geändert.
 
 
@@ -280,8 +280,8 @@ Bei einem zwischenzeitlichen Nickwechsel wird das Konto nicht auf den neuen Nick
 ## Bestätigte Entscheidung: Systemprüfung und Anmeldesitzung
 
 - Nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) wird `$system_default_check` aufgerufen. Nur wenn sämtliche Systemprüfungen positiv sind, darf der Schlacht-Timer gestartet werden.
-- Die Prüfung umfasst `System.dat`, `Translation.dat`, erforderliche Module und die vorhandenen/lesbaren/validen Datenbestände für Monster, Waffen, Techniken, Skills und weitere registrierte Spielinhalte. Welche dieser Bestände als konkrete Dateien bzw. Datenlisten organisiert werden, wird bei der Datenstrukturplanung festgelegt.
-- Bei fehlender Datei, ungültigen Einstellungen, fehlenden Pflichtdaten oder einem negativen Prüfergebnis wird eine technische Meldung im mIRC-Statusfenster ausgegeben. Es startet kein Schlacht-Timer.
+- Der Helfer erzeugt `System.dat` bei Bedarf mit Standardwerten und ergänzt fehlende Einstellungen. Danach prüft er die Konfiguration, `Translation.dat`, erforderliche Module und vorhandene/lesbare/gültige Datenbestände für Monster, Waffen, Techniken, Skills und weitere Spielinhalte. Welche Datenbestände als Dateien bzw. Datenlisten organisiert werden, wird bei der Datenstrukturplanung festgelegt.
+- Kann `System.dat` nicht angelegt, geschrieben, erneut gelesen oder validiert werden, oder fehlen andere Pflichtdateien/-daten, wird eine technische Meldung im mIRC-Statusfenster ausgegeben. Es startet kein Schlacht-Timer.
 - Eine Anmeldung bleibt bis zur Trennung vom IRC-Netzwerk oder bis zu einer Nickname-Änderung bestehen. Der jeweilige Vorgang beendet die Sitzung. Kehrt der Spieler später zum ursprünglichen Nickname zurück, kann er sich mit dem bisherigen Passwort erneut anmelden.
 
 
@@ -300,4 +300,11 @@ Vorgeschlagene Zuordnung:
 
 Die genauen Schlüsselnamen und Variablennamen für neu ergänzte Werte sind noch zu bestätigen. Eine Abweichung muss vor der Implementierung aufgelöst werden: Im vorgelegten Endversion-Helfer hat `TimeBetweenBattles` den Standardwert `120`, während die geplante Regel für v0.1 `180` Sekunden vorsieht.
 
-Die fehlende oder ungültige Einstellung innerhalb einer vorhandenen `System.dat` wird nicht automatisch als fataler Fehler behandelt, solange das Standardwertverhalten noch nicht beschlossen ist. Der Endversion-Helfer ergänzt bei einer Versionsänderung fehlende Werte über `SystemDatVersion`; die Frage, welche Standardwerte der v0.1-Helfer ergänzt und welche ungültigen Werte zum Abbruch führen, wird vor der Implementierung geklärt. Die Datei `System.dat` selbst bleibt Pflicht und ihre Nichterreichbarkeit verhindert weiterhin den Start des Schlacht-Timers.
+Fehlt `System.dat`, legt der V0.1-Helfer die Datei selbst mit Standardwerten an. Fehlen einzelne Einstellungen, werden sie ebenfalls ergänzt, bevor die Konfiguration validiert und in globale Variablen übernommen wird. Das Vorgehen soll sich am versionsabhängigen Standardwertprinzip des Endversion-Helfers (`SystemDatVersion`) orientieren, aber für V0.1 vereinfacht werden. Bereits vorhandene ungültige Werte werden erkannt; ob sie automatisch auf Standardwerte zurückgesetzt werden oder einen Startfehler auslösen, ist noch offen. Wenn Erzeugung, Schreiben, erneutes Einlesen oder Validierung scheitern, startet kein Schlacht-Timer.
+
+
+## Bestätigte Entscheidung: System.dat bei Neuinstallation automatisch anlegen
+
+V0.1 setzt nicht voraus, dass `System.dat` schon mitgeliefert oder vor dem Start von Hand erstellt wurde. Der Helfer legt die Datei bei Bedarf mit den vorgesehenen Standardwerten an und ergänzt fehlende Einträge in vorhandenen Dateien. Die Werte werden anschließend validiert und in globalen mIRC-Variablen bereitgestellt. Nur nach erfolgreicher Gesamtprüfung beginnt der Schlachtzyklus.
+
+Diese Ausnahme gilt nur für `System.dat`. Fehlende `Translation.dat`, Pflichtmodule oder erforderliche Spieldaten verhindern weiterhin den Start. Der Umgang mit bereits vorhandenen, aber ungültigen Konfigurationswerten ist noch offen und wird vor der Implementierung beschlossen.
