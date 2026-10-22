@@ -209,16 +209,16 @@ Die Anmeldesitzung endet, sobald die Verbindung zum IRC-Netzwerk abbricht oder d
 
 In Version 0.1 dienen die Einstellungen in `System.dat` als Quelle der konfigurierbaren Laufzeitwerte. Beim Initialisieren werden sie geprüft und in globale mIRC-Variablen geschrieben. Die Fachmodule verwenden anschließend die Variablen, nicht selbst fest codierte Zahlenwerte. Dieses Muster lehnt sich an den vorhandenen Helfer der Endversion an, etwa `TimeToEnter` → `%timeToEnter`.
 
-| Zweck | Konfigurationsschlüssel (vorläufig) | Zielwert v0.1 | Globale Variable (vorläufig) |
+| Zweck | Schlüssel in `System.dat` | Standardwert V0.1 | Globale Variable |
 |---|---|---:|---|
 | Erste Schlachtankündigung nach erfolgreicher Startprüfung | `TimeBeforeFirstBattle` | `180` Sekunden | `%timeBeforeFirstBattle` |
 | Beitrittsfenster | `TimeToEnter` | `120` Sekunden | `%timeToEnter` |
-| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` | laut v0.1-Planung `180` Sekunden | `%timeBetweenBattles` |
+| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` | `180` Sekunden | `%timeBetweenBattles` |
 | Zeitlimit für den Spielerzug | `TimeForIdle` | `180` Sekunden | `%timeForIdle` |
 | Maximal übersprungene Spielerzüge | `MaxIdleTurns` | `2` | `%maxIdleTurns` |
 | Rote Kugeln als Siegesbelohnung | `VictoryOrbReward` | `10` | `%victoryOrbReward` |
 
-Schlüsselnamen für neu ergänzte Einstellungen sind Vorschläge und werden vor der Implementierung bestätigt. Der bestehende Endversion-Helfer setzt `TimeBetweenBattles` derzeit auf `120`; die v0.1-Planung sieht nach einer leeren Beitrittsphase oder einem Kampfende dagegen den nächsten Ankündigungs-Countdown nach `180` Sekunden vor. Diese Differenz ist vor der Umsetzung aufzulösen.
+Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind für V0.1 bestätigt. Der Endversion-Helfer setzt `TimeBetweenBattles` derzeit auf `120`; für V0.1 ist ausdrücklich `180` Sekunden vorgesehen. Dieser Unterschied ist beabsichtigt, da der Helfer der Endversion nicht unverändert kopiert wird.
 
 ### Lade-, Prüf- und Standardwertverhalten
 
@@ -239,3 +239,28 @@ Der Schlacht-Timer startet nur, wenn die automatische Anlage/Ergänzung, die Rep
 ## Bestätigte Entscheidung: ungültige System.dat-Werte korrigieren
 
 Ein vorhandener, aber ungültiger Konfigurationswert wird nicht ungeprüft übernommen und löst nicht allein einen sofortigen Startabbruch aus. `$system_default_check` ersetzt ihn durch den für diesen Schlüssel vorgesehenen Standardwert, meldet die Korrektur im mIRC-Statusfenster und schreibt den korrigierten Wert nach `System.dat`. Anschließend wird die Konfiguration erneut validiert und die Startprüfung fortgesetzt. Wenn Schreiben, erneutes Einlesen oder Validierung fehlschlagen oder eine andere Pflichtprüfung negativ ausfällt, startet kein Schlacht-Timer.
+
+
+## Bestätigte Abgrenzung: eigener, reduzierter Systemhelfer für V0.1
+
+Der vorhandene `system_defaults_check` gehört zur Endversion. Er ist eine Referenz für das allgemeine Muster zur Anlage/Ergänzung von Standardeinstellungen, Validierung, Versionsprüfung und Bereitstellung globaler Variablen; er wird nicht als vollständiger Helfer in V0.1 kopiert.
+
+Für den Prototyp wird ein eigener, kleiner `$system_default_check` spezifiziert. Er verwaltet nur die Einstellungen und Prüfungen, die Colosseum V0.1 tatsächlich benötigt. Endversionspezifische Verzeichnisse, Module, Datenmigrationen und Bereinigungen für Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons, Sonderereignisse oder weitere spätere Systeme gehören nicht automatisch hinein.
+
+Die sechs Schlüssel, globalen Variablen und Standardwerte in der oben dokumentierten V0.1-Liste sind bestätigt. Für die Implementierung werden zusätzlich zulässige Datentypen/Wertebereiche und die genaue Zuordnung zu den verwendenden Modulen festgelegt. Der Endversion-Helfer setzt `TimeBetweenBattles` auf `120`; für V0.1 ist ausdrücklich `180` Sekunden festgelegt, sodass der Endversion-Wert nicht übernommen wird.
+
+
+## Bestätigte V0.1-Konfigurationsschnittstelle: sechs Laufzeitwerte
+
+Die folgenden sechs Einträge sind für V0.1 freigegeben. `$system_default_check` stellt die validierten Werte in den jeweils genannten globalen Variablen bereit. Fachmodule dürfen diese Laufzeitwerte nicht zusätzlich mit abweichenden fest codierten Zahlenwerten versehen.
+
+| `System.dat`-Schlüssel | Globale Variable | Standardwert | Modul-/Zweckzuordnung |
+|---|---|---:|---|
+| `TimeBeforeFirstBattle` | `%timeBeforeFirstBattle` | `180` Sekunden | erster Countdown nach erfolgreicher Verbindung und Startprüfung |
+| `TimeToEnter` | `%timeToEnter` | `120` Sekunden | Beitrittsfenster |
+| `TimeBetweenBattles` | `%timeBetweenBattles` | `180` Sekunden | Countdown zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende |
+| `TimeForIdle` | `%timeForIdle` | `180` Sekunden | Zeitlimit eines Spielerzugs |
+| `MaxIdleTurns` | `%maxIdleTurns` | `2` | übersprungene Spielerzüge bis zur Niederlage |
+| `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln | Siegesbelohnung bei Überleben des Spielers |
+
+Die getrennten Einstellungen `TimeBeforeFirstBattle` und `TimeBetweenBattles` bleiben bewusst eigenständig, obwohl beide zunächst `180` Sekunden betragen. Sie regeln unterschiedliche Phasen des Zyklus. Der Wert `TimeBetweenBattles = 180` ist eine ausdrückliche Abweichung vom Endversion-Helfer, der aktuell `120` verwendet.

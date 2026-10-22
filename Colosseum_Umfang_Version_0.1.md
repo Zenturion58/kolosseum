@@ -287,18 +287,18 @@ Bei einem zwischenzeitlichen Nickwechsel wird das Konto nicht auf den neuen Nick
 
 ## Bestätigte Entscheidung: Konfigurierbare Werte aus System.dat
 
-Die sechs zuvor aufgelisteten Laufzeitwerte sollen bereits in Version 0.1 aus `System.dat` gelesen und in globalen mIRC-Variablen gespeichert werden. Die Module nutzen diese Variablen; die eigentlichen Laufzeitwerte werden nicht separat in der Kampf- oder Timerlogik fest codiert. Das Vorbild dafür ist der Endversion-Helfer, beispielsweise `TimeToEnter` → `%timeToEnter`.
+Die sechs Laufzeitwerte werden bereits in Version 0.1 aus `System.dat` gelesen und in globalen mIRC-Variablen gespeichert. Die Module nutzen diese Variablen; die eigentlichen Laufzeitwerte werden nicht separat in der Kampf- oder Timerlogik fest codiert. Das Vorbild dafür ist der Endversion-Helfer, beispielsweise `TimeToEnter` → `%timeToEnter`.
 
-Vorgeschlagene Zuordnung:
+Bestätigte Zuordnung:
 
-- Erste Ankündigung nach erfolgreicher Startprüfung: `180` Sekunden; neuer Schlüssel `TimeBeforeFirstBattle`, globale Variable `%timeBeforeFirstBattle`.
+- Erste Ankündigung nach erfolgreicher Startprüfung: `180` Sekunden; Schlüssel `TimeBeforeFirstBattle`, globale Variable `%timeBeforeFirstBattle`.
 - Beitrittsfrist: `120` Sekunden; vorhandener Schlüssel `TimeToEnter`, globale Variable `%timeToEnter`.
 - Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende: bisher vereinbarte `180` Sekunden; vorhandener Schlüssel `TimeBetweenBattles`, globale Variable `%timeBetweenBattles`.
 - Spieler-Zeitlimit: `180` Sekunden; vorhandener Schlüssel `TimeForIdle`, globale Variable `%timeForIdle`.
 - Höchstzahl übersprungener Spielerzüge: `2`; vorhandener Schlüssel `MaxIdleTurns`, globale Variable `%maxIdleTurns`.
-- Siegesbelohnung: `10` rote Kugeln; neuer vorgeschlagener Schlüssel `VictoryOrbReward`, globale Variable `%victoryOrbReward`.
+- Siegesbelohnung: `10` rote Kugeln; Schlüssel `VictoryOrbReward`, globale Variable `%victoryOrbReward`.
 
-Die genauen Schlüsselnamen und Variablennamen für neu ergänzte Werte sind noch zu bestätigen. Eine Abweichung muss vor der Implementierung aufgelöst werden: Im vorgelegten Endversion-Helfer hat `TimeBetweenBattles` den Standardwert `120`, während die geplante Regel für v0.1 `180` Sekunden vorsieht.
+Die sechs Schlüssel, globalen Variablen und Standardwerte der Tabelle sind bestätigt. Im vorgelegten Endversion-Helfer hat `TimeBetweenBattles` den Standardwert `120`; für V0.1 ist ausdrücklich `180` Sekunden festgelegt.
 
 Fehlt `System.dat`, legt der V0.1-Helfer die Datei selbst mit Standardwerten an. Fehlen einzelne Einstellungen, werden sie ebenfalls ergänzt, bevor die Konfiguration validiert und in globale Variablen übernommen wird. Das Vorgehen soll sich am versionsabhängigen Standardwertprinzip des Endversion-Helfers (`SystemDatVersion`) orientieren, aber für V0.1 vereinfacht werden. Bereits vorhandene ungültige Werte werden durch die vorgesehenen Standardwerte ersetzt. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert; danach setzt der Helfer die Startprüfung fort. Wenn Erzeugung, Schreiben, erneutes Einlesen oder Validierung scheitern, startet kein Schlacht-Timer.
 
@@ -313,3 +313,28 @@ Diese Ausnahme gilt nur für `System.dat`. Fehlende `Translation.dat`, Pflichtmo
 ## Bestätigte Entscheidung: ungültige System.dat-Einstellungen auf Standardwerte zurücksetzen
 
 Enthält eine vorhandene `System.dat` eine Einstellung mit einem ungültigen Wert, ersetzt der V0.1-Helfer den Wert durch den für diese Einstellung vorgesehenen Standardwert. Er meldet die Korrektur im mIRC-Statusfenster und speichert die Änderung in `System.dat`. Anschließend wird die korrigierte Konfiguration erneut geprüft und die restliche Startprüfung fortgesetzt. Der Schlacht-Timer startet nur dann, wenn das Speichern, die erneute Validierung und sämtliche anderen Pflichtprüfungen erfolgreich sind.
+
+
+## Bestätigte Abgrenzung: System-Defaults für den Prototyp statt Endversion
+
+Der gezeigte `system_defaults_check` ist für die Endversion vorgesehen und wird in V0.1 nicht unverändert übernommen. Er dient als Vorlage für das Grundprinzip: fehlende Einstellungen ergänzen, ungültige Werte anhand definierter Standardwerte korrigieren, Änderungen protokollieren, Konfiguration validieren und gültige Werte in globale Variablen übernehmen.
+
+Der V0.1-Helfer bleibt bewusst klein. Er enthält nur solche Einstellungen, Pfade und Startprüfungen, die für den Prototyp erforderlich sind. Funktionen, Module, Ordner und Alt-Daten-Bereinigungen für Endversionsysteme wie Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons und zusätzliche Ereignisse werden nicht in den V0.1-Umfang gezogen.
+
+Vor der Implementierung wird eine vollständige Standardwertliste für V0.1 beschlossen. Sie enthält für jeden benötigten Eintrag Schlüssel, Standardwert, Datentyp/Wertebereich, globale Variable und Verwendungszweck. Bestehende Schlüssel werden nach Möglichkeit beibehalten, sofern ihre Bedeutung zum Prototyp passt; Unterschiede zwischen der Endversion-Vorgabe und den bestätigten V0.1-Regeln sind explizit festzulegen.
+
+
+## Bestätigte System.dat-Standardwerte für V0.1
+
+Die folgenden sechs Einstellungen werden getrennt voneinander in `System.dat` geführt, beim Start validiert und in die globalen Variablen übernommen:
+
+| Schlüssel | Globale Variable | Standardwert |
+|---|---|---:|
+| `TimeBeforeFirstBattle` | `%timeBeforeFirstBattle` | `180` Sekunden |
+| `TimeToEnter` | `%timeToEnter` | `120` Sekunden |
+| `TimeBetweenBattles` | `%timeBetweenBattles` | `180` Sekunden |
+| `TimeForIdle` | `%timeForIdle` | `180` Sekunden |
+| `MaxIdleTurns` | `%maxIdleTurns` | `2` |
+| `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln |
+
+`TimeBeforeFirstBattle` und `TimeBetweenBattles` bleiben zwei getrennte Einstellungen. Der erste Wert steuert die Wartezeit nach erfolgreicher Verbindung und abgeschlossener Startprüfung; der zweite steuert die Pause nach einer leeren Beitrittsphase oder nach einem Kampf. Beide haben für V0.1 zunächst den Standardwert `180` Sekunden. Die Endversions-Vorgabe `TimeBetweenBattles=120` wird in V0.1 nicht übernommen.
