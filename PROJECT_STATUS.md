@@ -199,3 +199,10 @@ Für Colosseum V0.1 sind nur die sechs festgelegten Einstellungen aktiv. Andere 
 Die sechs bekannten Einstellungen werden in der Sektion `[system]` ausgewertet. Ein bekannter Schlüssel außerhalb dieser Sektion zählt nicht als gültige Einstellung für V0.1. Fehlt er in `[system]`, wird er dort mit seinem Standardwert ergänzt.
 
 Jeder der sechs bekannten Schlüssel darf in der Sektion `[system]` insgesamt nur einmal vorkommen. Mehrfach vorkommende bekannte Schlüssel gelten als mehrdeutig und werden auf den jeweiligen Standardwert zurückgesetzt; die zusätzlichen Vorkommen werden entfernt. Die Korrektur wird im mIRC-Statusfenster gemeldet. Anschließend speichert der Helfer die Datei, liest sie erneut ein und validiert sie erneut. Misslingt ein Schritt, startet kein Schlacht-Timer.
+
+
+## Ergänzende Implementierungshinweise zur System.dat-Bereinigung
+
+Normale Änderungen an Einstellungen werden über `writeini` vorgenommen. Die Bereinigung bereits manuell eingefügter doppelter Textzeilen ist davon getrennt zu behandeln. Ein Reparaturhelfer muss die Datei tatsächlich zeilenweise auslesen; `$line` liest Zeilen aus einem benutzerdefinierten Fenster und ist kein Datei-Leseverfahren.
+
+Die Originaldatei darf nicht vor dem Neuaufbau gelöscht werden. Die Bereinigung erfolgt zunächst in einer temporären Datei, deren Schreiben, Inhalt und Konfiguration erfolgreich geprüft werden müssen. Erst nach erfolgreicher Prüfung darf sie die Originaldatei ersetzen. Bei einem Fehler bleibt die Originaldatei erhalten und der Schlacht-Timer startet nicht. Die Reparatur soll Kommentare, unbekannte Schlüssel und weitere Sektionen erhalten und nur doppelte bekannte V0.1-Schlüssel normalisieren. Vor einer Implementierung wird das Verhalten in mIRC 7.84 mit Testdateien und Sicherungskopien geprüft.
