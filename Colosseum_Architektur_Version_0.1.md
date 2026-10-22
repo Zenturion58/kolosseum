@@ -205,19 +205,25 @@ Nach erfolgreichem `on CONNECT` ruft der Initialisierungsablauf `$system_default
 Die Anmeldesitzung endet, sobald die Verbindung zum IRC-Netzwerk abbricht oder der Nickname geändert wird. Das Konto selbst bleibt an den ursprünglichen Nick gebunden und wird bei einem Nickwechsel nicht übertragen oder gelöscht. Nach der Rückkehr zum ursprünglichen Nick kann der Spieler sich mit dem bisherigen Passwort neu anmelden.
 
 
-## Vorschlag zur Prüfung: Laufzeitwerte aus System.dat
+## Bestätigte Entscheidung: System.dat als Quelle globaler Laufzeitwerte
 
-Die genaue Konfigurationsschnittstelle ist noch nicht freigegeben. Als Arbeitsvorschlag sollen die folgenden bereits vereinbarten Regeln in Version 0.1 aus `System.dat` gelesen und nach erfolgreicher Validierung in globalen Variablen für die jeweiligen Module bereitgestellt werden:
+In Version 0.1 dienen die Einstellungen in `System.dat` als Quelle der konfigurierbaren Laufzeitwerte. Beim Initialisieren werden sie geprüft und in globale mIRC-Variablen geschrieben. Die Fachmodule verwenden anschließend die Variablen, nicht selbst fest codierte Zahlenwerte. Dieses Muster lehnt sich an den vorhandenen Helfer der Endversion an, etwa `TimeToEnter` → `%timeToEnter`.
 
-| Schlüssel (vorläufig) | Startwert | Verbraucher |
-|---|---:|---|
-| `battle.first_announcement_delay_seconds` | `180` | System-/Timersteuerung |
-| `battle.join_window_seconds` | `120` | Kampfsteuerung |
-| `battle.next_announcement_delay_seconds` | `180` | System-/Timersteuerung |
-| `battle.player_turn_timeout_seconds` | `180` | Kampfsteuerung |
-| `battle.max_skipped_player_turns` | `2` | Kampfsteuerung |
-| `battle.victory_red_orbs` | `10` | Belohnungslogik |
+| Zweck | Konfigurationsschlüssel (vorläufig) | Zielwert v0.1 | Globale Variable (vorläufig) |
+|---|---|---:|---|
+| Erste Schlachtankündigung nach erfolgreicher Startprüfung | `TimeBeforeFirstBattle` | `180` Sekunden | `%timeBeforeFirstBattle` |
+| Beitrittsfenster | `TimeToEnter` | `120` Sekunden | `%timeToEnter` |
+| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` | laut v0.1-Planung `180` Sekunden | `%timeBetweenBattles` |
+| Zeitlimit für den Spielerzug | `TimeForIdle` | `180` Sekunden | `%timeForIdle` |
+| Maximal übersprungene Spielerzüge | `MaxIdleTurns` | `2` | `%maxIdleTurns` |
+| Rote Kugeln als Siegesbelohnung | `VictoryOrbReward` | `10` | `%victoryOrbReward` |
 
-Die Werte spiegeln den aktuellen Plan wider; ihre Konfigurierbarkeit ist noch zu bestätigen. Schlüsselnamen, Dateisyntax, Zeichencodierung, zulässige Wertebereiche und die Behandlung unbekannter Schlüssel bleiben vor der Implementierung offen.
+Schlüsselnamen für neu ergänzte Einstellungen sind Vorschläge und werden vor der Implementierung bestätigt. Der bestehende Endversion-Helfer setzt `TimeBetweenBattles` derzeit auf `120`; die v0.1-Planung sieht nach einer leeren Beitrittsphase oder einem Kampfende dagegen den nächsten Ankündigungs-Countdown nach `180` Sekunden vor. Diese Differenz ist vor der Umsetzung aufzulösen.
 
-Falls freigegeben, prüft `$system_default_check` vor dem ersten Timer alle sechs Einträge auf Vorhandensein, Eindeutigkeit, numerische Gültigkeit und Wertebereich. Ein Fehler verhindert den Start des Schlachtzyklus. Fehlende Pflichtwerte dürfen nicht unbemerkt durch im Code hinterlegte Ersatzwerte ersetzt werden. Die Prüfung dieser Werte ist von den Dateiprüfungen für Module und Spieldaten getrennt.
+### Lade-, Prüf- und Standardwertverhalten
+
+- Nach erfolgreichem `on CONNECT` liest und prüft `$system_default_check` die Pflichtkonfiguration, bevor Timer aktiviert werden.
+- Bei Erfolg schreibt der Helfer jeden validierten Wert in eine globale Variable. Andere Module verwenden diese Werte als zentrale Quelle.
+- Eine fehlende `System.dat` verhindert den Start gemäß der bestehenden Startregel. Ob ein fehlender Schlüssel innerhalb einer vorhandenen Datei ergänzt, aus einem versionsabhängigen Standardwert übernommen oder als Fehler behandelt wird, ist noch offen.
+- Der Endversion-Helfer nutzt `SystemDatVersion`, um fehlende Standardwerte einzutragen. Die strenge Abbruchregel aus dem Vorschlag in PR #5 ist nicht als verbindlich bestätigt zu behandeln; sie muss mit einer möglichen Versionsmigration und Standardwertergänzung abgestimmt werden.
+- Die endgültigen Wertebereiche, Validierungsregeln, Migrationslogik und Reaktion auf fehlerhafte Werte werden vor der Implementierung dokumentiert.
