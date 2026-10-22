@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für die Reparatur ungültiger `System.dat`-Werte: planning/systemdat-invalid-values-2026-10-22.
+- Aktueller Arbeitsbranch für die Abgrenzung des V0.1-Systemhelfers: planning/v01-system-default-scope-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
@@ -151,3 +151,12 @@ Diese automatische Anlage gilt nur für `System.dat`. Fehlende Pflichtmodule, `T
 ## Bestätigte Entscheidung: ungültige System.dat-Werte reparieren
 
 Wenn ein vorhandener Eintrag in `System.dat` einen ungültigen Wert enthält, ersetzt der V0.1-Helfer diesen Wert durch den für den Eintrag vorgesehenen Standardwert. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert. Danach setzt der Helfer die Startprüfung fort und prüft die korrigierte Konfiguration erneut. Nur wenn die Konfiguration und alle übrigen Pflichtmodule und Spieldaten erfolgreich geprüft wurden, startet der Schlacht-Timer. Kann die Korrektur nicht dauerhaft geschrieben oder validiert werden, bleibt der Start abgebrochen.
+
+
+## Bestätigte Abgrenzung: Endversion-Helfer und V0.1-Helfer
+
+Der vom Nutzer gezeigte `system_defaults_check` ist der Helfer für die angestrebte Endversion und dient bei der Planung als Referenz für das Prinzip: Einstellungen mit Standardwerten ergänzen, prüfen und in globalen Variablen bereitstellen. Er wird nicht unverändert in den Prototyp kopiert.
+
+Für V0.1 wird ein eigener, reduzierter Systemhelfer entworfen. Er bearbeitet nur Einstellungen, Module, Verzeichnisse und Datenbestände, die der kleine Prototyp tatsächlich benötigt. Endversionspezifische Funktionen (beispielsweise Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons, zusätzliche Events und alte Datenbereinigungen) werden nicht allein deshalb übernommen, weil sie im Endversion-Helfer stehen.
+
+Nächster Planungsschritt ist eine vollständige V0.1-Standardwertliste: jeden benötigten Eintrag festlegen, vorhandene Schlüssel aus dem Endversion-Helfer wiederverwenden, wo passend, neue Schlüssel nur bei Bedarf ergänzen und alle übrigen Endversion-Einträge explizit aus dem V0.1-Umfang ausschließen. Es werden weiterhin keine produktiven Skript- oder Datendateien angelegt.
