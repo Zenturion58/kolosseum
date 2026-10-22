@@ -96,7 +96,7 @@ Für Version 0.1 ist verbindlich vorgesehen, dass Nutzer nur `Colosseum.mrc` man
 
 **Fehlerbehandlung beim Start:** Bei einer fehlenden oder fehlerhaften Pflichtdatei gibt Colosseum eine technische Diagnose im mIRC-Statusfenster aus und startet keine Schlacht-Timer. Die Diagnose muss auch dann möglich sein, wenn `Translation.dat` selbst fehlt; dafür darf eine minimale technische Statusmeldung direkt im Bootstrap stehen. Das ist keine Spieler-Nachricht im IRC-Kanal.
 
-`System.dat` ist in Version 0.1 noch nicht Bestandteil des Releases. Die Zeiten bleiben fest vorgegeben; daher darf ein fehlendes `System.dat` in Version 0.1 keinen Startfehler auslösen. Sobald `System.dat` in einer späteren Version eingeführt wird, wird es als Pflichtdatei geprüft, bevor Timer gestartet werden. Ein Konfigurations-Check liest und validiert seine Werte und schreibt sie in globale mIRC-Variablen, auf die andere Module zugreifen können.
+`System.dat` ist bereits in Version 0.1 eine Pflichtdatei. Nach erfolgreichem `on CONNECT` führt `$system_default_check` die Systemprüfung aus: Die Datei muss vorhanden und gültig sein; ihre validierten Werte werden in globalen mIRC-Variablen für andere Module bereitgestellt. Der genaue Umfang der in Version 0.1 tatsächlich genutzten konfigurierbaren Werte wird vor der Implementierung noch abgegrenzt.
 
 Die Hauptdatei kann in späteren Versionen zusätzliche Aufgaben erhalten. Für Version 0.1 bleibt ihre Hauptaufgabe jedoch das zuverlässige Laden und Initialisieren des Systems; umfangreiche Spiellogik gehört nicht hinein.
 
@@ -125,7 +125,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 - Texte, die zu einer Angriffsfähigkeit bzw. Angriffsdefinition gehören, werden nicht als allgemeiner Translation-Schlüssel behandelt, sondern über den dafür vorgesehenen Mechanismus für Angriffs-/Fähigkeitsdaten gelesen. Für den Faustangriff in v0.1 ist dieser konkrete Datenweg noch festzulegen.
 - Da die Werte mIRC-Ausdrücke enthalten können, muss der Übersetzungshelfer diese gezielt und kontrolliert verarbeiten; wir evaluieren nicht blind beliebigen Dateiinhalt als mIRC-Code.
 - Doppelte Schlüssel müssen vor Implementierung aufgelöst werden. Im vorgelegten Beispiel ist `ALREADY_OCCUPIED` zweimal vorhanden; wir behalten nur einen Eintrag oder vergeben für eine tatsächlich andere Meldung einen eigenen eindeutigen Schlüssel.
-- `System.dat` gehört nicht in v0.1; Zeitwerte bleiben fest vorgegeben. Die Modulstruktur soll die spätere Konfiguration aber nicht behindern.
+- `System.dat` wird bereits in v0.1 geprüft und eingelesen. Ob einzelne Timerwerte in v0.1 schon dynamisch aus der Datei übernommen oder noch fest vorgegeben werden, wird vor Implementierung ausdrücklich festgelegt.
 
 ## 8. Noch gemeinsam festzulegen
 
@@ -137,7 +137,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 6. Wie ein Neustart während einer laufenden Instanz behandelt wird.
 7. Start des Schlacht-Timers: bestätigt ist, dass er erst nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) und bestandener Pflichtdateiprüfung startet. Die erste Ankündigung erfolgt drei Minuten danach; bei Disconnect werden aktive Timer bereinigt und nach Wiederverbindung ohne Duplikate neu gestartet.
 8. Validierungsregeln für `Translation.dat`, einschließlich Pflichtschlüsseln und Behandlung doppelter Schlüssel; außerdem welche Startfehler wie detailliert protokolliert werden.
-9. Wenn `System.dat` in einer späteren Version eingeführt wird: Pflichtschlüssel, Wertevalidierung und Verhalten bei fehlenden/ungültigen Einstellungen.
+9. Welche konkreten Einstellungen aus der bereits in v0.1 geprüften `System.dat` werden in dieser Version aktiv verwendet, und welche Zeitwerte bleiben vorerst fest?
 
 ## 9. Vorgesehener nächster Schritt
 
@@ -152,6 +152,7 @@ Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu 
 - `!registrieren` wird von `Character.mrc` behandelt und darf sowohl im öffentlichen IRC-Kanal als auch per privater Nachricht an den Bot ausgelöst werden. Da dieser Befehl kein Passwort annimmt, wird dabei kein Geheimnis öffentlich übermittelt.
 - Das neu erzeugte Startpasswort darf ausschließlich privat an den Spieler gesendet werden. Passwörter dürfen niemals ersatzweise in einem öffentlichen Kanal erscheinen.
 - `!anmelden` und `!passwort` sind ausschließlich per privater Nachricht an den Bot zulässig.
+- Eine Anmeldung bleibt bestehen, bis der Spieler die IRC-Verbindung verliert oder seinen Nickname ändert; dann wird die Sitzung beendet. Bei Rückkehr zum ursprünglichen Nick kann er sich mit dem bisherigen Passwort erneut anmelden.
 - Bei einem erkennbaren Fehler bei der privaten Zustellung des Startpassworts wird die Registrierung abgebrochen und der neue Charakterdatensatz entfernt; der Bot informiert den Spieler, dass private Nachrichten vom Bot ermöglicht werden müssen. IRC garantiert nicht in jedem Fall eine Zustellbestätigung, daher kann die Logik nur tatsächlich erkennbare Fehler behandeln.
 
 
@@ -171,9 +172,9 @@ Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu 
 ### Bootstrap und Konfiguration
 
 - Zuerst werden die erforderlichen Alias-Dateien geladen; anschließend die Fachmodule `System.mrc`, `Character.mrc` und `Battle.mrc`.
-- Erst nach dem Laden und erfolgreichen Prüfen der Pflichtdateien werden Laufzeitstatus vorbereitet und die Timer gestartet.
-- Bei fehlender oder unbrauchbarer `Translation.dat` (oder einem fehlenden Pflichtmodul) wird die Initialisierung kontrolliert abgebrochen; keine Schlacht-Timer starten. Eine minimale technische Fehlerausgabe im mIRC-Statusfenster muss auch dann möglich sein, wenn Übersetzungstexte nicht geladen werden können.
-- `System.dat` ist für Version 0.1 nicht vorgesehen. In einer späteren Version soll ein Helfer nach dem benannten Muster `$system_default_check` diese Datei einlesen, validieren und die Werte in globalen Variablen verfügbar machen.
+- Nach erfolgreichem `on CONNECT` ruft der Systemstart `$system_default_check` auf. Erst nach erfolgreicher Prüfung aller Pflichtmodule und Datenbestände werden Laufzeitstatus vorbereitet und Schlacht-Timer gestartet.
+- Bei fehlender oder unbrauchbarer `System.dat`, `Translation.dat`, fehlenden Pflichtmodulen oder unvollständigen/ungültigen benötigten Datenbeständen (unter anderem Monster, Waffen, Techniken und Skills) wird die Initialisierung kontrolliert abgebrochen; keine Schlacht-Timer starten. Eine minimale technische Fehlerausgabe im mIRC-Statusfenster muss auch dann möglich sein, wenn Übersetzungstexte nicht geladen werden können.
+- `$system_default_check` wird nach erfolgreichem `on CONNECT` aufgerufen und validiert bereits in Version 0.1 `System.dat`, `Translation.dat`, erforderliche Module sowie die Pflicht-Datenbestände (Monster, Waffen, Techniken, Skills usw.). Er liest gültige Systemwerte in globale Variablen. Bei jedem negativen Ergebnis wird der Schlacht-Timer nicht gestartet.
 
 ### Sicherheit und offene Punkte
 
@@ -193,3 +194,12 @@ Nach einem zwischenzeitlichen Nickwechsel bleibt der Charakterdatensatz erhalten
 Der Timer für den Schlachtzyklus wird nicht beim Laden oder Starten des Skripts gestartet. Erst wenn mIRC das erfolgreiche Verbindungsereignis (`on CONNECT`) auslöst und die Initialisierung einschließlich Pflichtmodulen und `Translation.dat` erfolgreich ist, beginnt der erste Dreiminuten-Countdown. Danach erscheint die erste Schlachtankündigung.
 
 Bei einem Disconnect werden zum Schlachtzyklus gehörende Timer gestoppt bzw. bereinigt. Nach einer erfolgreichen Wiederverbindung startet der Zyklus sauber neu; parallele doppelte Timer dürfen nicht entstehen.
+
+
+## Bestätigte Ablaufregel: Systemprüfung nach IRC-Verbindung
+
+Nach erfolgreichem `on CONNECT` ruft der Initialisierungsablauf `$system_default_check` auf. Der Helfer prüft `System.dat`, `Translation.dat`, alle benötigten Module und die vorhandenen sowie gültigen Datenbestände für Monster, Waffen, Techniken, Skills und weitere erforderliche Spielinhalte. Er liest zulässige Einstellungen aus `System.dat` und stellt sie in globalen Variablen bereit. Nur wenn die gesamte Prüfung erfolgreich ist, wird der Dreiminuten-Timer für die erste Schlachtankündigung gestartet. Bei jedem Fehler wird der Schlacht-Timer unterlassen und eine technische Diagnose im mIRC-Statusfenster ausgegeben.
+
+## Bestätigte Ablaufregel: Anmeldesitzung
+
+Die Anmeldesitzung endet, sobald die Verbindung zum IRC-Netzwerk abbricht oder der Nickname geändert wird. Das Konto selbst bleibt an den ursprünglichen Nick gebunden und wird bei einem Nickwechsel nicht übertragen oder gelöscht. Nach der Rückkehr zum ursprünglichen Nick kann der Spieler sich mit dem bisherigen Passwort neu anmelden.
