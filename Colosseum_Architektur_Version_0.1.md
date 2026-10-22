@@ -3,7 +3,7 @@
 **Status:** Grundstruktur, Dateinamen und Zuständigkeiten sind gemeinsam bestätigt; technische Details und Schnittstellen bleiben noch festzulegen.  
 **Ziel:** Kleine, modulare mIRC-Script-Architektur. Fachliche Befehle/Ereignisse gehören in zuständige `.mrc`-Dateien; wiederverwendbare Helfer-Aliases liegen in `.als`-Dateien. Alle sichtbaren Bottexte stammen aus der zentralen `Translation.dat` im Projekt-Hauptordner.
 
-## 1. Vorgeschlagene Repository-Struktur
+## 1. Repository-Struktur für V0.1 (am Endprodukt ausgerichtet)
 
 Die Verzeichnisstruktur wird bereits in V0.1 an das geplante Endprodukt angelehnt. Die `.mrc`- und `.als`-Dateien liegen im Hauptordner, ebenso die zentralen Konfigurations- und Übersetzungsdateien. Datenverzeichnisse, die erst spätere Versionen nutzen, werden im Layout bereits berücksichtigt, aber in V0.1 noch nicht mit entsprechenden Spielfunktionen befüllt.
 
@@ -37,7 +37,7 @@ Die Ordnernamen folgen den im gezeigten Endversion-Helfer vorgesehenen Standardp
 
 Auch die neuen V0.1-Module und Alias-Dateien liegen im Hauptordner, passend zum Ladeprinzip des Endversion-Helfers, der Module per Dateinamen aus dem aktuellen Skriptpfad lädt. Die Namen der V0.1-Dateien bleiben gemäß der bereits bestätigten Modulaufteilung bestehen; die Endversion-Ladeliste wird nicht einfach kopiert.
 
-`System.dat` und `Translation.dat` liegen auf derselben Ebene wie die Einstiegsdatei. Die Übersetzungsdatei wird daher im Text und in den Modulen als `Translation.dat` referenziert, nicht als `Translation.dat`.
+`System.dat` und `Translation.dat` liegen auf derselben Ebene wie die Einstiegsdatei. Die Übersetzungsdatei wird daher direkt als `Translation.dat` referenziert.
 
 `README.md` und `LICENSE` sind Repository-Dateien, keine Laufzeitmodule. Die Lizenz wird vor der Veröffentlichung separat geklärt.
 
@@ -55,10 +55,16 @@ Auch die neuen V0.1-Module und Alias-Dateien liegen im Hauptordner, passend zum 
 | `BattleFormula.als` | gemeinsame Schadensberechnung und kampfbezogene Mathematik | eigene IRC-Ereignisse |
 | `Monsters.als` | Monsterdefinitionen lesen/prüfen, gültiges Monster auswählen und Werte liefern | Spielerbefehle; für v0.1 kein eigenes `Monster.mrc` nötig, solange es keine monsterbezogenen Befehle/Ereignisse gibt |
 | `BattleRewards.als` | Ergebnisregel, 10 rote Kugeln bei Sieg + Überleben und Anforderung der Grundwert-Rücksetzung | IRC-Handler |
-| `TranslationAliases.als` | Translation.dat laden/nachschlagen und Platzhalter einsetzen | fest codierte Nachrichtentexte in Kampf-/Charakterlogik |
+| `TranslationAliases.als` | `Translation.dat` im Projekt-Hauptordner laden/nachschlagen und Platzhalter einsetzen | fest codierte Nachrichtentexte in Kampf-/Charakterlogik |
 | `Translation.dat` im Projekt-Hauptordner | Übersetzbare allgemeine Botmeldungen; Deutsch als Standardsprache. Werte dürfen definierte mIRC-Formatierungsausdrücke und Platzhalter enthalten. | Schlüssel, Platzhalter und Formatierungsausdrücke verändern oder übersetzen |
 | `characters/` | dauerhafte Spielerdatensätze; Format an der Wiki-`.chr`-Vorlage orientiert | Alias- oder Eventlogik |
 | `monsters/` | mindestens fünf eigene normale Monster; Monsterformat nach Prüfung der Wiki-Vorlage | Kampfsteuerung |
+| `System.dat` im Projekt-Hauptordner | Standardwerte und konfigurierbare Laufzeitwerte; fehlt die Datei, wird sie automatisch angelegt | Übersetzungstexte und Kampfnachrichten |
+| `bosses/` | künftige Bossdefinitionen; in V0.1 nicht verwendet | normale Monsterdefinitionen |
+| `zapped/` | Endversions-Daten für das entsprechende spätere System; in V0.1 nicht verwendet | Charaktere oder normale Monster |
+| `npcs/` | künftige NPC-Daten; in V0.1 nicht verwendet | normale Monsterdefinitionen |
+| `summons/` | künftige Beschwörungsdaten; in V0.1 nicht verwendet | normale Monsterdefinitionen |
+| `help-files/` | mögliche externe Hilfedateien für spätere Ausbaustufen | allgemeine Bottexte aus `Translation.dat` |
 
 ### Grundsatz zu Befehlen und Ereignissen
 
