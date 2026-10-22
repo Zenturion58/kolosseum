@@ -106,7 +106,16 @@ Laut offizieller mIRC-Dokumentation lädt `/load -a` eine Alias-Datei und `/load
 
 Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Identifier, zum Beispiel konzeptionell `col_system_init`, `col_character_create`, `col_battle_join` und `col_damage`. Die endgültigen Namen und Parameter werden gemeinsam festgelegt, wenn wir die konkreten Schnittstellen definieren.
 
-## 6. Datenformate
+
+## 6. Passwortspeicherung und Anmeldung
+
+- Passwörter werden niemals im Klartext in `.chr`-Dateien gespeichert. Das automatisch erzeugte Startpasswort wird einmalig per privater Nachricht an den Spieler gesendet.
+- Vorgesehen ist ein moderner Passwort-Hash mit individuellem zufälligem Salt pro Charakter. Beim Login wird der eingegebene Passwortkandidat mit den gespeicherten Parametern geprüft; der Klartext wird nicht gespeichert.
+- **Vorgesehene Hashfunktion:** Argon2id über mIRCs `$argon2`-Identifier. Für Colosseum 0.1 wird mIRC 7.83 oder neuer als Mindestversion vorausgesetzt; der Nutzer verwendet mIRC 7.84. Die geeigneten Parameter müssen wir bei der Implementierung testen und so wählen, dass sie sicher sind und keine übermäßig lange Blockierung des Clients verursachen. Quellen: [mIRC-Versionen und Neuigkeiten](https://www.mirc.com/news.html), [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
+- Vergessene Passwörter können nicht aus dem gespeicherten Hash wiederhergestellt oder angezeigt werden. Ein berechtigter Bot-Administrator darf das Passwort zurücksetzen; der genaue Ablauf (z. B. Erzeugung und private Zustellung eines temporären Passworts) wird vor Implementierung festgelegt. Auch danach wird ausschließlich ein Hash mit individuellem Salt gespeichert.
+- Ein schneller Einzelhash wie ein alleiniger SHA-256-Aufruf ist nicht als Passwortspeicherverfahren vorgesehen.
+
+## 7. Datenformate
 
 - Spielerdateien sollen sich an der dokumentierten `.chr`-Vorlage orientieren. Version 0.1 liest und verändert nur notwendige Felder; nicht benötigte Felder müssen nicht verstanden oder ausgewertet werden.
 - Monsterdefinitionen liegen einzeln in `data/monsters/`. Die Wiki beschreibt Monsterdateien mit `.char`; vor Implementierung prüfen wir, welche Felder die eigene v0.1-Monsterdefinition wirklich benötigt und ob das bestehende Format unverändert passt.
@@ -117,10 +126,10 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 - Doppelte Schlüssel müssen vor Implementierung aufgelöst werden. Im vorgelegten Beispiel ist `ALREADY_OCCUPIED` zweimal vorhanden; wir behalten nur einen Eintrag oder vergeben für eine tatsächlich andere Meldung einen eigenen eindeutigen Schlüssel.
 - `System.dat` gehört nicht in v0.1; Zeitwerte bleiben fest vorgegeben. Die Modulstruktur soll die spätere Konfiguration aber nicht behindern.
 
-## 7. Noch gemeinsam festzulegen
+## 8. Noch gemeinsam festzulegen
 
 1. Exakte Befehlsnamen und Schreibweisen für Registrierung/Login/Logout/Passwortänderung/Profilbefehle.
-2. Sichere Passwortspeicherung und Verhalten bei verlorenen Zugangsdaten.
+2. Konkrete Argon2id-Parameter und der Ablauf für einen administrativen Passwort-Reset (z. B. temporäres Passwort und private Zustellung). Die Mindestversion mIRC 7.83 oder neuer ist bestätigt.
 3. Technische Details der `Translation.dat`: Zeichencodierung, Abschnitts-/Schlüsselauflösung, kontrollierte Verarbeitung der mIRC-Formatierungsausdrücke und Verhalten bei fehlenden Schlüsseln.
 4. Ob und wie das `.chr`- bzw. `.char`-Datenformat aus der Wiki für v0.1 minimal angepasst werden muss.
 5. Exakte Schadensformel und Werte der fünf Startmonster.
@@ -129,6 +138,6 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 8. Validierungsregeln für `Translation.dat`, einschließlich Pflichtschlüsseln und Behandlung doppelter Schlüssel; außerdem welche Startfehler wie detailliert protokolliert werden.
 9. Wenn `System.dat` in einer späteren Version eingeführt wird: Pflichtschlüssel, Wertevalidierung und Verhalten bei fehlenden/ungültigen Einstellungen.
 
-## 8. Vorgesehener nächster Schritt
+## 9. Vorgesehener nächster Schritt
 
 Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu ladenden Einstiegsdatei `Colosseum.mrc` sind bestätigt. Als Nächstes werden wir die Fehlerbehandlung beim Start und die Schnittstellen zwischen den Modulen festlegen. Danach kann das Grundgerüst angelegt werden. Zuerst testen wir, ob Bootstrap und Module zuverlässig geladen werden; erst anschließend folgen Charakterregistrierung und Kampfcode.

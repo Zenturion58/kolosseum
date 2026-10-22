@@ -20,7 +20,10 @@
 - Die Spielerbefehle sind deutschsprachig. Der derzeitige Befehlsentwurf umfasst `!registrieren`, `!anmelden <Passwort>`, `!abmelden`, `!passwort <altesPasswort> <neuesPasswort>` und `!werte`. Die genaue Syntax und die zulässigen Ausführungskontexte werden vor Implementierung noch einmal verbindlich geprüft.
 - Bei der Registrierung wird ein zufälliges Passwort erzeugt und dem Spieler privat mitgeteilt.
 - Passwörter dürfen nicht öffentlich im IRC-Kanal eingegeben oder ausgegeben werden; Anmeldung und Passwortänderung erfolgen privat mit dem Bot.
+- Passwörter werden niemals im Klartext in Charakterdateien gespeichert. Für die Speicherung ist ein geeignetes Passwort-Hashverfahren mit individuellem zufälligem Salt pro Charakter vorgesehen.
+- Als Passwort-Hashverfahren ist Argon2id über mIRCs `$argon2` vorgesehen. Colosseum 0.1 setzt mIRC 7.83 oder neuer voraus; die konkreten Parameter und die Speicherung der Hash-Metadaten werden vor der Implementierung festgelegt.
 - Ein Passwortwechsel ist vorgesehen.
+- Vergessene Passwörter können nicht wiederhergestellt oder angezeigt werden. Ein berechtigter Bot-Administrator darf das Passwort zurücksetzen; das neue Passwort wird anschließend ebenfalls ausschließlich als Hash mit individuellem Salt gespeichert. Der genaue Ablauf des Zurücksetzens (z. B. Erzeugung eines neuen temporären Passworts und private Zustellung) wird vor der Implementierung festgelegt.
 - `!werte` zeigt dem Spieler seine aktuellen HP und TP sowie die vier Kernattribute Stärke, Verteidigung, Intelligenz und Schnelligkeit. Die Ausgabe erfolgt privat.
 - Charakterdaten bleiben nach einem Bot-Neustart erhalten.
 - Die Charaktervorlage orientiert sich an der Dokumentation; nicht benötigte Felder dürfen zunächst ungenutzt bleiben.
