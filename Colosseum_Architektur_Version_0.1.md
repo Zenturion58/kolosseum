@@ -226,11 +226,6 @@ Die Anmeldesitzung endet, sobald die Verbindung zum IRC-Netzwerk abbricht oder d
 
 In Version 0.1 dienen die Einstellungen in `System.dat` als Quelle der konfigurierbaren Laufzeitwerte. Beim Initialisieren werden sie geprüft und in globale mIRC-Variablen geschrieben. Die Fachmodule verwenden anschließend die Variablen, nicht selbst fest codierte Zahlenwerte. Dieses Muster lehnt sich an den vorhandenen Helfer der Endversion an, etwa `TimeToEnter` → `%timeToEnter`.
 
-| Zweck | Schlüssel in `System.dat` | Standardwert V0.1 | Globale Variable |
-|---|---|---:|---|
-| Beitrittsfenster | `TimeToEnter` | `120` Sekunden | `%timeToEnter` |
-| Zeitlimit für den Spielerzug | `TimeForIdle` | `180` Sekunden | `%timeForIdle` |
-| Maximal übersprungene Spielerzüge | `MaxIdleTurns` | `2` | `%maxIdleTurns` |
 
 
 ### Verbindliche Wertebereiche für `System.dat`
@@ -280,11 +275,6 @@ Für den Prototyp wird ein eigener, kleiner `$system_default_check` spezifiziert
 
 Die folgenden sechs Einträge sind für V0.1 freigegeben. `$system_default_check` stellt die validierten Werte in den jeweils genannten globalen Variablen bereit. Fachmodule dürfen diese Laufzeitwerte nicht zusätzlich mit abweichenden fest codierten Zahlenwerten versehen.
 
-| `System.dat`-Schlüssel | Globale Variable | Standardwert | Modul-/Zweckzuordnung |
-|---|---|---:|---|
-| `TimeToEnter` | `%timeToEnter` | `120` Sekunden | Beitrittsfenster |
-| `TimeForIdle` | `%timeForIdle` | `180` Sekunden | Zeitlimit eines Spielerzugs |
-| `MaxIdleTurns` | `%maxIdleTurns` | `2` | übersprungene Spielerzüge bis zur Niederlage |
 
 
 ## Bestätigte Entscheidung: Ordnerstruktur am Endprodukt ausrichten
@@ -292,6 +282,23 @@ Die folgenden sechs Einträge sind für V0.1 freigegeben. `$system_default_check
 Die Ordnerstruktur für V0.1 wird von Beginn an an das vorgesehene Endprodukt angelehnt. Es gibt keinen separaten `scripts/`- oder `data/`-Ordner für die V0.1-Module bzw. die hier beschriebenen Daten. Die Einstiegsdatei, Fachmodule, Alias-Dateien, `System.dat` und `Translation.dat` liegen im Projekt-Hauptordner. Die Datenordner `characters/`, `bosses/`, `monsters/`, `zapped/`, `npcs/`, `summons/` und `help-files/` werden auf der obersten Projektebene vorgesehen, entsprechend den im Endversion-Helfer gezeigten Pfadnamen.
 
 V0.1 nutzt insbesondere `characters/` und `monsters/`. Die übrigen Ordner dürfen für spätere Funktionen vorhanden bzw. im endgültigen Layout vorgesehen sein, ohne dass ihre Endversion-Funktionen bereits implementiert werden. Dadurch sollen spätere Datei- und Ordnerumzüge vermieden werden.
+
+## Verbindliche System.dat-Einstellungen für Version 0.1
+
+Die folgenden fünf Einstellungen sind für Version 0.1 festgelegt. Es werden ausschließlich offizielle Wiki-Schlüsselnamen verwendet. Die Endversion-Wiki beschreibt weiterhin das angestrebte Endprodukt; die hier genannten Wertebereiche und die prototypspezifische Verwendung gelten für Version 0.1.
+
+
+### Inaktivität im Kampf
+
+In Version 0.1 wird die Inaktivität über den gesamten Kampf gezählt. Nach dem ersten abgelaufenen Zuglimit wird der Spielerzug übersprungen und das Monster kann erneut angreifen. Erst wenn der Spieler zum zweiten Mal (bei `MaxIdleTurns=2`) keine Aktion ausführt, scheidet er aus. Ein zwischenzeitlich ausgeführter Angriff setzt den Zähler verpasster Züge nicht zurück. Da V0.1 nur einen Spieler pro Kampf zulässt, endet der Kampf dann als Niederlage ohne Belohnung.
+
+### Belohnung und Wiki-Bedeutung
+
+Das offizielle Wiki beschreibt `MaxOrbReward` als Obergrenze der möglichen Kugelbelohnung vor späteren Modifikatoren wie Skills und Accessoires. Version 0.1 verwendet denselben offiziellen Schlüssel prototypspezifisch für eine feste Belohnung von 10 roten Kugeln bei einem Sieg, sofern der Spieler überlebt. Skills, Styles, Accessoires und weitere Belohnungsmodifikatoren sind in V0.1 nicht vorhanden. Bei Niederlage oder Ausscheiden wegen Inaktivität gibt es keine Belohnung.
+
+### Prüfung der Werte
+
+Zeitwerte müssen ganze Zahlen innerhalb der für den jeweiligen Schlüssel angegebenen Grenzen sein. `MaxIdleTurns` muss eine ganze Zahl zwischen 1 und 10 sein. In Version 0.1 ist `MaxOrbReward` auf 10 festgelegt. Vorhandene ungültige Werte werden nicht automatisch überschrieben: Die Diagnose nennt Schlüssel, gefundenen Wert und erwarteten Bereich; die abhängige Funktion bleibt deaktiviert, bis der Nutzer den Wert korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Fehlende Einstellungen dürfen mit den festgelegten Standardwerten ergänzt werden.
 
 ## Verbindliche System.dat-Einstellungen für Version 0.1
 
