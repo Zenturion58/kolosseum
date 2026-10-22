@@ -154,7 +154,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 6. Wie ein Neustart während einer laufenden Instanz behandelt wird.
 7. Start des Schlacht-Timers: bestätigt ist, dass er erst nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) und bestandener Pflichtdateiprüfung startet. Die erste Ankündigung erfolgt drei Minuten danach; bei Disconnect werden aktive Timer bereinigt und nach Wiederverbindung ohne Duplikate neu gestartet.
 8. Validierungsregeln für `Translation.dat`, einschließlich Pflichtschlüsseln und Behandlung doppelter Schlüssel; außerdem welche Startfehler wie detailliert protokolliert werden.
-9. Das vereinfachte Versionsmigrationsprinzip für `System.dat` sowie der Umgang mit unbekannten oder doppelt vorkommenden Konfigurationsschlüsseln.
+9. Das vereinfachte Versionsmigrationsprinzip für `System.dat`.
 
 ## 9. Vorgesehener nächster Schritt
 
@@ -244,6 +244,14 @@ Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind f
 - `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein.
 - Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb des jeweiligen Bereichs gelten als ungültig. Ein ungültiger vorhandener Wert wird durch den zugehörigen Standardwert ersetzt; die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert.
 - Der Schlacht-Timer darf nur starten, wenn die korrigierte Konfiguration erfolgreich gespeichert, erneut eingelesen und validiert wurde.
+
+### Umgang mit manuellen Änderungen an `System.dat`
+
+`System.dat` bleibt eine normale Klartextdatei. Sie wird weder verschlüsselt noch mit einem besonderen Reparaturverfahren gegen manuelle Änderungen geschützt. Nutzer dürfen die Datei bearbeiten, müssen dabei aber die dokumentierte Struktur, Abschnittsnamen, Schlüsselnamen und zulässigen Werte beachten.
+
+Der Systemhelfer prüft die sechs für V0.1 vorgesehenen Einstellungen und behandelt ungültige Werte nach den festgelegten Regeln. Er übernimmt jedoch keine allgemeine Reparatur beliebiger manueller Änderungen und entfernt insbesondere keine doppelt eingefügten Textzeilen automatisch. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
+
+Wenn Nutzer Schlüssel doppelt eintragen, Abschnitte falsch schreiben oder die Dateistruktur anderweitig verändern, kann die Konfiguration fehlerhaft sein und das Skript möglicherweise nicht wie vorgesehen starten oder funktionieren. Die spätere Dokumentation muss klar erklären, wie die Datei aufgebaut ist, welche Werte zulässig sind und dass manuelle Änderungen auf eigene Verantwortung erfolgen.
 
 ### Lade-, Prüf- und Standardwertverhalten
 

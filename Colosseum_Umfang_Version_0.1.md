@@ -12,6 +12,12 @@
 - Die sechs besprochenen Laufzeitwerte werden aus `System.dat` in globale Variablen eingelesen und von den Modulen verwendet. Kann `System.dat` nicht angelegt, geschrieben oder validiert werden, startet der Schlacht-Timer nicht.
 - Die vier Zeitwerte `TimeBeforeFirstBattle`, `TimeToEnter`, `TimeBetweenBattles` und `TimeForIdle` müssen ganze Zahlen zwischen `1` und `3600` Sekunden einschließlich sein. Damit ist eine Stunde die Obergrenze für alle konfigurierbaren Warte- und Zugzeiten. Dezimalzahlen, nicht numerische Werte und Werte außerhalb des Bereichs gelten als ungültig und werden durch den jeweiligen Standardwert ersetzt; die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert.
 - `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein; `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein.
+- `System.dat` bleibt eine unverschlüsselte Klartextdatei, die der Nutzer bei Bedarf manuell bearbeiten kann. Abschnittsnamen, Schlüsselnamen, Dateiaufbau und Wertebereiche müssen eingehalten werden; die spätere Dokumentation erklärt diese Regeln.
+- Der Systemhelfer prüft weiterhin die sechs bekannten V0.1-Einstellungen und korrigiert ungültige Werte gemäß der festgelegten Standardwertregeln. Er führt jedoch keine besondere automatische Bereinigung manuell eingefügter doppelter Schlüsselzeilen durch. Doppelte oder anderweitig fehlerhafte Einträge können dazu führen, dass die Konfiguration oder das Skript nicht wie erwartet funktioniert; die Verantwortung für manuelle Änderungen liegt beim Nutzer.
+
+
+
+
 - Die vollständige Charaktervorlage aus der Dokumentation darf als Grundlage verwendet werden. Version 0.1 liest und verarbeitet aber nur die Felder, die sie tatsächlich benötigt.
 - Funktionen, die nicht ausdrücklich zum Umfang von Version 0.1 gehören, bleiben für spätere Versionen vorgemerkt. Der administrative Passwort-Reset ist eine solche Zukunftsfunktion.
 - Änderungen am Umfang werden gemeinsam besprochen und bestätigt, bevor sie implementiert werden.

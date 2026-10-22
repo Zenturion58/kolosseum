@@ -190,3 +190,12 @@ Die vier Zeitangaben in `System.dat` dürfen höchstens eine Stunde betragen. `T
 Dezimalzahlen, nicht numerische Werte sowie Zeitwerte außerhalb des zulässigen Bereichs gelten als ungültig. Der V0.1-Systemhelfer ersetzt einen vorhandenen ungültigen Eintrag durch den zugehörigen Standardwert, meldet die Korrektur im mIRC-Statusfenster und speichert den korrigierten Wert in `System.dat`. Kann die Datei danach nicht erfolgreich gespeichert, erneut eingelesen oder validiert werden, startet kein Schlacht-Timer.
 
 Die übrigen beiden Laufzeitwerte werden ebenfalls typgeprüft: `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein; `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein. Die sechs Standardwerte bleiben unverändert.
+
+
+## Bestätigte Entscheidung: System.dat bleibt eine Klartextdatei
+
+`System.dat` bleibt eine normale, unverschlüsselte Textdatei. Es wird kein verschlüsseltes Dateiformat und kein spezieller automatischer Bereinigungsmechanismus für manuell eingefügte doppelte Schlüsselzeilen eingeführt. Der Nutzer kann die Datei bearbeiten, muss dabei jedoch den dokumentierten Aufbau, die Abschnitts- und Schlüsselnamen sowie die zulässigen Wertebereiche beachten.
+
+Der Systemhelfer prüft weiterhin die sechs bestätigten V0.1-Einstellungen. Ungültige Werte werden gemäß der bestehenden Regeln durch ihre vorgesehenen Standardwerte ersetzt und in der Datei gespeichert; scheitert die erforderliche Validierung oder Speicherung, startet kein Schlacht-Timer. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
+
+Doppelte Schlüssel, falsch geschriebene Abschnitte oder andere manuelle Strukturänderungen werden nicht durch eine eigene Reparaturroutine bereinigt. Solche Änderungen können bewirken, dass die Konfiguration fehlerhaft ist oder das Skript nicht wie vorgesehen funktioniert. Eine ausführliche Dokumentation wird später erklären, wie `System.dat` korrekt bearbeitet wird und dass manuelle Änderungen in der Verantwortung des Nutzers liegen.
