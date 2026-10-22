@@ -324,7 +324,7 @@ Der gezeigte `system_defaults_check` ist für die Endversion vorgesehen und wird
 
 Der V0.1-Helfer bleibt bewusst klein. Er enthält nur solche Einstellungen, Pfade und Startprüfungen, die für den Prototyp erforderlich sind. Funktionen, Module, Ordner und Alt-Daten-Bereinigungen für Endversionsysteme wie Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons und zusätzliche Ereignisse werden nicht in den V0.1-Umfang gezogen.
 
-Vor der Implementierung wird eine vollständige Standardwertliste für V0.1 beschlossen. Sie enthält für jeden benötigten Eintrag Schlüssel, Standardwert, Datentyp/Wertebereich, globale Variable und Verwendungszweck. Bestehende Schlüssel werden nach Möglichkeit beibehalten, sofern ihre Bedeutung zum Prototyp passt; Unterschiede zwischen der Endversion-Vorgabe und den bestätigten V0.1-Regeln sind explizit festzulegen.
+Die verbindliche Standardwertliste für die fünf V0.1-Einstellungen steht im Abschnitt „Verbindliche System.dat-Einstellungen für Version 0.1“ am Ende dieses Dokuments.
 
 
 ## Bestätigte System.dat-Standardwerte für V0.1
