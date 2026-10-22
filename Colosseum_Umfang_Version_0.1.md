@@ -6,7 +6,8 @@
 ## 1. Verbindliche Leitlinien
 
 - Es gibt noch keinen vorhandenen Quellcode. Die Implementierung wird neu entworfen und selbst geschrieben.
-- Der Bot und alle für Spieler sichtbaren Nachrichten, Hilfetexte und Fehlermeldungen sollen auf Deutsch sein.
+- Der Bot und alle für Spieler sichtbaren Nachrichten, Hilfetexte und Fehlermeldungen sollen standardmäßig auf Deutsch sein.
+- Alle sichtbaren Texte werden von Anfang an aus `Translation.dat` geladen; sie werden nicht direkt in die Spiellogik eingebaut. So können Nutzer später Übersetzungen ändern oder weitere Sprachen hinzufügen, ohne den Quellcode zu bearbeiten.
 - Die vollständige Charaktervorlage aus der Dokumentation darf als Grundlage verwendet werden. Version 0.1 liest und verarbeitet aber nur die Felder, die sie tatsächlich benötigt.
 - Funktionen, die nicht ausdrücklich zum Umfang von Version 0.1 gehören, bleiben für spätere Versionen vorgemerkt.
 - Änderungen am Umfang werden gemeinsam besprochen und bestätigt, bevor sie implementiert werden.
@@ -103,16 +104,45 @@ Diese Liste bedeutet nicht, dass die Funktionen aus dem Zielprodukt gestrichen w
 
 ## 9. Architektur-Anforderungen
 
-Auch wenn die Funktionen zunächst einfach bleiben, soll das Grundgerüst spätere Erweiterungen ermöglichen:
+Auch wenn die Funktionen zunächst einfach bleiben, soll das Grundgerüst modular sein. Nicht alles soll in einer einzigen `.mrc`-Datei wachsen.
 
-- Charakterdaten, Kampfzustand, Monsterdaten, Belohnungslogik und sichtbare Texte soweit sinnvoll trennen.
-- Die Angriffsverarbeitung für IRC-Aktion und `!angriff` gemeinsam implementieren.
-- Kampfablauf, Schadensberechnung, Kampfende und Belohnungsvergabe in klar abgegrenzte Funktionen aufteilen.
-- Spielerdaten dauerhaft speichern.
-- Passwörter nicht im Klartext öffentlich ausgeben oder in allgemein sichtbaren Nachrichten speichern; die sichere Speicherung ist vor der Implementierung festzulegen.
-- Monster aus einer Datenliste auswählen, damit neue Monster später ergänzt werden können, ohne die Kampflogik umzuschreiben.
-- Texte zentral und bearbeitbar halten, damit der Bot durchgehend deutschsprachig bleibt.
-- Spätere Erweiterungen nicht durch unnötige Annahmen in der ersten Implementierung erschweren.
+### Trennung von Ereignissen und Helfer-Aliasen
+
+- IRC-Ereignis-Handler wie `on TEXT` und `on ACTION` gehören in eine zentrale Ereignis-/Steuerungsschicht, beispielsweise `Events.mrc`.
+- Diese Handler sollen eingehende Nachrichten erkennen und an passende Befehls- oder Spielfunktionen weiterleiten.
+- Module wie `Combat.mrc`, `Monster.mrc` und `Rewards.mrc` enthalten Helfer-Aliase und Fachlogik, aber keine eigenen `on TEXT`- oder `on ACTION`-Handler. Andere Module können ihre Helfer aufrufen.
+- `Battle.mrc` verwaltet den Schlachtablauf über klar definierte Helfer-Aliase; die eigentlichen IRC-Ereignisse bleiben zentral.
+- Die Hauptdatei `Colosseum.mrc` dient als Einstiegspunkt und lädt beziehungsweise initialisiert die benötigten Module.
+
+### Vorgeschlagene Modulaufteilung
+
+- `Colosseum.mrc`: Hauptdatei und Initialisierung.
+- `Events.mrc`: zentrale mIRC-Ereignis-Handler und Weiterleitung eingehender Ereignisse.
+- `Commands.mrc`: Erkennung und Weiterleitung unterstützter Bot-Befehle.
+- `System.mrc`: Systemstart, globaler Zustand, Timer und zunächst fest vorgegebene Einstellungen.
+- `Character.mrc`: Registrierungs-, Anmelde- und Charakter-Helfer.
+- `Storage.mrc`: Laden und Speichern von Charakterdaten.
+- `Battle.mrc`: Schlachtzyklus, Beitrittsfenster und Verwaltung der einzelnen Kampfinstanz.
+- `Combat.mrc`: reine Kampffunktionen wie Zugreihenfolge, Angriff und Schadensberechnung; keine IRC-Ereignis-Handler.
+- `Monster.mrc`: Monsterdaten laden, zufällig auswählen und Monsteraktionen ausführen; keine IRC-Ereignis-Handler.
+- `Rewards.mrc`: Berechnung und Vergabe der Kampfbelohnung.
+- `Translation.mrc`: Helfer zum Laden und Abrufen übersetzbarer Texte.
+- `data/Translation.dat`: vom Quellcode getrennte, bearbeitbare Nachrichten und Textvorlagen.
+- `data/monsters/`: Datendateien für die normalen Monster.
+- `data/characters/` oder ein separat festgelegter Spieler-Datenordner: dauerhafte Charakterdateien.
+
+Die Namen und genaue Anzahl der Dateien sind ein Architekturvorschlag und können bei der konkreten Implementierung noch angepasst werden. Die verbindlichen Grundsätze sind die Trennung der Zuständigkeiten, zentrale Ereignisverarbeitung und externe Übersetzungstexte.
+
+### Weitere Leitlinien
+
+- Die vollständige Charaktervorlage aus der Dokumentation dient als Grundlage; Version 0.1 liest und verarbeitet nur die dafür nötigen Felder.
+- Die Angriffsverarbeitung für IRC-Aktion und `!angriff` muss dieselbe interne Kampfaktion aufrufen.
+- Kampfablauf, Schadensberechnung, Kampfende und Belohnungsvergabe werden in klar abgegrenzte Funktionen aufgeteilt.
+- Spielerdaten bleiben dauerhaft gespeichert.
+- Passwörter dürfen nicht öffentlich ausgegeben oder in allgemein sichtbaren Nachrichten gespeichert werden; eine geeignete sichere Speicherung legen wir vor der Implementierung fest.
+- Monster werden aus einer Datenliste ausgewählt, damit neue Monster später ergänzt werden können, ohne die Kampflogik umzuschreiben.
+- Sichtbare Meldungen werden über Schlüssel aus `Translation.dat` geladen. Die Datei soll von Anfang an so gestaltet werden, dass spätere weitere Sprachen möglich sind.
+- Spätere Erweiterungen sollen nicht durch unnötige Annahmen in der ersten Implementierung erschwert werden.
 
 ## 10. Noch offen vor der Implementierung
 
@@ -142,7 +172,8 @@ Version 0.1 ist erst spielbar, wenn:
 - Sieg, Niederlage und Belohnung korrekt verarbeitet werden;
 - ausschließlich ein überlebender Sieger 10 rote Kugeln erhält;
 - Kampfwerte nach jedem beendeten Kampf auf Grundwerte zurückgesetzt werden;
-- alle sichtbaren Bottexte auf Deutsch sind;
+- alle sichtbaren Bottexte über `Translation.dat` bereitgestellt werden und standardmäßig auf Deutsch erscheinen;
+- IRC-Ereignis-Handler zentral in der Ereignis-/Steuerungsschicht liegen und die Fachmodule nur aufrufbare Helfer-Aliase enthalten;
 - Shop und andere zurückgestellte Systeme nicht für den Basiskampf vorausgesetzt werden.
 
 ## 12. Verhältnis zur Wiki
