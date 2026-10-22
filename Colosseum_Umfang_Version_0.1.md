@@ -227,3 +227,36 @@ Das GitHub-Wiki beschreibt das vollständige Zielprodukt. Diese Spezifikation be
 - Das automatisch erzeugte Startpasswort wird ausschließlich privat an den Spieler gesendet; Passwörter werden niemals ersatzweise öffentlich ausgegeben.
 - `!anmelden` und `!passwort` sind nur per privater Nachricht an den Bot zulässig, damit Zugangsdaten nicht im Kanal erscheinen.
 - Wenn die private Zustellung des Startpassworts mit einem erkennbaren Fehler scheitert, informiert der Bot den Spieler, bricht die Registrierung ab und entfernt den neu angelegten Charakterdatensatz. IRC garantiert nicht in allen Fällen eine Zustellbestätigung; behandelbar sind nur erkennbare Fehler.
+
+
+---
+
+## Projektstand-Nachtrag vom 22.10.2026
+
+Dieser Nachtrag hält Entscheidungen fest, die nach der bisherigen Fassung gemeinsam konkretisiert wurden.
+
+### Charakterkonten und Befehle
+
+- Pro IRC-Nickname ist genau ein Charakterkonto erlaubt.
+- Das Konto bleibt an den bei der Registrierung verwendeten Nickname gebunden. Ein Nickwechsel überträgt das Konto nicht auf den neuen Nick; die Charakterdatei wird durch den Nickwechsel nicht automatisch gelöscht.
+- Noch offen ist, ob die Rückkehr zum ursprünglichen Nickname den Zugriff auf das dort gespeicherte Konto wieder ermöglicht.
+- Bestätigte Befehle für Version 0.1: `!registrieren`, `!anmelden <Passwort>`, `!abmelden`, `!passwort <altesPasswort> <neuesPasswort>` und `!werte`.
+- `!registrieren` darf im Kanal oder per Privatnachricht ausgelöst werden. Das automatisch generierte Startpasswort wird ausschließlich privat gesendet.
+- `!anmelden` und `!passwort` sind nur per Privatnachricht zulässig. Persönliche Profilfunktionen wie `!werte` setzen eine erfolgreiche Anmeldung voraus.
+- `!werte` zeigt HP, TP sowie Stärke, Verteidigung, Intelligenz und Schnelligkeit privat an.
+- Wenn bei der Zustellung des Startpassworts ein Fehler erkennbar ist, informiert der Bot den Spieler, bricht die Registrierung ab und entfernt den neu angelegten Datensatz. IRC liefert nicht für jede Nichtzustellung ein verlässliches Fehlerereignis; die Implementierung darf keine erfolgreiche Zustellung vortäuschen.
+
+### Passwortsicherheit
+
+- Geplant ist Argon2id über mIRCs `$argon2` mit individuellem zufälligem Salt. Mindestversion ist mIRC 7.83; die Entwicklungsumgebung des Nutzers ist mIRC 7.84.
+- Hash-Parameter und konkrete Speicherung der nötigen Metadaten müssen vor dem Implementieren getestet und festgelegt werden.
+- Der administrative Passwort-Reset ist nicht Teil von Version 0.1 und bleibt für eine spätere Version vorgemerkt.
+
+### Architektur und Arbeitsablauf
+
+- Die Hauptdatei `Colosseum.mrc` ist der einzige Einstiegspunkt, den Nutzer manuell laden sollen.
+- Fachbefehle und zugehörige IRC-Handler liegen in der jeweils zuständigen `.mrc`-Datei. Es ist keine zentrale `Events.mrc` vorgesehen.
+- Wiederverwendbare Helfer liegen in aufgabenbezogenen `.als`-Dateien. Charakterbezogene Speicherung bleibt fachlich bei `Character.mrc` und den Helfern in `Characters.als`; eine separate `Storage.mrc` ist nicht vorgesehen.
+- Allgemeine Spielertexte werden aus `data/Translation.dat` geladen. Angriffstexte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden separat über den dafür vorgesehenen Datenmechanismus verarbeitet.
+- Vor dem Start des Schlacht-Timers müssen Pflichtmodule und `Translation.dat` erfolgreich geprüft sein. In Version 0.1 ist `System.dat` noch keine Pflichtdatei und wird nicht verwendet.
+- Änderungen an Planung und Spezifikation werden während der Entwicklung in einem separaten GitHub-Branch vorbereitet und über einen Pull Request zur Prüfung vorgelegt. `main` wird nicht ohne Freigabe geändert.
