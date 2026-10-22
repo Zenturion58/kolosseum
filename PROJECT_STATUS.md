@@ -154,7 +154,7 @@ Nächster Planungsschritt ist eine vollständige V0.1-Standardwertliste: jeden b
 
 ## Bestätigte Standardwerte für V0.1: fünf Laufzeit-Einstellungen
 
-Die folgende Liste ist nicht mehr nur ein Vorschlag. Alle fünf Einstellungen werden in Version 0.1 aus `System.dat` gelesen, validiert und in globalen mIRC-Variablen gespeichert. Die Timer- und Kampfmodule nutzen diese Variablen statt eigener fest codierter Laufzeitwerte.
+Alle fünf Einstellungen werden in Version 0.1 aus `System.dat` gelesen, validiert und in globalen mIRC-Variablen gespeichert. Die verbindliche Wertetabelle steht im Abschnitt „Verbindliche System.dat-Einstellungen für Version 0.1“ am Ende dieses Dokuments.
 
 
 
