@@ -238,7 +238,7 @@ In Version 0.1 dienen die Einstellungen in `System.dat` als Quelle der konfiguri
 
 `System.dat` bleibt eine normale Klartextdatei. Sie wird weder verschlüsselt noch mit einem besonderen Reparaturverfahren gegen manuelle Änderungen geschützt. Nutzer dürfen die Datei bearbeiten, müssen dabei aber die dokumentierte Struktur, Abschnittsnamen, Schlüsselnamen und zulässigen Werte beachten.
 
-Der Systemhelfer prüft die sechs für V0.1 vorgesehenen Einstellungen und behandelt ungültige Werte nach den festgelegten Regeln. Er übernimmt jedoch keine allgemeine Reparatur beliebiger manueller Änderungen und entfernt insbesondere keine doppelt eingefügten Textzeilen automatisch. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
+Der Systemhelfer prüft die fünf für V0.1 vorgesehenen Einstellungen und behandelt ungültige Werte nach den festgelegten Regeln. Er übernimmt jedoch keine allgemeine Reparatur beliebiger manueller Änderungen und entfernt insbesondere keine doppelt eingefügten Textzeilen automatisch. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
 
 Wenn Nutzer Schlüssel doppelt eintragen, Abschnitte falsch schreiben oder die Dateistruktur anderweitig verändern, kann die Konfiguration fehlerhaft sein und das Skript möglicherweise nicht wie vorgesehen starten oder funktionieren. Die spätere Dokumentation muss klar erklären, wie die Datei aufgebaut ist, welche Werte zulässig sind und dass manuelle Änderungen auf eigene Verantwortung erfolgen.
 
@@ -273,7 +273,7 @@ Für den Prototyp wird ein eigener, kleiner `$system_default_check` spezifiziert
 
 ## Bestätigte V0.1-Konfigurationsschnittstelle: fünf Laufzeitwerte
 
-Die folgenden sechs Einträge sind für V0.1 freigegeben. `$system_default_check` stellt die validierten Werte in den jeweils genannten globalen Variablen bereit. Fachmodule dürfen diese Laufzeitwerte nicht zusätzlich mit abweichenden fest codierten Zahlenwerten versehen.
+Die folgenden fünf Einträge sind für V0.1 freigegeben. `$system_default_check` stellt die validierten Werte in den jeweils genannten globalen Variablen bereit. Fachmodule dürfen diese Laufzeitwerte nicht zusätzlich mit abweichenden fest codierten Zahlenwerten versehen.
 
 
 
