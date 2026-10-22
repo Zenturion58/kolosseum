@@ -1,6 +1,6 @@
 # Colosseum – aktueller Projektstand
 
-**Stand:** 22. Oktober 2026  
+**Stand:** 23. Oktober 2026  
 **Repository:** [Zenturion58/kolosseum](https://github.com/Zenturion58/kolosseum)  
 **Status:** Bestandsaufnahme und Architekturplanung. Noch keine produktive mIRC-Implementierung.
 
@@ -79,7 +79,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 5. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
 6. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
 7. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
+8. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
 
@@ -149,7 +149,7 @@ Der vom Nutzer gezeigte `system_defaults_check` ist der Helfer für die angestre
 
 Für V0.1 wird ein eigener, reduzierter Systemhelfer entworfen. Er bearbeitet nur Einstellungen, Module, Verzeichnisse und Datenbestände, die der kleine Prototyp tatsächlich benötigt. Endversionspezifische Funktionen (beispielsweise Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons, zusätzliche Events und alte Datenbereinigungen) werden nicht allein deshalb übernommen, weil sie im Endversion-Helfer stehen.
 
-Nächster Planungsschritt ist eine vollständige V0.1-Standardwertliste: jeden benötigten Eintrag festlegen, vorhandene Schlüssel aus dem Endversion-Helfer wiederverwenden, wo passend, neue Schlüssel nur bei Bedarf ergänzen und alle übrigen Endversion-Einträge explizit aus dem V0.1-Umfang ausschließen. Es werden weiterhin keine produktiven Skript- oder Datendateien angelegt.
+Die fünf für V0.1 festgelegten System.dat-Einstellungen und ihre Wertebereiche sind in der verbindlichen Tabelle am Ende dieses Dokuments zusammengefasst. Es werden weiterhin keine produktiven Skript- oder Datendateien angelegt.
 
 
 ## Bestätigte Standardwerte für V0.1: fünf Laufzeit-Einstellungen
