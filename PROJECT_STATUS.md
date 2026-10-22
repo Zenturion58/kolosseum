@@ -152,7 +152,7 @@ Für V0.1 wird ein eigener, reduzierter Systemhelfer entworfen. Er bearbeitet nu
 Nächster Planungsschritt ist eine vollständige V0.1-Standardwertliste: jeden benötigten Eintrag festlegen, vorhandene Schlüssel aus dem Endversion-Helfer wiederverwenden, wo passend, neue Schlüssel nur bei Bedarf ergänzen und alle übrigen Endversion-Einträge explizit aus dem V0.1-Umfang ausschließen. Es werden weiterhin keine produktiven Skript- oder Datendateien angelegt.
 
 
-## Bestätigte Standardwerte für V0.1: sechs Laufzeit-Einstellungen
+## Bestätigte Standardwerte für V0.1: fünf Laufzeit-Einstellungen
 
 Die folgende Liste ist nicht mehr nur ein Vorschlag. Alle fünf Einstellungen werden in Version 0.1 aus `System.dat` gelesen, validiert und in globalen mIRC-Variablen gespeichert. Die Timer- und Kampfmodule nutzen diese Variablen statt eigener fest codierter Laufzeitwerte.
 
