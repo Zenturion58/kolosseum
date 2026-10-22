@@ -19,9 +19,9 @@
 - Spieler können einen neuen Charakter erstellen und sich gegenüber dem Bot authentifizieren.
 - Die Spielerbefehle sind deutschsprachig. Der derzeitige Befehlsentwurf umfasst `!registrieren`, `!anmelden <Passwort>`, `!abmelden`, `!passwort <altesPasswort> <neuesPasswort>` und `!werte`. Die genaue Syntax und die zulässigen Ausführungskontexte werden vor Implementierung noch einmal verbindlich geprüft.
 - Bei der Registrierung wird ein zufälliges Passwort erzeugt und dem Spieler privat mitgeteilt.
-- Wenn der Bot eine Zustellung der Passwort-PM als fehlgeschlagen erkennt, informiert er den Spieler mit einer deutschen Meldung, dass private Nachrichten vom Bot möglich sein müssen. In öffentlichen Meldungen dürfen weder Passwort noch Hash oder andere sensible Daten erscheinen. Zu entscheiden ist noch, ob eine fehlgeschlagene Zustellung die Registrierung vollständig abbricht bzw. zurückrollt.
+- Wenn der Bot einen Fehler bei der privaten Zustellung des Startpassworts erkennt, informiert er den Spieler mit einer deutschen Meldung, dass private Nachrichten vom Bot möglich sein müssen. Die Registrierung wird in diesem Fall abgebrochen und der neu angelegte Charakterdatensatz zurückgerollt/entfernt. Passwort, Hash und andere sensible Daten dürfen niemals ersatzweise öffentlich ausgegeben werden. IRC garantiert nicht in allen Fällen eine Zustellbestätigung; behandelt werden können nur tatsächlich erkennbare Zustellfehler.
 - Passwörter dürfen nicht öffentlich im IRC-Kanal eingegeben oder ausgegeben werden; Anmeldung und Passwortänderung erfolgen privat mit dem Bot.
-- Passwörter werden niemals im Klartext in Charakterdateien gespeichert. Für die Speicherung ist ein geeignetes Passwort-Hashverfahren mit individuellem zufälligem Salt pro Charakter vorgesehen.
+- Passwörter werden niemals im Klartext in Charakterdateien gespeichert. Vorgesehen ist Argon2id mit individuellem zufälligem Salt pro Charakter.
 - Als Passwort-Hashverfahren ist Argon2id über mIRCs `$argon2` vorgesehen. Colosseum 0.1 setzt mIRC 7.83 oder neuer voraus; die konkreten Parameter und die Speicherung der Hash-Metadaten werden vor der Implementierung festgelegt.
 - Ein Passwortwechsel ist vorgesehen.
 - Vergessene Passwörter können nicht wiederhergestellt oder angezeigt werden. **Ein administrativer Passwort-Reset ist für Version 0.1 ausdrücklich zurückgestellt** und wird für eine spätere Version vorgemerkt. Wenn wir ihn ergänzen, darf auch danach nur ein neuer Hash mit individuellem Salt gespeichert werden; Ablauf und private Zustellung werden dann separat festgelegt.
@@ -217,6 +217,6 @@ Version 0.1 ist erst spielbar, wenn:
 
 Das GitHub-Wiki beschreibt das vollständige Zielprodukt. Diese Spezifikation beschreibt ausschließlich den freigegebenen Umfang für Version 0.1. Vor jeder späteren Erweiterung prüfen wir die zugehörigen Wiki-Seiten, besprechen nötige Änderungen und ergänzen die Spezifikation für die betreffende Version. Unklare Regeln werden als offen markiert, anstatt stillschweigend geraten zu werden.
 
-## Noch zu entscheiden
+## Bereits entschieden
 
-- Verhalten bei erkennbar fehlgeschlagener privater Passwortzustellung: Registrierung abbrechen/rollback oder Datensatz bestehen lassen und Fehlhinweis ausgeben.
+- Wenn die private Zustellung des generierten Startpassworts mit einem erkennbaren Fehler scheitert, wird der Spieler informiert und die Registrierung zurückgerollt. Es bleibt kein Charakterdatensatz ohne zugestelltes Startpasswort zurück. Da IRC nicht in allen Fällen eine Zustellbestätigung liefert, kann nur auf tatsächlich erkennbare Fehler reagiert werden.
