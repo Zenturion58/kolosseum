@@ -115,25 +115,27 @@ Der erste Schlacht-Timer startet erst nach `on CONNECT` und nachdem `$system_def
 - Die Anmeldesitzung endet bei Netzwerk-Trennung oder Nickname-Änderung. Das Konto wird nicht übertragen; eine Rückkehr zum ursprünglichen Nick erlaubt eine neue Anmeldung mit dem bisherigen Passwort.
 
 
-## Vorschlag zur Prüfung: System.dat-Schlüssel für Version 0.1
+## Bestätigte Entscheidung: Laufzeitwerte aus System.dat und globale Variablen
 
-Die folgenden Werte sind ein **Vorschlag zur gemeinsamen Prüfung**, noch keine endgültig freigegebene Konfigurationsschnittstelle. Die Zahlen entsprechen bereits besprochenen Spielregeln; neu ist nur der Vorschlag, sie über `System.dat` steuerbar zu machen.
+In Version 0.1 werden die bereits besprochenen sechs Laufzeitwerte aus `System.dat` eingelesen und in globalen mIRC-Variablen gespeichert. Die Spiel- und Timerlogik verwendet diese Variablen; die Zahlenwerte werden nicht zusätzlich in den einzelnen Modulen fest codiert. Beispiel aus dem vorhandenen Endversion-Helfer: `TimeToEnter` wird aus der Konfiguration gelesen und in einer globalen Variable wie `%timeToEnter` bereitgestellt.
 
-| Vorgeschlagener Schlüssel | Vorgeschlagener Wert | Verwendung |
-|---|---:|---|
-| `battle.first_announcement_delay_seconds` | `180` | Wartezeit nach erfolgreicher Verbindung und abgeschlossener Startprüfung bis zur ersten Schlachtankündigung |
-| `battle.join_window_seconds` | `120` | Beitrittsfenster einer angekündigten Schlacht |
-| `battle.next_announcement_delay_seconds` | `180` | Wartezeit bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende |
-| `battle.player_turn_timeout_seconds` | `180` | Zeitlimit für einen Spielerzug |
-| `battle.max_skipped_player_turns` | `2` | Anzahl übersprungener Spielerzüge, nach der der Kampf als Niederlage endet |
-| `battle.victory_red_orbs` | `10` | Belohnung für einen Sieg mit überlebendem Spieler |
+### Vorläufige Zuordnung von Einstellungen und Variablen
 
-Die Schlüsselbezeichnungen sind vorläufig; auch das genaue Syntax- und Dateiformat von `System.dat` ist noch nicht festgelegt.
+| Zweck | Schlüssel in `System.dat` (Arbeitsname) | Wert für Version 0.1 | Globale Variable (Arbeitsname) |
+|---|---|---:|---|
+| Erste Schlachtankündigung nach erfolgreicher Verbindung und Prüfung | `TimeBeforeFirstBattle` (neu vorgeschlagen) | `180` Sekunden | `%timeBeforeFirstBattle` |
+| Beitrittsfenster | `TimeToEnter` (bereits im Endversion-Helfer vorhanden) | `120` Sekunden | `%timeToEnter` |
+| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` (bereits vorhanden; Wert abzugleichen) | laut bisheriger v0.1-Planung `180` Sekunden | `%timeBetweenBattles` |
+| Zeitlimit eines Spielerzugs | `TimeForIdle` (bereits im Endversion-Helfer vorhanden) | `180` Sekunden | `%timeForIdle` |
+| Übersprungene Spielerzüge bis zur Niederlage | `MaxIdleTurns` (bereits im Endversion-Helfer vorhanden) | `2` | `%maxIdleTurns` |
+| Belohnung für einen Sieg mit überlebendem Spieler | `VictoryOrbReward` (neu vorgeschlagen) | `10` rote Kugeln | `%victoryOrbReward` |
 
-### Vorgeschlagene Prüfregeln
+Die genaue Benennung der neu vorgeschlagenen Schlüssel und Variablen muss vor der Implementierung noch bestätigt werden. Insbesondere enthält der übergebene Endversion-Helfer für `TimeBetweenBattles` den Standardwert `120`, während die bisher beschlossene v0.1-Regel eine nächste Ankündigung nach `180` Sekunden vorsieht. Diese Abweichung darf bei der Anpassung für v0.1 nicht unbemerkt übernommen werden.
 
-- Wenn dieser Satz von Einstellungen freigegeben wird, muss jeder Schlüssel in Version 0.1 genau einmal vorhanden sein und einen gültigen ganzzahligen Wert enthalten.
-- Zeitwerte und die Anzahl erlaubter übersprungener Züge müssen positiv sein; die Belohnung darf nicht negativ sein.
-- Eine fehlende, doppelte, nicht numerische oder ungültige Pflichtangabe lässt die Startprüfung fehlschlagen. Für diese Pflichtwerte wird nicht stillschweigend ein Ersatzwert eingesetzt und der Schlacht-Timer startet nicht.
-- Die Prüfung von Konfigurationseinstellungen bleibt getrennt von der Prüfung, ob erforderliche Module und Spieldaten tatsächlich vorhanden und verwendbar sind.
-- Die sechs Einträge sind ein erster Vorschlag. Vor Implementierung sind Freigabe, genaue Grenzen und der Umgang mit zusätzlichen unbekannten Schlüsseln zu klären.
+### Initialisierung und Validierung
+
+- Nach erfolgreichem `on CONNECT` lädt `$system_default_check` die Systemeinstellungen und validiert sie, bevor ein Schlacht-Timer gestartet werden darf.
+- Bei erfolgreicher Prüfung stellt der Helfer die Werte in globalen Variablen bereit. Die Fachmodule lesen anschließend die Variablen statt eigene feste Laufzeitwerte zu verwenden.
+- `System.dat` bleibt eine Pflichtdatei. Das Verhalten bei einer fehlenden oder ungültigen einzelnen Einstellung ist noch festzulegen.
+- Der Endversion-Helfer ergänzt fehlende Einstellungen abhängig von der `SystemDatVersion` mit Standardwerten. Deshalb ist die in PR #5 festgehaltene Idee, bei jedem fehlenden Schlüssel zwingend abzubrechen und niemals einen Standardwert einzutragen, **noch keine bestätigte Regel** und muss mit diesem bestehenden Migrations-/Standardwertkonzept abgeglichen werden.
+- Wertebereiche, Versionsmigration, automatische Ergänzung fehlender Einträge und die Reaktion auf ungültige Werte werden vor Implementierung gemeinsam spezifiziert.
