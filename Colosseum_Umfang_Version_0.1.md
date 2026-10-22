@@ -9,11 +9,9 @@
 - Der Bot und alle für Spieler sichtbaren Nachrichten, Hilfetexte und Fehlermeldungen sollen standardmäßig auf Deutsch sein.
 - Allgemeine Botmeldungen, System-/Profilmeldungen, Schlachtankündigungen und Belohnungstexte werden von Anfang an aus `Translation.dat` geladen; diese Texte werden nicht direkt in die Spiellogik eingebaut. Die Datei nutzt Abschnitte und Schlüssel in der Form `Schlüssel=Textvorlage`. Übersetzer ändern nur den Text rechts vom `=` und lassen Schlüssel, Platzhalter (z. B. `%user%`, `%file`) und mIRC-Formatierungsbestandteile (z. B. `$chr(3)`, `$chr(15)`, `$chr(2)`, `$+`) unverändert. Texte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden davon getrennt über den Mechanismus für Angriffs-/Fähigkeitsdaten gelesen.
 - Nach erfolgreichem `on CONNECT` ruft das System den Helfer `$system_default_check` auf. Fehlt `System.dat`, legt er sie mit Standardwerten an; tatsächlich fehlende Schlüssel ergänzt er ebenfalls. Vorhandene ungültige Werte bleiben dagegen unverändert; die jeweilige Funktion wird deaktiviert und der Fehler wird konkret erläutert. Jeder Timer bzw. Kampfablauf startet nur, wenn seine eigenen Voraussetzungen gültig sind. Technische Lese-, Schreib- oder Pflichtdateifehler verhindern den Start der jeweils abhängigen Funktion.
-- Die sechs besprochenen Laufzeitwerte werden aus `System.dat` in globale Variablen eingelesen und von den Modulen verwendet. Kann `System.dat` nicht angelegt, geschrieben oder validiert werden, startet der Schlacht-Timer nicht.
-- Die vier Zeitwerte `TimeBeforeFirstBattle`, `TimeToEnter`, `TimeBetweenBattles` und `TimeForIdle` müssen ganze Zahlen zwischen `1` und `3600` Sekunden einschließlich sein. Damit ist eine Stunde die Obergrenze für alle konfigurierbaren Warte- und Zugzeiten. Dezimalzahlen, nicht numerische Werte und Werte außerhalb des Bereichs gelten als ungültig. Vorhandene ungültige Einträge bleiben unverändert; der Bot meldet den konkreten Wert sowie den erwarteten Typ bzw. Bereich und deaktiviert die davon abhängige Funktion, bis der Nutzer den Eintrag korrigiert und erneut geprüft hat.
-- `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein; `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein.
+- Die fünf besprochenen Laufzeitwerte werden aus `System.dat` in globale Variablen eingelesen und von den Modulen verwendet. Kann `System.dat` nicht angelegt, geschrieben oder validiert werden, startet der Schlacht-Timer nicht.
 - `System.dat` bleibt eine unverschlüsselte Klartextdatei, die der Nutzer bei Bedarf manuell bearbeiten kann. Abschnittsnamen, Schlüsselnamen, Dateiaufbau und Wertebereiche müssen eingehalten werden; die spätere Dokumentation erklärt diese Regeln.
-- Der Systemhelfer prüft weiterhin die sechs bekannten V0.1-Einstellungen. Vorhandene ungültige Werte werden nicht automatisch ersetzt: Die betroffene Funktion bleibt deaktiviert, bis der Nutzer den Wert korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Es gibt keine besondere automatische Bereinigung manuell eingefügter doppelter Schlüsselzeilen. Doppelte oder anderweitig fehlerhafte Einträge können dazu führen, dass die Konfiguration oder das Skript nicht wie erwartet funktioniert; die Verantwortung für manuelle Änderungen liegt beim Nutzer.
+- Der Systemhelfer prüft weiterhin die fünf bekannten V0.1-Einstellungen. Vorhandene ungültige Werte werden nicht automatisch ersetzt: Die betroffene Funktion bleibt deaktiviert, bis der Nutzer den Wert korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Es gibt keine besondere automatische Bereinigung manuell eingefügter doppelter Schlüsselzeilen. Doppelte oder anderweitig fehlerhafte Einträge können dazu führen, dass die Konfiguration oder das Skript nicht wie erwartet funktioniert; die Verantwortung für manuelle Änderungen liegt beim Nutzer.
 - Bei einem ungültigen Wert enthält die technische Diagnose mindestens den Schlüsselnamen, den vorgefundenen Inhalt sowie den erwarteten Typ bzw. Wertebereich. Es wird nicht stillschweigend auf einen anderen Wert ausgewichen.
 
 
@@ -296,18 +294,14 @@ Bei einem zwischenzeitlichen Nickwechsel wird das Konto nicht auf den neuen Nick
 
 ## Bestätigte Entscheidung: Konfigurierbare Werte aus System.dat
 
-Die sechs Laufzeitwerte werden bereits in Version 0.1 aus `System.dat` gelesen und in globalen mIRC-Variablen gespeichert. Die Module nutzen diese Variablen; die eigentlichen Laufzeitwerte werden nicht separat in der Kampf- oder Timerlogik fest codiert. Das Vorbild dafür ist der Endversion-Helfer, beispielsweise `TimeToEnter` → `%timeToEnter`.
+Die fünf Laufzeitwerte werden bereits in Version 0.1 aus `System.dat` gelesen und in globalen mIRC-Variablen gespeichert. Die Module nutzen diese Variablen; die eigentlichen Laufzeitwerte werden nicht separat in der Kampf- oder Timerlogik fest codiert. Das Vorbild dafür ist der Endversion-Helfer, beispielsweise `TimeToEnter` → `%timeToEnter`.
 
 Bestätigte Zuordnung:
 
-- Erste Ankündigung nach erfolgreicher Startprüfung: `180` Sekunden; Schlüssel `TimeBeforeFirstBattle`, globale Variable `%timeBeforeFirstBattle`.
 - Beitrittsfrist: `120` Sekunden; vorhandener Schlüssel `TimeToEnter`, globale Variable `%timeToEnter`.
-- Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende: bisher vereinbarte `180` Sekunden; vorhandener Schlüssel `TimeBetweenBattles`, globale Variable `%timeBetweenBattles`.
 - Spieler-Zeitlimit: `180` Sekunden; vorhandener Schlüssel `TimeForIdle`, globale Variable `%timeForIdle`.
 - Höchstzahl übersprungener Spielerzüge: `2`; vorhandener Schlüssel `MaxIdleTurns`, globale Variable `%maxIdleTurns`.
-- Siegesbelohnung: `10` rote Kugeln; Schlüssel `VictoryOrbReward`, globale Variable `%victoryOrbReward`.
 
-Die sechs Schlüssel, globalen Variablen und Standardwerte der Tabelle sind bestätigt. Im vorgelegten Endversion-Helfer hat `TimeBetweenBattles` den Standardwert `120`; für V0.1 ist ausdrücklich `180` Sekunden festgelegt.
 
 Fehlt `System.dat`, legt der V0.1-Helfer die Datei selbst mit Standardwerten an. Fehlen einzelne Einstellungen, werden sie ebenfalls ergänzt, bevor die Konfiguration validiert und in globale Variablen übernommen wird. Das Vorgehen soll sich am versionsabhängigen Standardwertprinzip des Endversion-Helfers (`SystemDatVersion`) orientieren, aber für V0.1 vereinfacht werden. Bereits vorhandene ungültige Werte bleiben unverändert. Der Helfer meldet Schlüssel, gefundenen Wert und erwarteten Typ bzw. Bereich und deaktiviert die abhängige Funktion. Unabhängige Botfunktionen dürfen weiterlaufen. Wenn die Datei technisch nicht erzeugt, geschrieben oder erneut eingelesen werden kann, starten keine davon abhängigen Timer. Ein einzelner vorhandener ungültiger Wert wird nicht überschrieben; er deaktiviert die davon abhängige Funktion und wird dem Nutzer gemeldet.
 
@@ -330,26 +324,42 @@ Der gezeigte `system_defaults_check` ist für die Endversion vorgesehen und wird
 
 Der V0.1-Helfer bleibt bewusst klein. Er enthält nur solche Einstellungen, Pfade und Startprüfungen, die für den Prototyp erforderlich sind. Funktionen, Module, Ordner und Alt-Daten-Bereinigungen für Endversionsysteme wie Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons und zusätzliche Ereignisse werden nicht in den V0.1-Umfang gezogen.
 
-Vor der Implementierung wird eine vollständige Standardwertliste für V0.1 beschlossen. Sie enthält für jeden benötigten Eintrag Schlüssel, Standardwert, Datentyp/Wertebereich, globale Variable und Verwendungszweck. Bestehende Schlüssel werden nach Möglichkeit beibehalten, sofern ihre Bedeutung zum Prototyp passt; Unterschiede zwischen der Endversion-Vorgabe und den bestätigten V0.1-Regeln sind explizit festzulegen.
+Die verbindliche Standardwertliste für die fünf V0.1-Einstellungen steht im Abschnitt „Verbindliche System.dat-Einstellungen für Version 0.1“ am Ende dieses Dokuments.
 
 
 ## Bestätigte System.dat-Standardwerte für V0.1
 
-Die folgenden sechs Einstellungen werden getrennt voneinander in `System.dat` geführt, beim Start validiert und in die globalen Variablen übernommen:
+Die fünf Einstellungen werden getrennt voneinander in `System.dat` geführt, beim Start validiert und in globale Variablen übernommen. Die verbindliche Wertetabelle steht im Abschnitt „Verbindliche System.dat-Einstellungen für Version 0.1“ am Ende dieses Dokuments.
 
-| Schlüssel | Globale Variable | Standardwert |
-|---|---|---:|
-| `TimeBeforeFirstBattle` | `%timeBeforeFirstBattle` | `180` Sekunden |
-| `TimeToEnter` | `%timeToEnter` | `120` Sekunden |
-| `TimeBetweenBattles` | `%timeBetweenBattles` | `180` Sekunden |
-| `TimeForIdle` | `%timeForIdle` | `180` Sekunden |
-| `MaxIdleTurns` | `%maxIdleTurns` | `2` |
-| `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln |
 
-`TimeBeforeFirstBattle` und `TimeBetweenBattles` bleiben zwei getrennte Einstellungen. Der erste Wert steuert die Wartezeit nach erfolgreicher Verbindung und abgeschlossener Startprüfung; der zweite steuert die Pause nach einer leeren Beitrittsphase oder nach einem Kampf. Beide haben für V0.1 zunächst den Standardwert `180` Sekunden. Die Endversions-Vorgabe `TimeBetweenBattles=120` wird in V0.1 nicht übernommen.
 
 ## Bestätigte Entscheidung: Ordnerstruktur des Endprodukts bereits in V0.1 verwenden
 
 Die vollständige Grundstruktur orientiert sich von Beginn an am geplanten Endprodukt. Die `.mrc`- und `.als`-Dateien, `System.dat` und `Translation.dat` liegen im Projekt-Hauptordner. Spielercharaktere werden in `characters/` und Monsterdefinitionen in `monsters/` gespeichert. Weitere Verzeichnisse aus dem Endversion-Helfer (`bosses/`, `zapped/`, `npcs/`, `summons/` und `help-files/`) gehören bereits zum vorgesehenen Hauptordner-Layout, auch wenn V0.1 ihre jeweiligen Funktionen nicht implementiert oder die Verzeichnisse noch nicht befüllt.
 
 Es wird kein zusätzlicher `scripts/`- oder `data/`-Ordner eingeführt, der beim Ausbau zur Endversion wieder verlassen werden müsste. Damit sollen Datei- und Ordnerumzüge bei späteren Versionsschritten vermieden werden. Nur die Funktionen, Module und Daten, die V0.1 benötigt, werden tatsächlich umgesetzt.
+
+## Verbindliche System.dat-Einstellungen für Version 0.1
+
+Die folgenden fünf Einstellungen sind für Version 0.1 festgelegt. Es werden ausschließlich offizielle Wiki-Schlüsselnamen verwendet. Die Endversion-Wiki beschreibt weiterhin das angestrebte Endprodukt; die hier genannten Wertebereiche und die prototypspezifische Verwendung gelten für Version 0.1.
+
+| Schlüssel | Standardwert für V0.1 | Zulässiger Bereich | Einheit / Bedeutung |
+|---|---:|---|---|
+| `TimeBetweenBattles` | `3` | `1–240` | Minuten; Wartezeit bis zur nächsten Schlachtankündigung im Leerlauf nach leerem Beitrittsfenster oder Kampfende. Bei der Übergabe an einen mIRC-Timer wird der Minutenwert in Sekunden umgerechnet. |
+| `TimeToEnter` | `120` | `30–300` | Sekunden; Dauer des Beitrittsfensters. Der Wert wird nicht erneut umgerechnet. |
+| `TimeForIdle` | `180` | `30–600` | Sekunden; Zeitlimit für einen Spielerzug. |
+| `MaxIdleTurns` | `2` | `1–10` | Ganze Zahl; Anzahl verpasster Spielerzüge, nach der der Spieler aus dem Kampf ausscheidet. |
+| `MaxOrbReward` | `10` | Für V0.1 fest auf `10` gesetzt | Rote Kugeln; im Prototyp als feste Siegesbelohnung verwendet. |
+
+### Inaktivität im Kampf
+
+In Version 0.1 wird die Inaktivität über den gesamten Kampf gezählt. Nach dem ersten abgelaufenen Zuglimit wird der Spielerzug übersprungen und das Monster kann erneut angreifen. Erst wenn der Spieler zum zweiten Mal (bei `MaxIdleTurns=2`) keine Aktion ausführt, scheidet er aus. Ein zwischenzeitlich ausgeführter Angriff setzt den Zähler verpasster Züge nicht zurück. Da V0.1 nur einen Spieler pro Kampf zulässt, endet der Kampf dann als Niederlage ohne Belohnung.
+
+### Belohnung und Wiki-Bedeutung
+
+Das offizielle Wiki beschreibt `MaxOrbReward` als Obergrenze der möglichen Kugelbelohnung vor späteren Modifikatoren wie Skills und Accessoires. Version 0.1 verwendet denselben offiziellen Schlüssel prototypspezifisch für eine feste Belohnung von 10 roten Kugeln bei einem Sieg, sofern der Spieler überlebt. Skills, Styles, Accessoires und weitere Belohnungsmodifikatoren sind in V0.1 nicht vorhanden. Bei Niederlage oder Ausscheiden wegen Inaktivität gibt es keine Belohnung.
+
+### Prüfung der Werte
+
+Zeitwerte müssen ganze Zahlen innerhalb der für den jeweiligen Schlüssel angegebenen Grenzen sein. `MaxIdleTurns` muss eine ganze Zahl zwischen 1 und 10 sein. In Version 0.1 ist `MaxOrbReward` auf 10 festgelegt. Vorhandene ungültige Werte werden nicht automatisch überschrieben: Die Diagnose nennt Schlüssel, gefundenen Wert und erwarteten Bereich; die abhängige Funktion bleibt deaktiviert, bis der Nutzer den Wert korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Fehlende Einstellungen dürfen mit den festgelegten Standardwerten ergänzt werden.
+
