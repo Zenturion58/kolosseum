@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für Systemprüfung und Anmeldesitzung: planning/startup-check-login-session-2026-10-22.
+- Aktueller Arbeitsbranch für die vorgeschlagenen `System.dat`-Einstellungen: planning/systemdat-settings-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
@@ -80,7 +80,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 5. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
 6. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
 7. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-8. Welche System.dat-Schlüssel und Werte müssen in Version 0.1 vorhanden und gültig sein, und welche davon steuern bereits die Laufzeit?
+8. Den Vorschlag für `System.dat`-Schlüssel und Werte prüfen: Welche davon sollen in Version 0.1 tatsächlich konfigurierbar und verpflichtend sein?
 9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
@@ -113,3 +113,27 @@ Der erste Schlacht-Timer startet erst nach `on CONNECT` und nachdem `$system_def
 - Nach erfolgreichem `on CONNECT` wird `$system_default_check` ausgeführt. Er prüft `System.dat`, `Translation.dat`, Pflichtmodule und die erforderlichen Datenbestände (Monster, Waffen, Techniken, Skills usw.). Jeder fehlgeschlagene Check verhindert den Start des Schlacht-Timers.
 - Bei erfolgreicher Prüfung liest der Helfer gültige Systemwerte aus `System.dat` in globale Variablen, die weitere Module verwenden können. Die konkrete Liste der Schlüssel und welche Werte in Version 0.1 tatsächlich dynamisch angewendet werden, ist noch festzulegen.
 - Die Anmeldesitzung endet bei Netzwerk-Trennung oder Nickname-Änderung. Das Konto wird nicht übertragen; eine Rückkehr zum ursprünglichen Nick erlaubt eine neue Anmeldung mit dem bisherigen Passwort.
+
+
+## Vorschlag zur Prüfung: System.dat-Schlüssel für Version 0.1
+
+Die folgenden Werte sind ein **Vorschlag zur gemeinsamen Prüfung**, noch keine endgültig freigegebene Konfigurationsschnittstelle. Die Zahlen entsprechen bereits besprochenen Spielregeln; neu ist nur der Vorschlag, sie über `System.dat` steuerbar zu machen.
+
+| Vorgeschlagener Schlüssel | Vorgeschlagener Wert | Verwendung |
+|---|---:|---|
+| `battle.first_announcement_delay_seconds` | `180` | Wartezeit nach erfolgreicher Verbindung und abgeschlossener Startprüfung bis zur ersten Schlachtankündigung |
+| `battle.join_window_seconds` | `120` | Beitrittsfenster einer angekündigten Schlacht |
+| `battle.next_announcement_delay_seconds` | `180` | Wartezeit bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende |
+| `battle.player_turn_timeout_seconds` | `180` | Zeitlimit für einen Spielerzug |
+| `battle.max_skipped_player_turns` | `2` | Anzahl übersprungener Spielerzüge, nach der der Kampf als Niederlage endet |
+| `battle.victory_red_orbs` | `10` | Belohnung für einen Sieg mit überlebendem Spieler |
+
+Die Schlüsselbezeichnungen sind vorläufig; auch das genaue Syntax- und Dateiformat von `System.dat` ist noch nicht festgelegt.
+
+### Vorgeschlagene Prüfregeln
+
+- Wenn dieser Satz von Einstellungen freigegeben wird, muss jeder Schlüssel in Version 0.1 genau einmal vorhanden sein und einen gültigen ganzzahligen Wert enthalten.
+- Zeitwerte und die Anzahl erlaubter übersprungener Züge müssen positiv sein; die Belohnung darf nicht negativ sein.
+- Eine fehlende, doppelte, nicht numerische oder ungültige Pflichtangabe lässt die Startprüfung fehlschlagen. Für diese Pflichtwerte wird nicht stillschweigend ein Ersatzwert eingesetzt und der Schlacht-Timer startet nicht.
+- Die Prüfung von Konfigurationseinstellungen bleibt getrennt von der Prüfung, ob erforderliche Module und Spieldaten tatsächlich vorhanden und verwendbar sind.
+- Die sechs Einträge sind ein erster Vorschlag. Vor Implementierung sind Freigabe, genaue Grenzen und der Umgang mit zusätzlichen unbekannten Schlüsseln zu klären.
