@@ -230,9 +230,7 @@ In Version 0.1 dienen die Einstellungen in `System.dat` als Quelle der konfiguri
 
 ### Verbindliche Wertebereiche für `System.dat`
 
-- `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein.
-- Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb des jeweiligen Bereichs gelten als ungültig. Ein vorhandener ungültiger Wert wird nicht automatisch verändert. Der Systemhelfer meldet den Schlüssel, den vorhandenen Inhalt und den erwarteten Datentyp bzw. Wertebereich im mIRC-Statusfenster und deaktiviert die davon abhängige Funktion, bis die Datei korrigiert und erneut erfolgreich geprüft wurde.
-- Der Schlacht-Timer darf nur starten, wenn die korrigierte Konfiguration erfolgreich gespeichert, erneut eingelesen und validiert wurde.
+Die verbindlichen Wertebereiche der fünf V0.1-Einstellungen stehen in der Tabelle „Verbindliche System.dat-Einstellungen für Version 0.1“ am Ende dieses Dokuments. Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb der dort angegebenen Bereiche gelten als ungültig. Vorhandene ungültige Werte werden nicht automatisch verändert. Der Systemhelfer meldet den Schlüssel, den vorhandenen Inhalt und den erwarteten Datentyp bzw. Wertebereich im mIRC-Statusfenster und deaktiviert die davon abhängige Funktion, bis die Datei korrigiert und erneut erfolgreich geprüft wurde. Der Schlacht-Timer startet nur, wenn die erforderlichen Konfigurationswerte erfolgreich validiert wurden.
 
 ### Umgang mit manuellen Änderungen an `System.dat`
 
