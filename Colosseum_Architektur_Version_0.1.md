@@ -179,5 +179,10 @@ Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu 
 
 - Geplant ist Passwort-Hashing mit Argon2id über mIRCs `$argon2`, jeweils mit individuellem zufälligem Salt. Mindestversion mIRC 7.83; Parameter werden noch vor der Implementierung getestet.
 - Der administrative Passwort-Reset ist für Version 0.1 ausgeschlossen und bleibt ein zukünftiges Feature.
-- Das Konto bleibt an den ursprünglichen IRC-Nick gebunden; bei einem Nickwechsel wird nichts automatisch übertragen oder gelöscht. Noch zu klären ist, ob ein späterer Wechsel zurück zum ursprünglichen Nick den Login mit dem bisherigen Passwort wieder zulassen soll.
+- Das Konto bleibt an den ursprünglichen IRC-Nick gebunden. Bei einem Nickwechsel wird es nicht übertragen und nicht automatisch gelöscht; kehrt der Nutzer zum ursprünglichen Nick zurück, kann er sich mit dem bisherigen Passwort erneut anmelden. Die IRC-netzwerkspezifische Nickname-Vergleichslogik wird bei der Implementierung berücksichtigt und getestet.
 - Die Projektplanung und Spezifikationsänderungen werden in getrennten GitHub-Branches veröffentlicht und als Pull Request überprüfbar gemacht. Produktive `.mrc`-, `.als`- und `.dat`-Dateien werden erst erstellt, wenn die Planungsgrundlagen ausreichend vollständig sind.
+
+
+## Ergänzte Entscheidung: Rückkehr zum ursprünglichen Nickname
+
+Nach einem zwischenzeitlichen Nickwechsel bleibt der Charakterdatensatz erhalten und an den ursprünglichen Nick gebunden. Bei Rückkehr zu diesem ursprünglichen Nick kann der Nutzer sich mit dem bisherigen Passwort wieder anmelden. Ein Accounttransfer auf den geänderten Nick findet nicht statt.
