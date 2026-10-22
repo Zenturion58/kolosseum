@@ -245,22 +245,13 @@ Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind f
 - Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb des jeweiligen Bereichs gelten als ungültig. Ein ungültiger vorhandener Wert wird durch den zugehörigen Standardwert ersetzt; die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert.
 - Der Schlacht-Timer darf nur starten, wenn die korrigierte Konfiguration erfolgreich gespeichert, erneut eingelesen und validiert wurde.
 
-### Unbekannte und doppelte Schlüssel in `System.dat`
+### Umgang mit manuellen Änderungen an `System.dat`
 
-- Für V0.1 gelten ausschließlich die sechs ausdrücklich bestätigten Schlüssel als aktiv. Ein anderer Schlüssel wird in dieser Version ignoriert, aber nicht gelöscht oder umgeschrieben. So bleiben Einstellungen späterer Versionen erhalten.
-- Unbekannte Schlüssel werden im mIRC-Statusfenster gesammelt gemeldet; die Meldung soll eine übersichtliche Zusammenfassung statt einer eigenen Meldung für jede einzelne Zeile sein. Unbekannte Schlüssel allein verhindern den Start nicht.
-- Die sechs bekannten Einstellungen werden innerhalb der Sektion `[system]` geprüft. Ein bekannter Schlüssel, der nur in einer anderen Sektion steht, zählt nicht als gültiger Eintrag für V0.1; fehlt der Eintrag in `[system]`, wird er dort mit dem Standardwert ergänzt.
-- Jeder der sechs bekannten Schlüssel darf über alle `[system]`-Sektionen hinweg nur einmal vorkommen. Wird ein bekannter Schlüssel mehrfach gefunden, gilt er als mehrdeutig: Der Helfer setzt ihn auf den für diesen Schlüssel vorgesehenen Standardwert zurück, entfernt die zusätzlichen Vorkommen und lässt genau einen kanonischen Eintrag bestehen. Er übernimmt in diesem Fall nicht willkürlich den ersten oder letzten Wert.
-- Eine ungültige einzelne Einstellung und ein mehrfach vorkommender bekannter Schlüssel werden im mIRC-Statusfenster gemeldet und korrigiert. Danach wird die Datei gespeichert, erneut eingelesen und noch einmal validiert.
-- Können die Korrekturen nicht zuverlässig gespeichert, erneut gelesen oder validiert werden, bleibt die Initialisierung fehlgeschlagen und der Schlacht-Timer startet nicht.
-- Für normale Änderungen an Einstellungen verwendet der Systemhelfer `writeini`; das erneute Schreiben desselben Abschnitts- und Schlüsselnamens soll den vorhandenen Wert aktualisieren. Die Bereinigung manuell eingefügter doppelter Textzeilen ist ein separater Reparaturfall.
-- Die Reparatur muss die Datei mit einem Datei-Leseverfahren wie `$read` zeilenweise analysieren; `$line` ist ein Bezeichner für Zeilen in einem benutzerdefinierten Fenster und nicht zum Lesen von Dateien geeignet.
-- Die Originaldatei darf niemals vorzeitig gelöscht werden. Die Bereinigung muss zunächst eine temporäre Datei erstellen und erfolgreich schreiben sowie prüfen. Erst danach darf die geprüfte Ersatzdatei die Originaldatei ablösen. Bei einem Fehler bleibt die Originaldatei erhalten und der Schlacht-Timer startet nicht.
-- Die Reparatur soll nur doppelte Vorkommen der sechs bekannten V0.1-Schlüssel normalisieren. Andere Schlüssel, Sektionen und Kommentare dürfen nicht stillschweigend verschwinden oder verändert werden. Vor einer späteren Implementierung sind das Verhalten in mIRC 7.84 und die Ersatzstrategie mit einer Sicherungskopie zu testen.
-- Die Prüfung muss doppelte bekannte Schlüssel über mehrere aufeinanderfolgende `[system]`-Abschnitte hinweg erkennen; das bloße Zurücksetzen einer Merkliste bei jeder Abschnittszeile reicht dafür nicht.
-- Der Prüfer muss die betroffenen Schlüssel ausdrücklich festhalten. Nur eine spätere allgemeine Standardwertprüfung aufzurufen reicht nicht aus, wenn diese den bereits verbliebenen ersten Wert als gültig akzeptieren würde.
-- Nicht bekannte Schlüssel dürfen bei der Prüfung nicht versehentlich wie bekannte Schlüssel bereinigt werden. Die bekannte Schlüsselmenge muss ausdrücklich auf die sechs V0.1-Einstellungen begrenzt sein.
-- Der geprüfte Beispielansatz liest mit `$read(%file, nt, %i)` zeilenweise; diese konkrete Verwendung ist gültig. Ein Beispielcode ist dennoch erst nach Tests auf mIRC 7.84 und nach Behebung der beschriebenen Fehler für eine Umsetzung geeignet.
+`System.dat` bleibt eine normale Klartextdatei. Sie wird weder verschlüsselt noch mit einem besonderen Reparaturverfahren gegen manuelle Änderungen geschützt. Nutzer dürfen die Datei bearbeiten, müssen dabei aber die dokumentierte Struktur, Abschnittsnamen, Schlüsselnamen und zulässigen Werte beachten.
+
+Der Systemhelfer prüft die sechs für V0.1 vorgesehenen Einstellungen und behandelt ungültige Werte nach den festgelegten Regeln. Er übernimmt jedoch keine allgemeine Reparatur beliebiger manueller Änderungen und entfernt insbesondere keine doppelt eingefügten Textzeilen automatisch. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
+
+Wenn Nutzer Schlüssel doppelt eintragen, Abschnitte falsch schreiben oder die Dateistruktur anderweitig verändern, kann die Konfiguration fehlerhaft sein und das Skript möglicherweise nicht wie vorgesehen starten oder funktionieren. Die spätere Dokumentation muss klar erklären, wie die Datei aufgebaut ist, welche Werte zulässig sind und dass manuelle Änderungen auf eigene Verantwortung erfolgen.
 
 ### Lade-, Prüf- und Standardwertverhalten
 
