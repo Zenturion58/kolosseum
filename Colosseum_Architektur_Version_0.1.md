@@ -239,3 +239,12 @@ Der Schlacht-Timer startet nur, wenn die automatische Anlage/Ergänzung, die Rep
 ## Bestätigte Entscheidung: ungültige System.dat-Werte korrigieren
 
 Ein vorhandener, aber ungültiger Konfigurationswert wird nicht ungeprüft übernommen und löst nicht allein einen sofortigen Startabbruch aus. `$system_default_check` ersetzt ihn durch den für diesen Schlüssel vorgesehenen Standardwert, meldet die Korrektur im mIRC-Statusfenster und schreibt den korrigierten Wert nach `System.dat`. Anschließend wird die Konfiguration erneut validiert und die Startprüfung fortgesetzt. Wenn Schreiben, erneutes Einlesen oder Validierung fehlschlagen oder eine andere Pflichtprüfung negativ ausfällt, startet kein Schlacht-Timer.
+
+
+## Bestätigte Abgrenzung: eigener, reduzierter Systemhelfer für V0.1
+
+Der vorhandene `system_defaults_check` gehört zur Endversion. Er ist eine Referenz für das allgemeine Muster zur Anlage/Ergänzung von Standardeinstellungen, Validierung, Versionsprüfung und Bereitstellung globaler Variablen; er wird nicht als vollständiger Helfer in V0.1 kopiert.
+
+Für den Prototyp wird ein eigener, kleiner `$system_default_check` spezifiziert. Er verwaltet nur die Einstellungen und Prüfungen, die Colosseum V0.1 tatsächlich benötigt. Endversionspezifische Verzeichnisse, Module, Datenmigrationen und Bereinigungen für Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons, Sonderereignisse oder weitere spätere Systeme gehören nicht automatisch hinein.
+
+Die konkrete V0.1-Standardwertliste wird als nächster Planungsschritt erstellt. Für jeden Eintrag wird festgehalten: Schlüssel in `System.dat`, Standardwert, erwarteter Datentyp/Wertebereich, globale mIRC-Variable und verwendendes Modul. Bestehende Schlüsselnamen wie `TimeToEnter`, `TimeForIdle` oder `MaxIdleTurns` werden wiederverwendet, wenn Bedeutung und gewünschtes V0.1-Verhalten übereinstimmen. Abweichungen (derzeit insbesondere `TimeBetweenBattles`) werden ausdrücklich entschieden und nicht stillschweigend übernommen.
