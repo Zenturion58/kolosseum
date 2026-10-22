@@ -146,3 +146,10 @@ Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu 
 ## Festgelegte Fehlerbehandlung für die Registrierung
 
 - Wenn der Bot einen Fehler bei der privaten Zustellung des automatisch erzeugten Startpassworts erkennt, zeigt er einen deutschen Hinweis an, bricht die Registrierung ab und entfernt den neu angelegten Charakterdatensatz. Es gibt keine öffentliche Ersatz-Ausgabe des Passworts. IRC garantiert allerdings nicht in allen Fällen eine Zustellbestätigung; behandelt werden nur erkennbare Fehler.
+
+## Bestätigte Registrierungs- und Befehlsorte
+
+- `!registrieren` wird von `Character.mrc` behandelt und darf sowohl im öffentlichen IRC-Kanal als auch per privater Nachricht an den Bot ausgelöst werden. Da dieser Befehl kein Passwort annimmt, wird dabei kein Geheimnis öffentlich übermittelt.
+- Das neu erzeugte Startpasswort darf ausschließlich privat an den Spieler gesendet werden. Passwörter dürfen niemals ersatzweise in einem öffentlichen Kanal erscheinen.
+- `!anmelden` und `!passwort` sind ausschließlich per privater Nachricht an den Bot zulässig.
+- Bei einem erkennbaren Fehler bei der privaten Zustellung des Startpassworts wird die Registrierung abgebrochen und der neue Charakterdatensatz entfernt; der Bot informiert den Spieler, dass private Nachrichten vom Bot ermöglicht werden müssen. IRC garantiert nicht in jedem Fall eine Zustellbestätigung, daher kann die Logik nur tatsächlich erkennbare Fehler behandeln.

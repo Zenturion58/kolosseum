@@ -220,3 +220,10 @@ Das GitHub-Wiki beschreibt das vollständige Zielprodukt. Diese Spezifikation be
 ## Bereits entschieden
 
 - Wenn die private Zustellung des generierten Startpassworts mit einem erkennbaren Fehler scheitert, wird der Spieler informiert und die Registrierung zurückgerollt. Es bleibt kein Charakterdatensatz ohne zugestelltes Startpasswort zurück. Da IRC nicht in allen Fällen eine Zustellbestätigung liefert, kann nur auf tatsächlich erkennbare Fehler reagiert werden.
+
+## Registrierungs- und Befehlsorte (bestätigt)
+
+- `!registrieren` darf sowohl im öffentlichen IRC-Kanal als auch per privater Nachricht an den Bot verwendet werden. Der Befehl enthält kein Passwort.
+- Das automatisch erzeugte Startpasswort wird ausschließlich privat an den Spieler gesendet; Passwörter werden niemals ersatzweise öffentlich ausgegeben.
+- `!anmelden` und `!passwort` sind nur per privater Nachricht an den Bot zulässig, damit Zugangsdaten nicht im Kanal erscheinen.
+- Wenn die private Zustellung des Startpassworts mit einem erkennbaren Fehler scheitert, informiert der Bot den Spieler, bricht die Registrierung ab und entfernt den neu angelegten Charakterdatensatz. IRC garantiert nicht in allen Fällen eine Zustellbestätigung; behandelbar sind nur erkennbare Fehler.
