@@ -154,7 +154,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 6. Wie ein Neustart während einer laufenden Instanz behandelt wird.
 7. Start des Schlacht-Timers: bestätigt ist, dass er erst nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) und bestandener Pflichtdateiprüfung startet. Die erste Ankündigung erfolgt drei Minuten danach; bei Disconnect werden aktive Timer bereinigt und nach Wiederverbindung ohne Duplikate neu gestartet.
 8. Validierungsregeln für `Translation.dat`, einschließlich Pflichtschlüsseln und Behandlung doppelter Schlüssel; außerdem welche Startfehler wie detailliert protokolliert werden.
-9. Welche konkreten Einstellungen aus der bereits in v0.1 geprüften `System.dat` werden in dieser Version aktiv verwendet, und welche Zeitwerte bleiben vorerst fest?
+9. Das vereinfachte Versionsmigrationsprinzip für `System.dat` sowie der Umgang mit unbekannten oder doppelt vorkommenden Konfigurationsschlüsseln.
 
 ## 9. Vorgesehener nächster Schritt
 
@@ -237,13 +237,21 @@ In Version 0.1 dienen die Einstellungen in `System.dat` als Quelle der konfiguri
 
 Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind für V0.1 bestätigt. Der Endversion-Helfer setzt `TimeBetweenBattles` derzeit auf `120`; für V0.1 ist ausdrücklich `180` Sekunden vorgesehen. Dieser Unterschied ist beabsichtigt, da der Helfer der Endversion nicht unverändert kopiert wird.
 
+### Verbindliche Wertebereiche für `System.dat`
+
+- `TimeBeforeFirstBattle`, `TimeToEnter`, `TimeBetweenBattles` und `TimeForIdle` müssen ganze Zahlen in Sekunden zwischen `1` und `3600` einschließlich sein. `3600` Sekunden entsprechen einer Stunde und sind die maximale zulässige Warte- bzw. Zugzeit.
+- `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein.
+- `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein.
+- Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb des jeweiligen Bereichs gelten als ungültig. Ein ungültiger vorhandener Wert wird durch den zugehörigen Standardwert ersetzt; die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert.
+- Der Schlacht-Timer darf nur starten, wenn die korrigierte Konfiguration erfolgreich gespeichert, erneut eingelesen und validiert wurde.
+
 ### Lade-, Prüf- und Standardwertverhalten
 
 - Nach erfolgreichem `on CONNECT` liest und prüft `$system_default_check` die Pflichtkonfiguration, bevor Timer aktiviert werden.
 - Bei Erfolg schreibt der Helfer jeden validierten Wert in eine globale Variable. Andere Module verwenden diese Werte als zentrale Quelle.
 - Eine fehlende `System.dat` wird automatisch mit Standardwerten erzeugt. Fehlende Schlüssel werden ebenfalls mit ihren vorgesehenen Standardwerten ergänzt; dabei soll das bewährte Versionsprinzip (`SystemDatVersion`) sinngemäß berücksichtigt werden.
 - Bereits vorhandene, ungültige Einstellungswerte werden durch die vorgesehenen Standardwerte ersetzt. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert; anschließend wird die Startprüfung fortgesetzt.
-- Kann die Datei nicht angelegt, geschrieben, erneut gelesen oder erfolgreich validiert werden, startet kein Schlacht-Timer. Wertebereiche und die genaue V0.1-Versionsmigration werden vor Implementierung dokumentiert.
+- Kann die Datei nicht angelegt, geschrieben, erneut gelesen oder erfolgreich validiert werden, startet kein Schlacht-Timer. Die genaue V0.1-Versionsmigration wird vor der Implementierung dokumentiert.
 
 
 ## Bestätigte Entscheidung: automatische Standardwert-Erzeugung für System.dat
@@ -264,7 +272,7 @@ Der vorhandene `system_defaults_check` gehört zur Endversion. Er ist eine Refer
 
 Für den Prototyp wird ein eigener, kleiner `$system_default_check` spezifiziert. Er verwaltet nur die Einstellungen und Prüfungen, die Colosseum V0.1 tatsächlich benötigt. Endversionspezifische Verzeichnisse, Module, Datenmigrationen und Bereinigungen für Bosse, Mechs, NPCs, Shops, Auktionen, Dungeons, Sonderereignisse oder weitere spätere Systeme gehören nicht automatisch hinein.
 
-Die sechs Schlüssel, globalen Variablen und Standardwerte in der oben dokumentierten V0.1-Liste sind bestätigt. Für die Implementierung werden zusätzlich zulässige Datentypen/Wertebereiche und die genaue Zuordnung zu den verwendenden Modulen festgelegt. Der Endversion-Helfer setzt `TimeBetweenBattles` auf `120`; für V0.1 ist ausdrücklich `180` Sekunden festgelegt, sodass der Endversion-Wert nicht übernommen wird.
+Die sechs Schlüssel, globalen Variablen und Standardwerte in der oben dokumentierten V0.1-Liste sind bestätigt. Die zulässigen Wertebereiche sind im Abschnitt „Verbindliche Wertebereiche für `System.dat`“ festgelegt. Die genaue Zuordnung zu den verwendenden Modulen bleibt bei der Schnittstellenplanung zu prüfen. Der Endversion-Helfer setzt `TimeBetweenBattles` auf `120`; für V0.1 ist ausdrücklich `180` Sekunden festgelegt, sodass der Endversion-Wert nicht übernommen wird.
 
 
 ## Bestätigte V0.1-Konfigurationsschnittstelle: sechs Laufzeitwerte

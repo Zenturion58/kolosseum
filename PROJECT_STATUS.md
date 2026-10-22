@@ -182,3 +182,11 @@ Die folgende Liste ist nicht mehr nur ein Vorschlag. Alle sechs Einstellungen we
 Die Verzeichnisstruktur wird nicht nur auf den Prototyp zugeschnitten. V0.1 verwendet von Anfang an das geplante Endprodukt-Layout, damit später keine Datenordner verschoben oder umbenannt werden müssen. Die Einstiegsdatei `Colosseum.mrc`, die Fachmodule, die Alias-Dateien sowie `System.dat` und `Translation.dat` liegen im Projekt-Hauptordner. Ein separater `scripts/`- oder `data/`-Ordner wird für diese Dateien nicht eingeführt.
 
 Auf der obersten Projektebene sind die Verzeichnisse `characters/`, `bosses/`, `monsters/`, `zapped/`, `npcs/`, `summons/` und `help-files/` vorgesehen, angelehnt an die Standardpfade aus dem Endversion-Helfer. V0.1 benötigt insbesondere `characters/` und `monsters/`; die übrigen Ordner stehen für spätere Funktionen und werden in V0.1 noch nicht mit diesen Funktionen implementiert. Die Übersetzungsdatei heißt weiterhin `Translation.dat`, liegt aber im Projekt-Hauptordner statt unter `data/Translation.dat`.
+
+## Bestätigte Entscheidung: Wertebereiche für System.dat
+
+Die vier Zeitangaben in `System.dat` dürfen höchstens eine Stunde betragen. `TimeBeforeFirstBattle`, `TimeToEnter`, `TimeBetweenBattles` und `TimeForIdle` müssen deshalb ganze Sekundenwerte zwischen `1` und `3600` einschließlich sein. Eine Stunde entspricht `3600` Sekunden; Wartezeiten von mehreren Tagen oder Wochen sind ungültig.
+
+Dezimalzahlen, nicht numerische Werte sowie Zeitwerte außerhalb des zulässigen Bereichs gelten als ungültig. Der V0.1-Systemhelfer ersetzt einen vorhandenen ungültigen Eintrag durch den zugehörigen Standardwert, meldet die Korrektur im mIRC-Statusfenster und speichert den korrigierten Wert in `System.dat`. Kann die Datei danach nicht erfolgreich gespeichert, erneut eingelesen oder validiert werden, startet kein Schlacht-Timer.
+
+Die übrigen beiden Laufzeitwerte werden ebenfalls typgeprüft: `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein; `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein. Die sechs Standardwerte bleiben unverändert.
