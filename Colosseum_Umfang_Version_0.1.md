@@ -7,7 +7,7 @@
 
 - Es gibt noch keinen vorhandenen Quellcode. Die Implementierung wird neu entworfen und selbst geschrieben.
 - Der Bot und alle für Spieler sichtbaren Nachrichten, Hilfetexte und Fehlermeldungen sollen standardmäßig auf Deutsch sein.
-- Alle sichtbaren Texte werden von Anfang an aus `Translation.dat` geladen; sie werden nicht direkt in die Spiellogik eingebaut. So können Nutzer später Übersetzungen ändern oder weitere Sprachen hinzufügen, ohne den Quellcode zu bearbeiten.
+- Allgemeine Botmeldungen, System-/Profilmeldungen, Schlachtankündigungen und Belohnungstexte werden von Anfang an aus `Translation.dat` geladen; diese Texte werden nicht direkt in die Spiellogik eingebaut. Die Datei nutzt Abschnitte und Schlüssel in der Form `Schlüssel=Textvorlage`. Übersetzer ändern nur den Text rechts vom `=` und lassen Schlüssel, Platzhalter (z. B. `%user%`, `%file`) und mIRC-Formatierungsbestandteile (z. B. `$chr(3)`, `$chr(15)`, `$chr(2)`, `$+`) unverändert. Texte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden davon getrennt über den Mechanismus für Angriffs-/Fähigkeitsdaten gelesen.
 - Beim Start wird geprüft, ob `Translation.dat` vorhanden und lesbar ist. Bei einem Fehler wird die Initialisierung kontrolliert abgebrochen; insbesondere dürfen keine Schlacht-Timer starten, solange Pflichtdateien oder erforderliche Module nicht bereit sind.
 - `System.dat` gehört nicht zum Umfang von Version 0.1. Der Start prüft diese Datei daher noch nicht; die Zeiten bleiben für diese Version fest vorgegeben. Sobald `System.dat` später eingeführt wird, müssen die Einstellungen vor dem Start des Schlachtzyklus geprüft und in globale Variablen übertragen werden.
 - Die vollständige Charaktervorlage aus der Dokumentation darf als Grundlage verwendet werden. Version 0.1 liest und verarbeitet aber nur die Felder, die sie tatsächlich benötigt.
@@ -116,7 +116,7 @@ Die Skriptstruktur trennt **fachliche Module (`.mrc`)** von **wiederverwendbaren
 - `Battle.mrc` behandelt Schlacht- und Kampfbefehle sowie relevante `TEXT`-/`ACTION`-Ereignisse.
 - Wiederverwendbare Helfer-Aliases liegen in eigenen `.als`-Dateien, gruppiert nach Aufgabe.
 - Die `.mrc`-Module orchestrieren den fachlichen Ablauf und rufen Helfer aus den `.als`-Dateien auf. Hilfsberechnungen werden nicht wahllos in Ereignishandler kopiert.
-- Alle vom Bot ausgegebenen Spielertexte werden aus `data/Translation.dat` bezogen. `TranslationAliases.als` stellt dafür die Lade- und Abruffunktionen bereit.
+- Allgemeine Spielertexte werden aus `data/Translation.dat` bezogen. `TranslationAliases.als` stellt Lade- und Abruffunktionen sowie die kontrollierte Verarbeitung von Platzhaltern und erlaubten Formatierungsausdrücken bereit. Textvorlagen, die unmittelbar zu einer Angriffs-/Fähigkeitsdefinition gehören, werden über den dafür vorgesehenen Datenweg gelesen und sind keine allgemeinen Translation-Schlüssel.
 - Die Charakterverwaltung bleibt fachlich in `Character.mrc`; eine separate `Storage.mrc` wird für Version 0.1 nicht benötigt. Charakterbezogene Lade-/Speicher-Helfer gehören in `Characters.als`.
 - Eine `Combat.mrc` oder `Monster.mrc` wird in Version 0.1 nur angelegt, falls dort tatsächlich fachliche Befehle/Ereignisse unterzubringen sind. Reine Kampf- und Monster-Helfer gehören in `.als`-Dateien.
 
@@ -141,7 +141,7 @@ Dateinamen und Alias-Signaturen sind ein Entwurf für Version 0.1 und werden vor
 
 ### Datenordner
 
-- `data/Translation.dat`: externe, bearbeitbare Bottexte; Deutsch ist die Standardsprache.
+- `data/Translation.dat`: externe, bearbeitbare allgemeine Bottexte im Abschnitt-/Schlüssel-Format; Deutsch ist die Standardsprache. Schlüssel, Platzhalter und mIRC-Formatierungssyntax bleiben bei Übersetzungen unverändert. Angriffsfähigkeits-/Angriffsdefinitionstexte werden getrennt behandelt.
 - `data/characters/`: gespeicherte Spielercharaktere im dokumentierten `.chr`-Format, vorbehaltlich der abschließenden Formatprüfung.
 - `data/monsters/`: mindestens fünf eigene normale Monsterdefinitionen. Die Wiki verwendet für Monster Vorlagen mit der Endung `.char`; wir prüfen vor dem Code, ob wir dieses Format unverändert übernehmen oder für Version 0.1 ein minimales kompatibles Profil definieren.
 
@@ -180,8 +180,9 @@ mIRC unterscheidet technisch zwischen Alias-Dateien und Remote-Skriptdateien; di
 3. Exakte Schreibweise und Aliase aller Registrierungs-, Login-, Passwort- und Statusbefehle.
 4. Einzelheiten der Charaktervorlage, die für Version 0.1 tatsächlich gelesen oder verändert werden müssen.
 5. Technische Zielumgebung (mIRC-Version/IRC-Verhalten) und konkretes Speicherformat der Charakterdateien.
-6. Exakter Wortlaut und Kanal-/Privatnachrichten-Verteilung der deutschen Botmeldungen.
-7. Ein genauer Testplan für Grenzfälle, beispielsweise gleichzeitige Befehle, Bot-Neustart während eines Kampfes und Monster-/Spieler-HP bei 0.
+6. Exakter Wortlaut und Kanal-/Privatnachrichten-Verteilung der deutschen Botmeldungen. Meldungen, die ein Passwort enthalten (z. B. `%newpass`), dürfen ausschließlich privat an den betreffenden Spieler gesendet werden.
+7. Für den einfachen Faustangriff: genauer Speicherort bzw. Lesemechanismus für die an eine Angriffs-/Fähigkeitsdefinition gebundene Meldung, getrennt von `Translation.dat`.
+8. Ein genauer Testplan für Grenzfälle, beispielsweise gleichzeitige Befehle, Bot-Neustart während eines Kampfes und Monster-/Spieler-HP bei 0.
 
 ## 11. Akzeptanzkriterien für Version 0.1
 
