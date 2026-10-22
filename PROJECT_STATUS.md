@@ -192,23 +192,6 @@ Für den Schlachtzyklus gilt: Ohne gültige Werte für die jeweils benötigten A
 
 Die folgenden fünf Einstellungen sind für Version 0.1 festgelegt. Es werden ausschließlich offizielle Wiki-Schlüsselnamen verwendet. Die Endversion-Wiki beschreibt weiterhin das angestrebte Endprodukt; die hier genannten Wertebereiche und die prototypspezifische Verwendung gelten für Version 0.1.
 
-
-### Inaktivität im Kampf
-
-In Version 0.1 wird die Inaktivität über den gesamten Kampf gezählt. Nach dem ersten abgelaufenen Zuglimit wird der Spielerzug übersprungen und das Monster kann erneut angreifen. Erst wenn der Spieler zum zweiten Mal (bei `MaxIdleTurns=2`) keine Aktion ausführt, scheidet er aus. Ein zwischenzeitlich ausgeführter Angriff setzt den Zähler verpasster Züge nicht zurück. Da V0.1 nur einen Spieler pro Kampf zulässt, endet der Kampf dann als Niederlage ohne Belohnung.
-
-### Belohnung und Wiki-Bedeutung
-
-Das offizielle Wiki beschreibt `MaxOrbReward` als Obergrenze der möglichen Kugelbelohnung vor späteren Modifikatoren wie Skills und Accessoires. Version 0.1 verwendet denselben offiziellen Schlüssel prototypspezifisch für eine feste Belohnung von 10 roten Kugeln bei einem Sieg, sofern der Spieler überlebt. Skills, Styles, Accessoires und weitere Belohnungsmodifikatoren sind in V0.1 nicht vorhanden. Bei Niederlage oder Ausscheiden wegen Inaktivität gibt es keine Belohnung.
-
-### Prüfung der Werte
-
-Zeitwerte müssen ganze Zahlen innerhalb der für den jeweiligen Schlüssel angegebenen Grenzen sein. `MaxIdleTurns` muss eine ganze Zahl zwischen 1 und 10 sein. In Version 0.1 ist `MaxOrbReward` auf 10 festgelegt. Vorhandene ungültige Werte werden nicht automatisch überschrieben: Die Diagnose nennt Schlüssel, gefundenen Wert und erwarteten Bereich; die abhängige Funktion bleibt deaktiviert, bis der Nutzer den Wert korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Fehlende Einstellungen dürfen mit den festgelegten Standardwerten ergänzt werden.
-
-## Verbindliche System.dat-Einstellungen für Version 0.1
-
-Die folgenden fünf Einstellungen sind für Version 0.1 festgelegt. Es werden ausschließlich offizielle Wiki-Schlüsselnamen verwendet. Die Endversion-Wiki beschreibt weiterhin das angestrebte Endprodukt; die hier genannten Wertebereiche und die prototypspezifische Verwendung gelten für Version 0.1.
-
 | Schlüssel | Standardwert für V0.1 | Zulässiger Bereich | Einheit / Bedeutung |
 |---|---:|---|---|
 | `TimeBetweenBattles` | `3` | `1–240` | Minuten; Wartezeit bis zur nächsten Schlachtankündigung im Leerlauf nach leerem Beitrittsfenster oder Kampfende. Bei der Übergabe an einen mIRC-Timer wird der Minutenwert in Sekunden umgerechnet. |
