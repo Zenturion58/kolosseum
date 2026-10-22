@@ -257,6 +257,10 @@ Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind f
 - Die Reparatur muss die Datei mit einem Datei-Leseverfahren wie `$read` zeilenweise analysieren; `$line` ist ein Bezeichner für Zeilen in einem benutzerdefinierten Fenster und nicht zum Lesen von Dateien geeignet.
 - Die Originaldatei darf niemals vorzeitig gelöscht werden. Die Bereinigung muss zunächst eine temporäre Datei erstellen und erfolgreich schreiben sowie prüfen. Erst danach darf die geprüfte Ersatzdatei die Originaldatei ablösen. Bei einem Fehler bleibt die Originaldatei erhalten und der Schlacht-Timer startet nicht.
 - Die Reparatur soll nur doppelte Vorkommen der sechs bekannten V0.1-Schlüssel normalisieren. Andere Schlüssel, Sektionen und Kommentare dürfen nicht stillschweigend verschwinden oder verändert werden. Vor einer späteren Implementierung sind das Verhalten in mIRC 7.84 und die Ersatzstrategie mit einer Sicherungskopie zu testen.
+- Die Prüfung muss doppelte bekannte Schlüssel über mehrere aufeinanderfolgende `[system]`-Abschnitte hinweg erkennen; das bloße Zurücksetzen einer Merkliste bei jeder Abschnittszeile reicht dafür nicht.
+- Der Prüfer muss die betroffenen Schlüssel ausdrücklich festhalten. Nur eine spätere allgemeine Standardwertprüfung aufzurufen reicht nicht aus, wenn diese den bereits verbliebenen ersten Wert als gültig akzeptieren würde.
+- Nicht bekannte Schlüssel dürfen bei der Prüfung nicht versehentlich wie bekannte Schlüssel bereinigt werden. Die bekannte Schlüsselmenge muss ausdrücklich auf die sechs V0.1-Einstellungen begrenzt sein.
+- Der geprüfte Beispielansatz liest mit `$read(%file, nt, %i)` zeilenweise; diese konkrete Verwendung ist gültig. Ein Beispielcode ist dennoch erst nach Tests auf mIRC 7.84 und nach Behebung der beschriebenen Fehler für eine Umsetzung geeignet.
 
 ### Lade-, Prüf- und Standardwertverhalten
 
