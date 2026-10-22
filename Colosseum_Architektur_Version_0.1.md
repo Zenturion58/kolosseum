@@ -154,7 +154,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 6. Wie ein Neustart während einer laufenden Instanz behandelt wird.
 7. Start des Schlacht-Timers: bestätigt ist, dass er erst nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) und bestandener Pflichtdateiprüfung startet. Die erste Ankündigung erfolgt drei Minuten danach; bei Disconnect werden aktive Timer bereinigt und nach Wiederverbindung ohne Duplikate neu gestartet.
 8. Validierungsregeln für `Translation.dat`, einschließlich Pflichtschlüsseln und Behandlung doppelter Schlüssel; außerdem welche Startfehler wie detailliert protokolliert werden.
-9. Das vereinfachte Versionsmigrationsprinzip für `System.dat` sowie der Umgang mit unbekannten oder doppelt vorkommenden Konfigurationsschlüsseln.
+9. Das vereinfachte Versionsmigrationsprinzip für `System.dat`.
 
 ## 9. Vorgesehener nächster Schritt
 
@@ -244,6 +244,15 @@ Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind f
 - `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein.
 - Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb des jeweiligen Bereichs gelten als ungültig. Ein ungültiger vorhandener Wert wird durch den zugehörigen Standardwert ersetzt; die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert.
 - Der Schlacht-Timer darf nur starten, wenn die korrigierte Konfiguration erfolgreich gespeichert, erneut eingelesen und validiert wurde.
+
+### Unbekannte und doppelte Schlüssel in `System.dat`
+
+- Für V0.1 gelten ausschließlich die sechs ausdrücklich bestätigten Schlüssel als aktiv. Ein anderer Schlüssel wird in dieser Version ignoriert, aber nicht gelöscht oder umgeschrieben. So bleiben Einstellungen späterer Versionen erhalten.
+- Unbekannte Schlüssel werden im mIRC-Statusfenster gesammelt gemeldet; die Meldung soll eine übersichtliche Zusammenfassung statt einer eigenen Meldung für jede einzelne Zeile sein. Unbekannte Schlüssel allein verhindern den Start nicht.
+- Die sechs bekannten Einstellungen werden innerhalb der Sektion `[system]` geprüft. Ein bekannter Schlüssel, der nur in einer anderen Sektion steht, zählt nicht als gültiger Eintrag für V0.1; fehlt der Eintrag in `[system]`, wird er dort mit dem Standardwert ergänzt.
+- Jeder der sechs bekannten Schlüssel darf über alle `[system]`-Sektionen hinweg nur einmal vorkommen. Wird ein bekannter Schlüssel mehrfach gefunden, gilt er als mehrdeutig: Der Helfer setzt ihn auf den für diesen Schlüssel vorgesehenen Standardwert zurück, entfernt die zusätzlichen Vorkommen und lässt genau einen kanonischen Eintrag bestehen. Er übernimmt in diesem Fall nicht willkürlich den ersten oder letzten Wert.
+- Eine ungültige einzelne Einstellung und ein mehrfach vorkommender bekannter Schlüssel werden im mIRC-Statusfenster gemeldet und korrigiert. Danach wird die Datei gespeichert, erneut eingelesen und noch einmal validiert.
+- Können die Korrekturen nicht zuverlässig gespeichert, erneut gelesen oder validiert werden, bleibt die Initialisierung fehlgeschlagen und der Schlacht-Timer startet nicht.
 
 ### Lade-, Prüf- und Standardwertverhalten
 
