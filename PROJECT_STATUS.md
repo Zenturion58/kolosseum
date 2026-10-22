@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für die Standardwert-Erzeugung von `System.dat`: planning/systemdat-default-generation-2026-10-22.
+- Aktueller Arbeitsbranch für die Reparatur ungültiger `System.dat`-Werte: planning/systemdat-invalid-values-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
@@ -79,7 +79,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 5. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
 6. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
 7. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-8. Endgültige Schlüsselnamen und Wertebereiche sowie die Behandlung bereits vorhandener ungültiger Werte festlegen; außerdem die Abweichung `TimeBetweenBattles` (Endversion 120 Sekunden, v0.1 bislang 180 Sekunden) auflösen.
+8. Endgültige Schlüsselnamen und Wertebereiche festlegen; außerdem die Abweichung `TimeBetweenBattles` (Endversion 120 Sekunden, v0.1 bislang 180 Sekunden) auflösen.
 9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
@@ -137,7 +137,7 @@ Die genaue Benennung der neu vorgeschlagenen Schlüssel und Variablen muss vor d
 - Bei erfolgreicher Prüfung stellt der Helfer die Werte in globalen Variablen bereit. Die Fachmodule lesen anschließend die Variablen statt eigene feste Laufzeitwerte zu verwenden.
 - Fehlt `System.dat`, legt der V0.1-Helfer die Datei mit Standardwerten an. Fehlen einzelne Einträge, werden sie ebenfalls mit den vorgesehenen Standardwerten ergänzt.
 - Die Ergänzung von Standardwerten soll sich am bestehenden Endversion-Prinzip mit `SystemDatVersion` orientieren. Die konkrete Versionsmigration wird für V0.1 vereinfacht und vor der Implementierung spezifiziert.
-- Bereits vorhandene, aber ungültige Werte dürfen nicht stillschweigend ungeprüft verwendet werden. Ob sie automatisch auf den Standardwert zurückgesetzt werden oder die Startprüfung fehlschlägt, bleibt noch zu entscheiden.
+- Bereits vorhandene, aber ungültige Werte werden durch den jeweiligen Standardwert ersetzt. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert; anschließend wird die Startprüfung fortgesetzt. Kann die Korrektur nicht geschrieben oder erfolgreich validiert werden, startet kein Schlacht-Timer.
 - Kann die Datei nicht angelegt, geschrieben, erneut gelesen oder erfolgreich validiert werden, startet kein Schlacht-Timer.
 
 
@@ -145,4 +145,9 @@ Die genaue Benennung der neu vorgeschlagenen Schlüssel und Variablen muss vor d
 
 Abweichend von der ursprünglichen Planung muss `System.dat` bei einer frischen Installation nicht bereits vorhanden sein. Der Helfer für Version 0.1 legt sie selbst mit den vorgesehenen Standardwerten an. Fehlen einzelne Einstellungen in einer vorhandenen Datei, ergänzt er ebenfalls die dafür vorgesehenen Standardwerte. Anschließend liest und validiert er die resultierende Konfiguration und stellt die Werte in globalen Variablen bereit. Erst nach erfolgreicher Gesamtprüfung startet der Schlacht-Timer.
 
-Diese automatische Anlage gilt nur für `System.dat`. Fehlende Pflichtmodule, `Translation.dat` oder notwendige und ungültige Spieldaten bleiben Fehler der Startprüfung. Bereits vorhandene, aber ungültige Einstellungswerte werden nicht ungeprüft übernommen; ob sie auf Standardwerte zurückgesetzt werden oder den Start abbrechen, ist noch offen.
+Diese automatische Anlage gilt nur für `System.dat`. Fehlende Pflichtmodule, `Translation.dat` oder notwendige und ungültige Spieldaten bleiben Fehler der Startprüfung. Bereits vorhandene ungültige Einstellungswerte werden auf ihre vorgesehenen Standardwerte zurückgesetzt, die Korrektur wird im mIRC-Statusfenster gemeldet und die aktualisierte Datei wird gespeichert. Danach setzt der Helfer die Prüfung fort. Scheitert das Schreiben oder die anschließende Validierung, startet kein Schlacht-Timer.
+
+
+## Bestätigte Entscheidung: ungültige System.dat-Werte reparieren
+
+Wenn ein vorhandener Eintrag in `System.dat` einen ungültigen Wert enthält, ersetzt der V0.1-Helfer diesen Wert durch den für den Eintrag vorgesehenen Standardwert. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert. Danach setzt der Helfer die Startprüfung fort und prüft die korrigierte Konfiguration erneut. Nur wenn die Konfiguration und alle übrigen Pflichtmodule und Spieldaten erfolgreich geprüft wurden, startet der Schlacht-Timer. Kann die Korrektur nicht dauerhaft geschrieben oder validiert werden, bleibt der Start abgebrochen.
