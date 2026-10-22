@@ -1,6 +1,6 @@
 # Colosseum – Architekturentwurf für Version 0.1
 
-**Status:** Gemeinsamer Entwurf zur Prüfung; noch nicht als endgültig freigegeben markiert.  
+**Status:** Grundstruktur, Dateinamen und Zuständigkeiten sind gemeinsam bestätigt; technische Details und Schnittstellen bleiben noch festzulegen.  
 **Ziel:** Kleine, modulare mIRC-Script-Architektur. Fachliche Befehle/Ereignisse gehören in zuständige `.mrc`-Dateien; wiederverwendbare Helfer-Aliases liegen in `.als`-Dateien. Alle sichtbaren Bottexte stammen aus `data/Translation.dat`.
 
 ## 1. Vorgeschlagene Repository-Struktur
@@ -86,10 +86,14 @@ Die Pfeile beschreiben konzeptionelle Aufrufe, nicht schon implementierte Alias-
 
 ## 4. Ladefolge
 
+Für Version 0.1 ist verbindlich vorgesehen, dass Nutzer nur `Colosseum.mrc` manuell laden müssen. Diese Hauptdatei übernimmt den Bootstrap und lädt die benötigten Dateien in definierter Reihenfolge.
+
 1. Nutzer lädt `Colosseum.mrc`.
 2. Der Bootstrap lädt die `.als`-Dateien, damit alle Helper-Aliase vor der Initialisierung verfügbar sind.
 3. Der Bootstrap lädt `System.mrc`, `Character.mrc` und `Battle.mrc` als Remote-Skripte.
-4. Erst nach dem vollständigen Laden wird initialisiert: Übersetzung und Datendateien prüfen, Laufzeitstatus setzen und den ersten Schlachtzyklus starten.
+4. Erst nach dem vollständigen Laden wird initialisiert: Übersetzung und erforderliche Datendateien prüfen, Laufzeitstatus vorbereiten und den Schlachtzyklus starten.
+
+Die Hauptdatei kann in späteren Versionen zusätzliche Aufgaben erhalten. Für Version 0.1 bleibt ihre Hauptaufgabe jedoch das zuverlässige Laden und Initialisieren des Systems; umfangreiche Spiellogik gehört nicht hinein.
 
 Laut offizieller mIRC-Dokumentation lädt `/load -a` eine Alias-Datei und `/load -rs` eine Remote-Skriptdatei. Die konkrete Pfadauflösung und der Bootstrap werden beim Implementieren in der Zielversion von mIRC ausprobiert. Quellen: [mIRC `/load`](https://www.mirc.com/help/html/mirc_commands.html), [mIRC Aliases](https://www.mirc.com/help/html/aliases.html), [mIRC Remote Scripts](https://www.mirc.com/help/html/remote.html).
 
@@ -116,4 +120,4 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 
 ## 8. Vorgesehener nächster Schritt
 
-Prüfe diese Liste und korrigiere Dateinamen oder Verantwortlichkeiten, wo du etwas anders vorgesehen hast. Erst nach deiner Freigabe legen wir die Dateien im Repository an. Danach schreiben wir das Bootstrap-/Ladesystem und testen zuerst, ob alle Module fehlerfrei geladen werden können – erst anschließend kommt Charakterregistrierung und Kampfcode hinzu.
+Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu ladenden Einstiegsdatei `Colosseum.mrc` sind bestätigt. Als Nächstes werden wir die Fehlerbehandlung beim Start und die Schnittstellen zwischen den Modulen festlegen. Danach kann das Grundgerüst angelegt werden. Zuerst testen wir, ob Bootstrap und Module zuverlässig geladen werden; erst anschließend folgen Charakterregistrierung und Kampfcode.
