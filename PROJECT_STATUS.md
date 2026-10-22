@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für die vorgeschlagenen `System.dat`-Einstellungen: planning/systemdat-settings-2026-10-22.
+- Aktueller Arbeitsbranch für die Standardwert-Erzeugung von `System.dat`: planning/systemdat-default-generation-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
@@ -67,8 +67,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Character.mrc verantwortet Charakterfunktionen einschließlich charakterbezogener Speicherung; Characters.als enthält zugehörige wiederverwendbare Helfer. Eine separate Storage.mrc ist nicht vorgesehen.
 - Allgemeine, sichtbare Botmeldungen werden aus data/Translation.dat geladen. Die Datei hat Abschnitte und eindeutige Schlüssel im Format Schlüssel=Text. Schlüssel links vom Gleichheitszeichen, Platzhalter wie %user% und mIRC-Formatierungsbestandteile wie $chr(3), $chr(15), $chr(2) und $+ bleiben bei Übersetzungen unverändert.
 - Texte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden getrennt über den vorgesehenen Datenmechanismus verarbeitet, nicht als allgemeine Translation-Schlüssel behandelt.
-- `$system_default_check` prüft nach `on CONNECT` die `System.dat`, `Translation.dat`, Pflichtmodule sowie vorhandene/gültige Datenbestände für Monster, Waffen, Techniken, Skills usw. Jeder Fehler verhindert den Schlacht-Timerstart; eine technische Diagnose erscheint im mIRC-Statusfenster.
-- `System.dat` und `$system_default_check` sind bereits für die Startprüfung von Version 0.1 vorgesehen. Der Helfer liest gültige Werte in globale Variablen. Noch festzulegen ist, welche Einstellungen Version 0.1 aktiv nutzt und welche Zeitwerte vorerst fest bleiben.
+- Nach erfolgreichem `on CONNECT` führt `$system_default_check` die Startprüfung aus. Fehlt `System.dat`, legt der Helfer die Datei mit den vorgesehenen Standardwerten an; fehlende Einstellungen werden ebenfalls ergänzt. Anschließend prüft er die Werte und speichert sie in globalen Variablen. Fehlende Pflichtmodule, fehlerhafte Konfigurationswerte oder ungültige erforderliche Spieldaten verhindern den Schlacht-Timerstart; eine technische Diagnose erscheint im mIRC-Statusfenster.
 - Die vollständige Charaktervorlage dient als Grundlage; Version 0.1 liest und verändert nur die benötigten Felder.
 
 ## Noch offen
@@ -80,7 +79,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 5. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
 6. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
 7. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-8. Den Vorschlag für `System.dat`-Schlüssel und Werte prüfen: Welche davon sollen in Version 0.1 tatsächlich konfigurierbar und verpflichtend sein?
+8. Endgültige Schlüsselnamen und Wertebereiche sowie die Behandlung bereits vorhandener ungültiger Werte festlegen; außerdem die Abweichung `TimeBetweenBattles` (Endversion 120 Sekunden, v0.1 bislang 180 Sekunden) auflösen.
 9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
@@ -100,18 +99,18 @@ Ein Konto wird nicht auf einen geänderten Nickname übertragen und bei einem Ni
 
 ## Neue bestätigte Entscheidung: Timer-Start
 
-Nach erfolgreichem `on CONNECT` ruft der Startablauf `$system_default_check` auf. Nur bei erfolgreicher Prüfung von `System.dat`, `Translation.dat`, Pflichtmodulen und benötigten Datenbeständen (Monster, Waffen, Techniken, Skills usw.) startet der Dreiminuten-Timer. Bei Fehlern startet kein Timer; Disconnect bereinigt laufende Timer.
+Nach erfolgreichem `on CONNECT` ruft der Startablauf `$system_default_check` auf. Fehlt `System.dat`, wird sie mit Standardwerten angelegt; fehlende Einstellungen werden ergänzt. Nur wenn danach die Konfiguration, `Translation.dat`, Pflichtmodule und benötigten Datenbestände (Monster, Waffen, Techniken, Skills usw.) erfolgreich geprüft sind, startet der Dreiminuten-Timer. Bei Erzeugungs-, Schreib- oder Prüfungsfehlern startet kein Timer; Disconnect bereinigt laufende Timer.
 
 
 ## Verbindliche Ablaufregel: Verbindung und erster Timer
 
-Der erste Schlacht-Timer startet erst nach `on CONNECT` und nachdem `$system_default_check` alle Pflichtprüfungen (einschließlich `System.dat`, `Translation.dat` und benötigter Spieldaten) erfolgreich abgeschlossen hat. Die erste Ankündigung folgt drei Minuten später. Bei Disconnect werden laufende Timer bereinigt; nach Wiederverbindung darf ein einzelner neuer Zyklus beginnen.
+Der erste Schlacht-Timer startet erst nach `on CONNECT` und nachdem `$system_default_check` die Konfiguration sichergestellt hat: Eine fehlende `System.dat` wird mit Standardwerten erstellt und fehlende Einträge werden ergänzt. Danach müssen die validierte Konfiguration, `Translation.dat`, Pflichtmodule und benötigte Spieldaten erfolgreich geprüft sein. Die erste Ankündigung folgt drei Minuten später. Bei Disconnect werden laufende Timer bereinigt; nach Wiederverbindung darf ein einzelner neuer Zyklus beginnen.
 
 
 ## Neue bestätigte Entscheidungen: Systemprüfung und Anmeldung
 
-- Nach erfolgreichem `on CONNECT` wird `$system_default_check` ausgeführt. Er prüft `System.dat`, `Translation.dat`, Pflichtmodule und die erforderlichen Datenbestände (Monster, Waffen, Techniken, Skills usw.). Jeder fehlgeschlagene Check verhindert den Start des Schlacht-Timers.
-- Bei erfolgreicher Prüfung liest der Helfer gültige Systemwerte aus `System.dat` in globale Variablen, die weitere Module verwenden können. Die konkrete Liste der Schlüssel und welche Werte in Version 0.1 tatsächlich dynamisch angewendet werden, ist noch festzulegen.
+- Nach erfolgreichem `on CONNECT` wird `$system_default_check` ausgeführt. Falls `System.dat` fehlt, erzeugt der Helfer sie mit Standardwerten; bei fehlenden Einträgen ergänzt er die Standardwerte. Danach prüft er `System.dat`, `Translation.dat`, Pflichtmodule und die erforderlichen Datenbestände (Monster, Waffen, Techniken, Skills usw.). Fehler bei der Erzeugung, beim Schreiben oder bei der Prüfung verhindern den Start des Schlacht-Timers.
+- Nach erfolgreicher Validierung liest der Helfer die Einstellungen in globale Variablen, die weitere Module verwenden. Die sechs besprochenen Laufzeitwerte sollen in Version 0.1 dynamisch aus diesen Variablen verwendet werden.
 - Die Anmeldesitzung endet bei Netzwerk-Trennung oder Nickname-Änderung. Das Konto wird nicht übertragen; eine Rückkehr zum ursprünglichen Nick erlaubt eine neue Anmeldung mit dem bisherigen Passwort.
 
 
@@ -136,6 +135,14 @@ Die genaue Benennung der neu vorgeschlagenen Schlüssel und Variablen muss vor d
 
 - Nach erfolgreichem `on CONNECT` lädt `$system_default_check` die Systemeinstellungen und validiert sie, bevor ein Schlacht-Timer gestartet werden darf.
 - Bei erfolgreicher Prüfung stellt der Helfer die Werte in globalen Variablen bereit. Die Fachmodule lesen anschließend die Variablen statt eigene feste Laufzeitwerte zu verwenden.
-- `System.dat` bleibt eine Pflichtdatei. Das Verhalten bei einer fehlenden oder ungültigen einzelnen Einstellung ist noch festzulegen.
-- Der Endversion-Helfer ergänzt fehlende Einstellungen abhängig von der `SystemDatVersion` mit Standardwerten. Deshalb ist die in PR #5 festgehaltene Idee, bei jedem fehlenden Schlüssel zwingend abzubrechen und niemals einen Standardwert einzutragen, **noch keine bestätigte Regel** und muss mit diesem bestehenden Migrations-/Standardwertkonzept abgeglichen werden.
-- Wertebereiche, Versionsmigration, automatische Ergänzung fehlender Einträge und die Reaktion auf ungültige Werte werden vor Implementierung gemeinsam spezifiziert.
+- Fehlt `System.dat`, legt der V0.1-Helfer die Datei mit Standardwerten an. Fehlen einzelne Einträge, werden sie ebenfalls mit den vorgesehenen Standardwerten ergänzt.
+- Die Ergänzung von Standardwerten soll sich am bestehenden Endversion-Prinzip mit `SystemDatVersion` orientieren. Die konkrete Versionsmigration wird für V0.1 vereinfacht und vor der Implementierung spezifiziert.
+- Bereits vorhandene, aber ungültige Werte dürfen nicht stillschweigend ungeprüft verwendet werden. Ob sie automatisch auf den Standardwert zurückgesetzt werden oder die Startprüfung fehlschlägt, bleibt noch zu entscheiden.
+- Kann die Datei nicht angelegt, geschrieben, erneut gelesen oder erfolgreich validiert werden, startet kein Schlacht-Timer.
+
+
+## Bestätigte Entscheidung: System.dat bei Bedarf automatisch anlegen
+
+Abweichend von der ursprünglichen Planung muss `System.dat` bei einer frischen Installation nicht bereits vorhanden sein. Der Helfer für Version 0.1 legt sie selbst mit den vorgesehenen Standardwerten an. Fehlen einzelne Einstellungen in einer vorhandenen Datei, ergänzt er ebenfalls die dafür vorgesehenen Standardwerte. Anschließend liest und validiert er die resultierende Konfiguration und stellt die Werte in globalen Variablen bereit. Erst nach erfolgreicher Gesamtprüfung startet der Schlacht-Timer.
+
+Diese automatische Anlage gilt nur für `System.dat`. Fehlende Pflichtmodule, `Translation.dat` oder notwendige und ungültige Spieldaten bleiben Fehler der Startprüfung. Bereits vorhandene, aber ungültige Einstellungswerte werden nicht ungeprüft übernommen; ob sie auf Standardwerte zurückgesetzt werden oder den Start abbrechen, ist noch offen.
