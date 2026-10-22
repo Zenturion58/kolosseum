@@ -285,15 +285,19 @@ Bei einem zwischenzeitlichen Nickwechsel wird das Konto nicht auf den neuen Nick
 - Eine Anmeldung bleibt bis zur Trennung vom IRC-Netzwerk oder bis zu einer Nickname-Änderung bestehen. Der jeweilige Vorgang beendet die Sitzung. Kehrt der Spieler später zum ursprünglichen Nickname zurück, kann er sich mit dem bisherigen Passwort erneut anmelden.
 
 
-## Vorschlag zur Prüfung: Konfiguration über System.dat
+## Bestätigte Entscheidung: Konfigurierbare Werte aus System.dat
 
-Noch nicht endgültig freigegeben ist der Vorschlag, folgende bereits besprochene Zahlenwerte in Version 0.1 über `System.dat` einzustellen:
+Die sechs zuvor aufgelisteten Laufzeitwerte sollen bereits in Version 0.1 aus `System.dat` gelesen und in globalen mIRC-Variablen gespeichert werden. Die Module nutzen diese Variablen; die eigentlichen Laufzeitwerte werden nicht separat in der Kampf- oder Timerlogik fest codiert. Das Vorbild dafür ist der Endversion-Helfer, beispielsweise `TimeToEnter` → `%timeToEnter`.
 
-- Erste Schlachtankündigung nach erfolgreicher Startprüfung: `180` Sekunden.
-- Beitrittsfenster: `120` Sekunden.
-- Nächste Schlachtankündigung nach leerer Beitrittsphase bzw. Kampfende: `180` Sekunden.
-- Spieler-Zeitlimit pro Zug: `180` Sekunden.
-- Höchstzahl übersprungener Spielerzüge vor Niederlage: `2`.
-- Belohnung für einen Sieg mit überlebendem Spieler: `10` rote Kugeln.
+Vorgeschlagene Zuordnung:
 
-Wenn dieser Vorschlag angenommen wird, sind alle zugehörigen Einträge Pflichtwerte von `System.dat`. Fehlt ein Wert oder ist er nicht eindeutig, nicht numerisch oder außerhalb des erlaubten Bereichs, schlägt die Startprüfung fehl und es startet kein Schlacht-Timer. Es soll keine stillschweigende Rückfalleinstellung geben. Die konkreten Schlüsselnamen, Wertebereiche, das Dateiformat und der Umgang mit zusätzlichen Schlüsseln bleiben offen, bis wir die Konfiguration gemeinsam bestätigen.
+- Erste Ankündigung nach erfolgreicher Startprüfung: `180` Sekunden; neuer Schlüssel `TimeBeforeFirstBattle`, globale Variable `%timeBeforeFirstBattle`.
+- Beitrittsfrist: `120` Sekunden; vorhandener Schlüssel `TimeToEnter`, globale Variable `%timeToEnter`.
+- Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende: bisher vereinbarte `180` Sekunden; vorhandener Schlüssel `TimeBetweenBattles`, globale Variable `%timeBetweenBattles`.
+- Spieler-Zeitlimit: `180` Sekunden; vorhandener Schlüssel `TimeForIdle`, globale Variable `%timeForIdle`.
+- Höchstzahl übersprungener Spielerzüge: `2`; vorhandener Schlüssel `MaxIdleTurns`, globale Variable `%maxIdleTurns`.
+- Siegesbelohnung: `10` rote Kugeln; neuer vorgeschlagener Schlüssel `VictoryOrbReward`, globale Variable `%victoryOrbReward`.
+
+Die genauen Schlüsselnamen und Variablennamen für neu ergänzte Werte sind noch zu bestätigen. Eine Abweichung muss vor der Implementierung aufgelöst werden: Im vorgelegten Endversion-Helfer hat `TimeBetweenBattles` den Standardwert `120`, während die geplante Regel für v0.1 `180` Sekunden vorsieht.
+
+Die fehlende oder ungültige Einstellung innerhalb einer vorhandenen `System.dat` wird nicht automatisch als fataler Fehler behandelt, solange das Standardwertverhalten noch nicht beschlossen ist. Der Endversion-Helfer ergänzt bei einer Versionsänderung fehlende Werte über `SystemDatVersion`; die Frage, welche Standardwerte der v0.1-Helfer ergänzt und welche ungültigen Werte zum Abbruch führen, wird vor der Implementierung geklärt. Die Datei `System.dat` selbst bleibt Pflicht und ihre Nichterreichbarkeit verhindert weiterhin den Start des Schlacht-Timers.
