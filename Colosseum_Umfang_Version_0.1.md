@@ -239,7 +239,7 @@ Dieser Nachtrag hält Entscheidungen fest, die nach der bisherigen Fassung gemei
 
 - Pro IRC-Nickname ist genau ein Charakterkonto erlaubt.
 - Das Konto bleibt an den bei der Registrierung verwendeten Nickname gebunden. Ein Nickwechsel überträgt das Konto nicht auf den neuen Nick; die Charakterdatei wird durch den Nickwechsel nicht automatisch gelöscht.
-- Noch offen ist, ob die Rückkehr zum ursprünglichen Nickname den Zugriff auf das dort gespeicherte Konto wieder ermöglicht.
+- Wenn der Nutzer später zu seinem ursprünglichen IRC-Nickname zurückkehrt, kann er sich mit dem bisherigen Passwort wieder anmelden. Das Konto wird nicht übertragen; der zwischenzeitliche Nickwechsel löscht die Charakterdatei nicht.
 - Bestätigte Befehle für Version 0.1: `!registrieren`, `!anmelden <Passwort>`, `!abmelden`, `!passwort <altesPasswort> <neuesPasswort>` und `!werte`.
 - `!registrieren` darf im Kanal oder per Privatnachricht ausgelöst werden. Das automatisch generierte Startpasswort wird ausschließlich privat gesendet.
 - `!anmelden` und `!passwort` sind nur per Privatnachricht zulässig. Persönliche Profilfunktionen wie `!werte` setzen eine erfolgreiche Anmeldung voraus.
@@ -260,3 +260,8 @@ Dieser Nachtrag hält Entscheidungen fest, die nach der bisherigen Fassung gemei
 - Allgemeine Spielertexte werden aus `data/Translation.dat` geladen. Angriffstexte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden separat über den dafür vorgesehenen Datenmechanismus verarbeitet.
 - Vor dem Start des Schlacht-Timers müssen Pflichtmodule und `Translation.dat` erfolgreich geprüft sein. In Version 0.1 ist `System.dat` noch keine Pflichtdatei und wird nicht verwendet.
 - Änderungen an Planung und Spezifikation werden während der Entwicklung in einem separaten GitHub-Branch vorbereitet und über einen Pull Request zur Prüfung vorgelegt. `main` wird nicht ohne Freigabe geändert.
+
+
+## Nickname-Bindung – Entscheidung ergänzt
+
+Bei einem zwischenzeitlichen Nickwechsel wird das Konto nicht auf den neuen Nick übertragen, und die gespeicherte Charakterdatei wird nicht automatisch gelöscht. Kehrt der Nutzer zu genau dem ursprünglichen Nickname zurück, darf er sich mit dem bisherigen Passwort wieder anmelden. Die Nickname-Schreibweise und die IRC-netzwerkspezifische Vergleichslogik müssen bei der Implementierung berücksichtigt und getestet werden.
