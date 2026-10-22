@@ -119,11 +119,6 @@ In Version 0.1 werden die bereits besprochenen fünf Laufzeitwerte aus `System.d
 
 ### Bestätigte Zuordnung von Einstellungen und Variablen
 
-| Zweck | Schlüssel in `System.dat` | Standardwert für Version 0.1 | Globale Variable |
-|---|---|---:|---|
-| Beitrittsfenster | `TimeToEnter` | `120` Sekunden | `%timeToEnter` |
-| Zeitlimit eines Spielerzugs | `TimeForIdle` | `180` Sekunden | `%timeForIdle` |
-| Übersprungene Spielerzüge bis zur Niederlage | `MaxIdleTurns` | `2` | `%maxIdleTurns` |
 
 
 ### Initialisierung und Validierung
@@ -161,11 +156,6 @@ Nächster Planungsschritt ist eine vollständige V0.1-Standardwertliste: jeden b
 
 Die folgende Liste ist nicht mehr nur ein Vorschlag. Alle fünf Einstellungen werden in Version 0.1 aus `System.dat` gelesen, validiert und in globalen mIRC-Variablen gespeichert. Die Timer- und Kampfmodule nutzen diese Variablen statt eigener fest codierter Laufzeitwerte.
 
-| Schlüssel in `System.dat` | Globale Variable | Standardwert | Bedeutung |
-|---|---|---:|---|
-| `TimeToEnter` | `%timeToEnter` | `120` Sekunden | Beitrittsfrist für eine angekündigte Schlacht |
-| `TimeForIdle` | `%timeForIdle` | `180` Sekunden | Zeitlimit für einen Spielerzug |
-| `MaxIdleTurns` | `%maxIdleTurns` | `2` | Anzahl übersprungener Spielerzüge bis zur Niederlage |
 
 
 ## Bestätigte Entscheidung: Ordnerstruktur schon in V0.1 am Endprodukt ausrichten
@@ -185,7 +175,7 @@ Dezimalzahlen, nicht numerische Werte sowie Zeitwerte außerhalb des zulässigen
 
 `System.dat` bleibt eine normale, unverschlüsselte Textdatei. Es wird kein verschlüsseltes Dateiformat und kein spezieller automatischer Bereinigungsmechanismus für manuell eingefügte doppelte Schlüsselzeilen eingeführt. Der Nutzer kann die Datei bearbeiten, muss dabei jedoch den dokumentierten Aufbau, die Abschnitts- und Schlüsselnamen sowie die zulässigen Wertebereiche beachten.
 
-Der Systemhelfer prüft weiterhin die sechs bestätigten V0.1-Einstellungen. Vorhandene ungültige Werte werden nicht automatisch ersetzt oder in der Datei geändert. Die betroffene Funktion wird deaktiviert und eine Diagnose erklärt den Fehler sowie den erwarteten Wert bzw. Wertebereich. Erst nach einer manuellen Korrektur und erneuten erfolgreichen Prüfung wird die Funktion wieder aktiviert. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
+Der Systemhelfer prüft weiterhin die fünf festgelegten V0.1-Einstellungen. Vorhandene ungültige Werte werden nicht automatisch ersetzt oder in der Datei geändert. Die betroffene Funktion wird deaktiviert und eine Diagnose erklärt den Fehler sowie den erwarteten Wert bzw. Wertebereich. Erst nach einer manuellen Korrektur und erneuten erfolgreichen Prüfung wird die Funktion wieder aktiviert. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
 
 Doppelte Schlüssel, falsch geschriebene Abschnitte oder andere manuelle Strukturänderungen werden nicht durch eine eigene Reparaturroutine bereinigt. Solche Änderungen können bewirken, dass die Konfiguration fehlerhaft ist oder das Skript nicht wie vorgesehen funktioniert. Eine ausführliche Dokumentation wird später erklären, wie `System.dat` korrekt bearbeitet wird und dass manuelle Änderungen in der Verantwortung des Nutzers liegen.
 
@@ -197,6 +187,23 @@ Enthält ein vorhandener Eintrag in `System.dat` einen ungültigen Wert, veränd
 Die bereits beschlossene automatische Anlage einer fehlenden `System.dat` und das Ergänzen tatsächlich fehlender Einträge mit Standardwerten bleiben bestehen. Davon klar getrennt ist ein vorhandener, aber ungültiger Wert: Dieser wird niemals stillschweigend überschrieben. Die automatische Bereinigung manuell eingefügter doppelter Schlüsselzeilen ist weiterhin nicht vorgesehen.
 
 Für den Schlachtzyklus gilt: Ohne gültige Werte für die jeweils benötigten Ablauf- und Zugzeiten dürfen die abhängigen Timer bzw. Kampfabläufe nicht starten. Die konkrete erneute Prüfung nach einer manuellen Änderung während einer laufenden Verbindung wird vor der Implementierung festgelegt.
+
+## Verbindliche System.dat-Einstellungen für Version 0.1
+
+Die folgenden fünf Einstellungen sind für Version 0.1 festgelegt. Es werden ausschließlich offizielle Wiki-Schlüsselnamen verwendet. Die Endversion-Wiki beschreibt weiterhin das angestrebte Endprodukt; die hier genannten Wertebereiche und die prototypspezifische Verwendung gelten für Version 0.1.
+
+
+### Inaktivität im Kampf
+
+In Version 0.1 wird die Inaktivität über den gesamten Kampf gezählt. Nach dem ersten abgelaufenen Zuglimit wird der Spielerzug übersprungen und das Monster kann erneut angreifen. Erst wenn der Spieler zum zweiten Mal (bei `MaxIdleTurns=2`) keine Aktion ausführt, scheidet er aus. Ein zwischenzeitlich ausgeführter Angriff setzt den Zähler verpasster Züge nicht zurück. Da V0.1 nur einen Spieler pro Kampf zulässt, endet der Kampf dann als Niederlage ohne Belohnung.
+
+### Belohnung und Wiki-Bedeutung
+
+Das offizielle Wiki beschreibt `MaxOrbReward` als Obergrenze der möglichen Kugelbelohnung vor späteren Modifikatoren wie Skills und Accessoires. Version 0.1 verwendet denselben offiziellen Schlüssel prototypspezifisch für eine feste Belohnung von 10 roten Kugeln bei einem Sieg, sofern der Spieler überlebt. Skills, Styles, Accessoires und weitere Belohnungsmodifikatoren sind in V0.1 nicht vorhanden. Bei Niederlage oder Ausscheiden wegen Inaktivität gibt es keine Belohnung.
+
+### Prüfung der Werte
+
+Zeitwerte müssen ganze Zahlen innerhalb der für den jeweiligen Schlüssel angegebenen Grenzen sein. `MaxIdleTurns` muss eine ganze Zahl zwischen 1 und 10 sein. In Version 0.1 ist `MaxOrbReward` auf 10 festgelegt. Vorhandene ungültige Werte werden nicht automatisch überschrieben: Die Diagnose nennt Schlüssel, gefundenen Wert und erwarteten Bereich; die abhängige Funktion bleibt deaktiviert, bis der Nutzer den Wert korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Fehlende Einstellungen dürfen mit den festgelegten Standardwerten ergänzt werden.
 
 ## Verbindliche System.dat-Einstellungen für Version 0.1
 
