@@ -273,7 +273,7 @@ Für den Prototyp wird ein eigener, kleiner `$system_default_check` spezifiziert
 
 ## Bestätigte V0.1-Konfigurationsschnittstelle: fünf Laufzeitwerte
 
-Die folgenden fünf Einträge sind für V0.1 freigegeben. `$system_default_check` stellt die validierten Werte in den jeweils genannten globalen Variablen bereit. Fachmodule dürfen diese Laufzeitwerte nicht zusätzlich mit abweichenden fest codierten Zahlenwerten versehen.
+`$system_default_check` stellt die validierten Werte in globalen Variablen bereit. Fachmodule verwenden diese Laufzeitwerte und legen keine abweichenden Zahlenwerte fest codiert fest. Die verbindliche Wertetabelle steht im Abschnitt „Verbindliche System.dat-Einstellungen für Version 0.1“ am Ende dieses Dokuments.
 
 
 
