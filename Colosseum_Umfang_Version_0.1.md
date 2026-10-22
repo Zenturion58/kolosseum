@@ -329,7 +329,7 @@ Vor der Implementierung wird eine vollständige Standardwertliste für V0.1 besc
 
 ## Bestätigte System.dat-Standardwerte für V0.1
 
-Die folgenden fünf Einstellungen werden getrennt voneinander in `System.dat` geführt, beim Start validiert und in die globalen Variablen übernommen:
+Die fünf Einstellungen werden getrennt voneinander in `System.dat` geführt, beim Start validiert und in globale Variablen übernommen. Die verbindliche Wertetabelle steht im Abschnitt „Verbindliche System.dat-Einstellungen für Version 0.1“ am Ende dieses Dokuments.
 
 
 
