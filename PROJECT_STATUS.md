@@ -192,24 +192,10 @@ Dezimalzahlen, nicht numerische Werte sowie Zeitwerte außerhalb des zulässigen
 Die übrigen beiden Laufzeitwerte werden ebenfalls typgeprüft: `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein; `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein. Die sechs Standardwerte bleiben unverändert.
 
 
-## Bestätigte Entscheidung: unbekannte und doppelte System.dat-Schlüssel
+## Bestätigte Entscheidung: System.dat bleibt eine Klartextdatei
 
-Für Colosseum V0.1 sind nur die sechs festgelegten Einstellungen aktiv. Andere Schlüssel in `System.dat` werden von V0.1 ignoriert, aber nicht gelöscht oder verändert, damit Einstellungen für spätere Versionen erhalten bleiben. Der Systemhelfer meldet unbekannte Schlüssel gesammelt im mIRC-Statusfenster; sie allein verhindern den Start nicht.
+`System.dat` bleibt eine normale, unverschlüsselte Textdatei. Es wird kein verschlüsseltes Dateiformat und kein spezieller automatischer Bereinigungsmechanismus für manuell eingefügte doppelte Schlüsselzeilen eingeführt. Der Nutzer kann die Datei bearbeiten, muss dabei jedoch den dokumentierten Aufbau, die Abschnitts- und Schlüsselnamen sowie die zulässigen Wertebereiche beachten.
 
-Die sechs bekannten Einstellungen werden in der Sektion `[system]` ausgewertet. Ein bekannter Schlüssel außerhalb dieser Sektion zählt nicht als gültige Einstellung für V0.1. Fehlt er in `[system]`, wird er dort mit seinem Standardwert ergänzt.
+Der Systemhelfer prüft weiterhin die sechs bestätigten V0.1-Einstellungen. Ungültige Werte werden gemäß der bestehenden Regeln durch ihre vorgesehenen Standardwerte ersetzt und in der Datei gespeichert; scheitert die erforderliche Validierung oder Speicherung, startet kein Schlacht-Timer. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
 
-Jeder der sechs bekannten Schlüssel darf in der Sektion `[system]` insgesamt nur einmal vorkommen. Mehrfach vorkommende bekannte Schlüssel gelten als mehrdeutig und werden auf den jeweiligen Standardwert zurückgesetzt; die zusätzlichen Vorkommen werden entfernt. Die Korrektur wird im mIRC-Statusfenster gemeldet. Anschließend speichert der Helfer die Datei, liest sie erneut ein und validiert sie erneut. Misslingt ein Schritt, startet kein Schlacht-Timer.
-
-
-## Ergänzende Implementierungshinweise zur System.dat-Bereinigung
-
-Normale Änderungen an Einstellungen werden über `writeini` vorgenommen. Die Bereinigung bereits manuell eingefügter doppelter Textzeilen ist davon getrennt zu behandeln. Ein Reparaturhelfer muss die Datei tatsächlich zeilenweise auslesen; `$line` liest Zeilen aus einem benutzerdefinierten Fenster und ist kein Datei-Leseverfahren.
-
-Die Originaldatei darf nicht vor dem Neuaufbau gelöscht werden. Die Bereinigung erfolgt zunächst in einer temporären Datei, deren Schreiben, Inhalt und Konfiguration erfolgreich geprüft werden müssen. Erst nach erfolgreicher Prüfung darf sie die Originaldatei ersetzen. Bei einem Fehler bleibt die Originaldatei erhalten und der Schlacht-Timer startet nicht. Die Reparatur soll Kommentare, unbekannte Schlüssel und weitere Sektionen erhalten und nur doppelte bekannte V0.1-Schlüssel normalisieren. Vor einer Implementierung wird das Verhalten in mIRC 7.84 mit Testdateien und Sicherungskopien geprüft.
-
-
-## Prüfergebnis zu einem möglichen System.dat-Cleaner
-
-Ein zeilenweiser Cleaner ist als Ansatz relevant, wird aber nicht ungeprüft übernommen. Die konkrete Form `$read(%file, nt, %i)` liest die angegebene Zeilennummer. Ein brauchbarer Entwurf muss allerdings die betroffenen bekannten Schlüssel ausdrücklich sammeln, doppelte Einträge auch über wiederholte `[system]`-Abschnitte hinweg erkennen und nur die sechs bekannten V0.1-Schlüssel bereinigen. Das bloße Auslassen des späteren Duplikats und anschließender Aufruf einer allgemeinen Standardwertprüfung stellt den Standardwert nicht zuverlässig wieder her.
-
-Der Austausch darf die Originaldatei nicht zuerst löschen und muss bei jedem Schreib- oder Prüfungsfehler die Originaldatei erhalten. Unbekannte Schlüssel, andere Abschnitte und Kommentare bleiben unangetastet. Der Entwurf ist deshalb ein brauchbarer Ausgangspunkt für die Spezifikation, aber noch kein übernahmefähiger Implementierungscode.
+Doppelte Schlüssel, falsch geschriebene Abschnitte oder andere manuelle Strukturänderungen werden nicht durch eine eigene Reparaturroutine bereinigt. Solche Änderungen können bewirken, dass die Konfiguration fehlerhaft ist oder das Skript nicht wie vorgesehen funktioniert. Eine ausführliche Dokumentation wird später erklären, wie `System.dat` korrekt bearbeitet wird und dass manuelle Änderungen in der Verantwortung des Nutzers liegen.
