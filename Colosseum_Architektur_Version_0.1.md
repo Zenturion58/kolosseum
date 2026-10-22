@@ -153,3 +153,31 @@ Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu 
 - Das neu erzeugte Startpasswort darf ausschließlich privat an den Spieler gesendet werden. Passwörter dürfen niemals ersatzweise in einem öffentlichen Kanal erscheinen.
 - `!anmelden` und `!passwort` sind ausschließlich per privater Nachricht an den Bot zulässig.
 - Bei einem erkennbaren Fehler bei der privaten Zustellung des Startpassworts wird die Registrierung abgebrochen und der neue Charakterdatensatz entfernt; der Bot informiert den Spieler, dass private Nachrichten vom Bot ermöglicht werden müssen. IRC garantiert nicht in jedem Fall eine Zustellbestätigung, daher kann die Logik nur tatsächlich erkennbare Fehler behandeln.
+
+
+---
+
+## Projektstand-Nachtrag vom 22.10.2026
+
+### Verantwortlichkeiten bestätigt
+
+- `Colosseum.mrc` ist die einzige manuell zu ladende Einstiegsdatei. Sie lädt die erforderlichen Helfer und Fachmodule, prüft den Startzustand und startet den Schlachtzyklus erst nach erfolgreicher Initialisierung.
+- `Character.mrc` enthält Charakterbefehle und Charakterereignisse, Registrierung, Passwortgenerierung und -änderung, Anmeldung/Abmeldung, Profilfunktionen sowie den Ablauf für charakterbezogenes Laden und Speichern. Wiederverwendbare Charakterhelfer liegen in `Characters.als`.
+- `Battle.mrc` enthält Kampf-/Schlachtbefehle und zugehörige Ereignisse. Die Kampfabwicklung wird von Helfern in `BattleControl.als`, `BattleFormula.als`, `Monsters.als` und `BattleRewards.als übernommen.
+- `System.mrc` enthält systembezogene Befehle/Ereignisse; allgemeine Systemhelfer liegen in `SystemAliases.als`.
+- Eine zentrale `Events.mrc` und eine separate `Storage.mrc` sind nicht vorgesehen.
+- `TranslationAliases.als` lädt und verarbeitet allgemeine Nachrichten aus `data/Translation.dat`. Die Datendatei nutzt Abschnittsüberschriften und eindeutige Schlüssel im Format `Schlüssel=Text`. Schlüssel, Platzhalter und mIRC-Formatierungsausdrücke müssen beim Übersetzen unverändert bleiben. Es darf nicht blind beliebiger Dateiinhalt als mIRC-Code ausgewertet werden.
+
+### Bootstrap und Konfiguration
+
+- Zuerst werden die erforderlichen Alias-Dateien geladen; anschließend die Fachmodule `System.mrc`, `Character.mrc` und `Battle.mrc`.
+- Erst nach dem Laden und erfolgreichen Prüfen der Pflichtdateien werden Laufzeitstatus vorbereitet und die Timer gestartet.
+- Bei fehlender oder unbrauchbarer `Translation.dat` (oder einem fehlenden Pflichtmodul) wird die Initialisierung kontrolliert abgebrochen; keine Schlacht-Timer starten. Eine minimale technische Fehlerausgabe im mIRC-Statusfenster muss auch dann möglich sein, wenn Übersetzungstexte nicht geladen werden können.
+- `System.dat` ist für Version 0.1 nicht vorgesehen. In einer späteren Version soll ein Helfer nach dem benannten Muster `$system_default_check` diese Datei einlesen, validieren und die Werte in globalen Variablen verfügbar machen.
+
+### Sicherheit und offene Punkte
+
+- Geplant ist Passwort-Hashing mit Argon2id über mIRCs `$argon2`, jeweils mit individuellem zufälligem Salt. Mindestversion mIRC 7.83; Parameter werden noch vor der Implementierung getestet.
+- Der administrative Passwort-Reset ist für Version 0.1 ausgeschlossen und bleibt ein zukünftiges Feature.
+- Das Konto bleibt an den ursprünglichen IRC-Nick gebunden; bei einem Nickwechsel wird nichts automatisch übertragen oder gelöscht. Noch zu klären ist, ob ein späterer Wechsel zurück zum ursprünglichen Nick den Login mit dem bisherigen Passwort wieder zulassen soll.
+- Die Projektplanung und Spezifikationsänderungen werden in getrennten GitHub-Branches veröffentlicht und als Pull Request überprüfbar gemacht. Produktive `.mrc`-, `.als`- und `.dat`-Dateien werden erst erstellt, wenn die Planungsgrundlagen ausreichend vollständig sind.
