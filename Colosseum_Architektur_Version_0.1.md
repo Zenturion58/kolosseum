@@ -111,7 +111,7 @@ Für Version 0.1 ist verbindlich vorgesehen, dass Nutzer nur `Colosseum.mrc` man
 4. Erst nach dem vollständigen Laden beginnt die Startprüfung. Für Version 0.1 ist `Translation.dat` erforderlich; wird sie vermisst oder kann sie nicht gelesen bzw. vorbereitet werden, wird der Start kontrolliert abgebrochen.
 5. Der Schlachtzyklus wird erst gestartet, wenn alle für diese Version erforderlichen Module und Daten erfolgreich geprüft und initialisiert wurden.
 
-**Fehlerbehandlung beim Start:** Bei einer fehlenden oder fehlerhaften Pflichtdatei startet Colosseum keine Schlacht-Timer und gibt eine technische Diagnose im mIRC-Statusfenster aus. `System.dat` ist die Ausnahme beim Fehlen: Diese Datei wird mit Standardwerten automatisch angelegt. Kann das nicht gelingen oder bleibt die Konfiguration ungültig, wird der Start abgebrochen. Die Diagnose muss auch dann möglich sein, wenn `Translation.dat` selbst fehlt; dafür darf eine minimale technische Statusmeldung direkt im Bootstrap stehen. Das ist keine Spieler-Nachricht im IRC-Kanal.
+**Fehlerbehandlung beim Start:** Bei einer fehlenden oder fehlerhaften Pflichtdatei startet Colosseum keine Schlacht-Timer und gibt eine technische Diagnose im mIRC-Statusfenster aus. `System.dat` ist die Ausnahme beim Fehlen: Diese Datei wird mit Standardwerten automatisch angelegt. Kann `System.dat` nicht angelegt, geschrieben oder erneut gelesen werden, startet kein Schlacht-Timer. Enthält eine vorhandene Datei einen ungültigen Wert, bleibt dieser Eintrag unverändert; die betroffene Funktion wird mit einer verständlichen Diagnose deaktiviert. Unabhängige Botfunktionen dürfen weiterarbeiten. Schlacht-Timer und Kampfabläufe starten nur, wenn alle dafür erforderlichen Einstellungen gültig sind. Die Diagnose muss auch dann möglich sein, wenn `Translation.dat` selbst fehlt; dafür darf eine minimale technische Statusmeldung direkt im Bootstrap stehen. Das ist keine Spieler-Nachricht im IRC-Kanal.
 
 In Version 0.1 muss `System.dat` nach erfolgreicher Verbindung durch `$system_default_check` verfügbar gemacht werden. Fehlt die Datei, legt der Helfer sie mit den vorgesehenen Standardwerten an; fehlen einzelne Einstellungen, ergänzt er diese ebenfalls. Nach Validierung stellt er die Werte in globalen mIRC-Variablen für andere Module bereit. Kann die Datei nicht angelegt, geschrieben, erneut gelesen oder geprüft werden, startet kein Schlacht-Timer.
 
@@ -142,7 +142,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 - Texte, die zu einer Angriffsfähigkeit bzw. Angriffsdefinition gehören, werden nicht als allgemeiner Translation-Schlüssel behandelt, sondern über den dafür vorgesehenen Mechanismus für Angriffs-/Fähigkeitsdaten gelesen. Für den Faustangriff in v0.1 ist dieser konkrete Datenweg noch festzulegen.
 - Da die Werte mIRC-Ausdrücke enthalten können, muss der Übersetzungshelfer diese gezielt und kontrolliert verarbeiten; wir evaluieren nicht blind beliebigen Dateiinhalt als mIRC-Code.
 - Doppelte Schlüssel müssen vor Implementierung aufgelöst werden. Im vorgelegten Beispiel ist `ALREADY_OCCUPIED` zweimal vorhanden; wir behalten nur einen Eintrag oder vergeben für eine tatsächlich andere Meldung einen eigenen eindeutigen Schlüssel.
-- `System.dat` wird in V0.1 bei Bedarf mit Standardwerten angelegt; fehlende Einstellungen werden ergänzt und ungültige Werte durch Standardwerte ersetzt. Die sechs bestätigten Laufzeitwerte werden in globale Variablen eingelesen.
+- `System.dat` wird in V0.1 bei Bedarf mit Standardwerten angelegt; fehlende Einstellungen werden ergänzt. Vorhandene ungültige Werte werden nicht überschrieben: Die betroffene Funktion wird deaktiviert und eine Diagnose nennt den Schlüssel, den gefundenen Wert und den erwarteten Wert bzw. Wertebereich. Die sechs Laufzeitwerte werden nur dann als gültige Laufzeitwerte bereitgestellt, wenn sie erfolgreich geprüft wurden.
 
 ## 8. Noch gemeinsam festzulegen
 
@@ -242,7 +242,7 @@ Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind f
 - `TimeBeforeFirstBattle`, `TimeToEnter`, `TimeBetweenBattles` und `TimeForIdle` müssen ganze Zahlen in Sekunden zwischen `1` und `3600` einschließlich sein. `3600` Sekunden entsprechen einer Stunde und sind die maximale zulässige Warte- bzw. Zugzeit.
 - `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein.
 - `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein.
-- Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb des jeweiligen Bereichs gelten als ungültig. Ein ungültiger vorhandener Wert wird durch den zugehörigen Standardwert ersetzt; die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert.
+- Dezimalzahlen, nicht numerische Inhalte sowie Werte außerhalb des jeweiligen Bereichs gelten als ungültig. Ein vorhandener ungültiger Wert wird nicht automatisch verändert. Der Systemhelfer meldet den Schlüssel, den vorhandenen Inhalt und den erwarteten Datentyp bzw. Wertebereich im mIRC-Statusfenster und deaktiviert die davon abhängige Funktion, bis die Datei korrigiert und erneut erfolgreich geprüft wurde.
 - Der Schlacht-Timer darf nur starten, wenn die korrigierte Konfiguration erfolgreich gespeichert, erneut eingelesen und validiert wurde.
 
 ### Umgang mit manuellen Änderungen an `System.dat`
@@ -258,7 +258,7 @@ Wenn Nutzer Schlüssel doppelt eintragen, Abschnitte falsch schreiben oder die D
 - Nach erfolgreichem `on CONNECT` liest und prüft `$system_default_check` die Pflichtkonfiguration, bevor Timer aktiviert werden.
 - Bei Erfolg schreibt der Helfer jeden validierten Wert in eine globale Variable. Andere Module verwenden diese Werte als zentrale Quelle.
 - Eine fehlende `System.dat` wird automatisch mit Standardwerten erzeugt. Fehlende Schlüssel werden ebenfalls mit ihren vorgesehenen Standardwerten ergänzt; dabei soll das bewährte Versionsprinzip (`SystemDatVersion`) sinngemäß berücksichtigt werden.
-- Bereits vorhandene, ungültige Einstellungswerte werden durch die vorgesehenen Standardwerte ersetzt. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert; anschließend wird die Startprüfung fortgesetzt.
+- Bereits vorhandene, ungültige Einstellungswerte bleiben unverändert. Der Systemhelfer meldet den konkreten Fehler und den erwarteten Wert bzw. Wertebereich; die abhängige Funktion bleibt deaktiviert. Andere unabhängige Funktionen dürfen weiter initialisiert werden.
 - Kann die Datei nicht angelegt, geschrieben, erneut gelesen oder erfolgreich validiert werden, startet kein Schlacht-Timer. Die genaue V0.1-Versionsmigration wird vor der Implementierung dokumentiert.
 
 
@@ -266,12 +266,12 @@ Wenn Nutzer Schlüssel doppelt eintragen, Abschnitte falsch schreiben oder die D
 
 Für Version 0.1 ist keine vorab vorhandene `System.dat` erforderlich. Wenn die Datei fehlt, legt `$system_default_check` sie mit den vorgesehenen Standardwerten an. In einer vorhandenen Datei fehlende Einstellungen ergänzt der Helfer ebenfalls mit Standardwerten. Danach liest und validiert er die endgültigen Einstellungen und stellt sie als globale mIRC-Variablen bereit.
 
-Der Schlacht-Timer startet nur, wenn die automatische Anlage/Ergänzung, die Reparatur ungültiger Einstellungen und die gesamte Startprüfung erfolgreich sind. Ungültige Einstellungswerte werden durch Standardwerte ersetzt; die Korrektur wird im mIRC-Statusfenster gemeldet und in der Datei gespeichert, bevor die Prüfung fortgesetzt wird. Die automatische Anlage von `System.dat` ersetzt keine anderen Pflichtdateien: Eine fehlende `Translation.dat`, ein fehlendes Pflichtmodul oder unbrauchbare notwendige Spieldaten verhindern den Start. Scheitern Schreiben oder Validierung, startet ebenfalls kein Schlacht-Timer.
+Der Schlacht-Timer startet nur, wenn die automatische Anlage/Ergänzung sowie alle für den Schlachtzyklus erforderlichen Prüfungen erfolgreich sind. Vorhandene ungültige Einstellungswerte werden nicht repariert und nicht in der Datei verändert. Die jeweilige Funktion bleibt deaktiviert; Funktionen, die von den ungültigen Werten abhängen, starten nicht. Die automatische Anlage von `System.dat` ersetzt keine anderen Pflichtdateien: Eine fehlende `Translation.dat`, ein fehlendes Pflichtmodul oder unbrauchbare notwendige Spieldaten verhindern den Start. Scheitern Schreiben oder Validierung, startet ebenfalls kein Schlacht-Timer.
 
 
-## Bestätigte Entscheidung: ungültige System.dat-Werte korrigieren
+## Bestätigte Entscheidung: ungültige System.dat-Werte unverändert lassen
 
-Ein vorhandener, aber ungültiger Konfigurationswert wird nicht ungeprüft übernommen und löst nicht allein einen sofortigen Startabbruch aus. `$system_default_check` ersetzt ihn durch den für diesen Schlüssel vorgesehenen Standardwert, meldet die Korrektur im mIRC-Statusfenster und schreibt den korrigierten Wert nach `System.dat`. Anschließend wird die Konfiguration erneut validiert und die Startprüfung fortgesetzt. Wenn Schreiben, erneutes Einlesen oder Validierung fehlschlagen oder eine andere Pflichtprüfung negativ ausfällt, startet kein Schlacht-Timer.
+Ein vorhandener, aber ungültiger Konfigurationswert wird weder ungeprüft verwendet noch automatisch durch einen Standardwert ersetzt. Die Datei bleibt unverändert. `$system_default_check` meldet im mIRC-Statusfenster den betroffenen Schlüssel, den gefundenen Wert und den zulässigen Datentyp bzw. Wertebereich. Die von diesem Wert abhängige Funktion wird deaktiviert, bis der Nutzer den Eintrag korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Unabhängige Botfunktionen dürfen weiterlaufen. Ein Schlacht-Timer oder Kampfablauf startet nur dann, wenn die dafür benötigten Einstellungen gültig sind.
 
 
 ## Bestätigte Abgrenzung: eigener, reduzierter Systemhelfer für V0.1
