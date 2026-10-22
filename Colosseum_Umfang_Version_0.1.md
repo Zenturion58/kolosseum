@@ -289,14 +289,14 @@ Bei einem zwischenzeitlichen Nickwechsel wird das Konto nicht auf den neuen Nick
 
 Die sechs Laufzeitwerte werden bereits in Version 0.1 aus `System.dat` gelesen und in globalen mIRC-Variablen gespeichert. Die Module nutzen diese Variablen; die eigentlichen Laufzeitwerte werden nicht separat in der Kampf- oder Timerlogik fest codiert. Das Vorbild dafür ist der Endversion-Helfer, beispielsweise `TimeToEnter` → `%timeToEnter`.
 
-Vorgeschlagene Zuordnung:
+Bestätigte Zuordnung:
 
-- Erste Ankündigung nach erfolgreicher Startprüfung: `180` Sekunden; neuer Schlüssel `TimeBeforeFirstBattle`, globale Variable `%timeBeforeFirstBattle`.
+- Erste Ankündigung nach erfolgreicher Startprüfung: `180` Sekunden; Schlüssel `TimeBeforeFirstBattle`, globale Variable `%timeBeforeFirstBattle`.
 - Beitrittsfrist: `120` Sekunden; vorhandener Schlüssel `TimeToEnter`, globale Variable `%timeToEnter`.
 - Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende: bisher vereinbarte `180` Sekunden; vorhandener Schlüssel `TimeBetweenBattles`, globale Variable `%timeBetweenBattles`.
 - Spieler-Zeitlimit: `180` Sekunden; vorhandener Schlüssel `TimeForIdle`, globale Variable `%timeForIdle`.
 - Höchstzahl übersprungener Spielerzüge: `2`; vorhandener Schlüssel `MaxIdleTurns`, globale Variable `%maxIdleTurns`.
-- Siegesbelohnung: `10` rote Kugeln; neuer vorgeschlagener Schlüssel `VictoryOrbReward`, globale Variable `%victoryOrbReward`.
+- Siegesbelohnung: `10` rote Kugeln; Schlüssel `VictoryOrbReward`, globale Variable `%victoryOrbReward`.
 
 Die sechs Schlüssel, globalen Variablen und Standardwerte der Tabelle sind bestätigt. Im vorgelegten Endversion-Helfer hat `TimeBetweenBattles` den Standardwert `120`; für V0.1 ist ausdrücklich `180` Sekunden festgelegt.
 
