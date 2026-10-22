@@ -11,7 +11,7 @@
 - Beim Start wird geprüft, ob `Translation.dat` vorhanden und lesbar ist. Bei einem Fehler wird die Initialisierung kontrolliert abgebrochen; insbesondere dürfen keine Schlacht-Timer starten, solange Pflichtdateien oder erforderliche Module nicht bereit sind.
 - `System.dat` gehört nicht zum Umfang von Version 0.1. Der Start prüft diese Datei daher noch nicht; die Zeiten bleiben für diese Version fest vorgegeben. Sobald `System.dat` später eingeführt wird, müssen die Einstellungen vor dem Start des Schlachtzyklus geprüft und in globale Variablen übertragen werden.
 - Die vollständige Charaktervorlage aus der Dokumentation darf als Grundlage verwendet werden. Version 0.1 liest und verarbeitet aber nur die Felder, die sie tatsächlich benötigt.
-- Funktionen, die nicht ausdrücklich zum Umfang von Version 0.1 gehören, bleiben für spätere Versionen vorgemerkt.
+- Funktionen, die nicht ausdrücklich zum Umfang von Version 0.1 gehören, bleiben für spätere Versionen vorgemerkt. Der administrative Passwort-Reset ist eine solche Zukunftsfunktion.
 - Änderungen am Umfang werden gemeinsam besprochen und bestätigt, bevor sie implementiert werden.
 
 ## 2. Version 0.1: Charakter und Anmeldung
@@ -23,7 +23,7 @@
 - Passwörter werden niemals im Klartext in Charakterdateien gespeichert. Für die Speicherung ist ein geeignetes Passwort-Hashverfahren mit individuellem zufälligem Salt pro Charakter vorgesehen.
 - Als Passwort-Hashverfahren ist Argon2id über mIRCs `$argon2` vorgesehen. Colosseum 0.1 setzt mIRC 7.83 oder neuer voraus; die konkreten Parameter und die Speicherung der Hash-Metadaten werden vor der Implementierung festgelegt.
 - Ein Passwortwechsel ist vorgesehen.
-- Vergessene Passwörter können nicht wiederhergestellt oder angezeigt werden. Ein berechtigter Bot-Administrator darf das Passwort zurücksetzen; das neue Passwort wird anschließend ebenfalls ausschließlich als Hash mit individuellem Salt gespeichert. Der genaue Ablauf des Zurücksetzens (z. B. Erzeugung eines neuen temporären Passworts und private Zustellung) wird vor der Implementierung festgelegt.
+- Vergessene Passwörter können nicht wiederhergestellt oder angezeigt werden. **Ein administrativer Passwort-Reset ist für Version 0.1 ausdrücklich zurückgestellt** und wird für eine spätere Version vorgemerkt. Wenn wir ihn ergänzen, darf auch danach nur ein neuer Hash mit individuellem Salt gespeichert werden; Ablauf und private Zustellung werden dann separat festgelegt.
 - `!werte` zeigt dem Spieler seine aktuellen HP und TP sowie die vier Kernattribute Stärke, Verteidigung, Intelligenz und Schnelligkeit. Die Ausgabe erfolgt privat.
 - Charakterdaten bleiben nach einem Bot-Neustart erhalten.
 - Die Charaktervorlage orientiert sich an der Dokumentation; nicht benötigte Felder dürfen zunächst ungenutzt bleiben.

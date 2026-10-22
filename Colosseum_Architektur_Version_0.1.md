@@ -112,7 +112,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 - Passwörter werden niemals im Klartext in `.chr`-Dateien gespeichert. Das automatisch erzeugte Startpasswort wird einmalig per privater Nachricht an den Spieler gesendet.
 - Vorgesehen ist ein moderner Passwort-Hash mit individuellem zufälligem Salt pro Charakter. Beim Login wird der eingegebene Passwortkandidat mit den gespeicherten Parametern geprüft; der Klartext wird nicht gespeichert.
 - **Vorgesehene Hashfunktion:** Argon2id über mIRCs `$argon2`-Identifier. Für Colosseum 0.1 wird mIRC 7.83 oder neuer als Mindestversion vorausgesetzt; der Nutzer verwendet mIRC 7.84. Die geeigneten Parameter müssen wir bei der Implementierung testen und so wählen, dass sie sicher sind und keine übermäßig lange Blockierung des Clients verursachen. Quellen: [mIRC-Versionen und Neuigkeiten](https://www.mirc.com/news.html), [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
-- Vergessene Passwörter können nicht aus dem gespeicherten Hash wiederhergestellt oder angezeigt werden. Ein berechtigter Bot-Administrator darf das Passwort zurücksetzen; der genaue Ablauf (z. B. Erzeugung und private Zustellung eines temporären Passworts) wird vor Implementierung festgelegt. Auch danach wird ausschließlich ein Hash mit individuellem Salt gespeichert.
+- Vergessene Passwörter können nicht aus dem gespeicherten Hash wiederhergestellt oder angezeigt werden. **Ein administrativer Passwort-Reset gehört nicht zu Version 0.1** und ist für eine spätere Version vorgemerkt. Bei einer späteren Umsetzung werden Ablauf, Berechtigungsprüfung und private Zustellung festgelegt; auch dann wird ausschließlich ein neuer Hash mit individuellem Salt gespeichert.
 - Ein schneller Einzelhash wie ein alleiniger SHA-256-Aufruf ist nicht als Passwortspeicherverfahren vorgesehen.
 
 ## 7. Datenformate
@@ -129,7 +129,7 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 ## 8. Noch gemeinsam festzulegen
 
 1. Exakte Befehlsnamen und Schreibweisen für Registrierung/Login/Logout/Passwortänderung/Profilbefehle.
-2. Konkrete Argon2id-Parameter und der Ablauf für einen administrativen Passwort-Reset (z. B. temporäres Passwort und private Zustellung). Die Mindestversion mIRC 7.83 oder neuer ist bestätigt.
+2. Konkrete Argon2id-Parameter. Die Mindestversion mIRC 7.83 oder neuer ist bestätigt. Der administrative Passwort-Reset ist aus Version 0.1 ausgeklammert und wird erst für eine spätere Version spezifiziert.
 3. Technische Details der `Translation.dat`: Zeichencodierung, Abschnitts-/Schlüsselauflösung, kontrollierte Verarbeitung der mIRC-Formatierungsausdrücke und Verhalten bei fehlenden Schlüsseln.
 4. Ob und wie das `.chr`- bzw. `.char`-Datenformat aus der Wiki für v0.1 minimal angepasst werden muss.
 5. Exakte Schadensformel und Werte der fünf Startmonster.
