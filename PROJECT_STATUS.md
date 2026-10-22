@@ -190,3 +190,12 @@ Die vier Zeitangaben in `System.dat` dürfen höchstens eine Stunde betragen. `T
 Dezimalzahlen, nicht numerische Werte sowie Zeitwerte außerhalb des zulässigen Bereichs gelten als ungültig. Der V0.1-Systemhelfer ersetzt einen vorhandenen ungültigen Eintrag durch den zugehörigen Standardwert, meldet die Korrektur im mIRC-Statusfenster und speichert den korrigierten Wert in `System.dat`. Kann die Datei danach nicht erfolgreich gespeichert, erneut eingelesen oder validiert werden, startet kein Schlacht-Timer.
 
 Die übrigen beiden Laufzeitwerte werden ebenfalls typgeprüft: `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein; `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein. Die sechs Standardwerte bleiben unverändert.
+
+
+## Bestätigte Entscheidung: unbekannte und doppelte System.dat-Schlüssel
+
+Für Colosseum V0.1 sind nur die sechs festgelegten Einstellungen aktiv. Andere Schlüssel in `System.dat` werden von V0.1 ignoriert, aber nicht gelöscht oder verändert, damit Einstellungen für spätere Versionen erhalten bleiben. Der Systemhelfer meldet unbekannte Schlüssel gesammelt im mIRC-Statusfenster; sie allein verhindern den Start nicht.
+
+Die sechs bekannten Einstellungen werden in der Sektion `[system]` ausgewertet. Ein bekannter Schlüssel außerhalb dieser Sektion zählt nicht als gültige Einstellung für V0.1. Fehlt er in `[system]`, wird er dort mit seinem Standardwert ergänzt.
+
+Jeder der sechs bekannten Schlüssel darf in der Sektion `[system]` insgesamt nur einmal vorkommen. Mehrfach vorkommende bekannte Schlüssel gelten als mehrdeutig und werden auf den jeweiligen Standardwert zurückgesetzt; die zusätzlichen Vorkommen werden entfernt. Die Korrektur wird im mIRC-Statusfenster gemeldet. Anschließend speichert der Helfer die Datei, liest sie erneut ein und validiert sie erneut. Misslingt ein Schritt, startet kein Schlacht-Timer.
