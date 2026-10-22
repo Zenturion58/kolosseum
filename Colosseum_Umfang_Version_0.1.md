@@ -331,11 +331,6 @@ Vor der Implementierung wird eine vollständige Standardwertliste für V0.1 besc
 
 Die folgenden fünf Einstellungen werden getrennt voneinander in `System.dat` geführt, beim Start validiert und in die globalen Variablen übernommen:
 
-| Schlüssel | Globale Variable | Standardwert |
-|---|---|---:|
-| `TimeToEnter` | `%timeToEnter` | `120` Sekunden |
-| `TimeForIdle` | `%timeForIdle` | `180` Sekunden |
-| `MaxIdleTurns` | `%maxIdleTurns` | `2` |
 
 
 ## Bestätigte Entscheidung: Ordnerstruktur des Endprodukts bereits in V0.1 verwenden
@@ -343,6 +338,23 @@ Die folgenden fünf Einstellungen werden getrennt voneinander in `System.dat` ge
 Die vollständige Grundstruktur orientiert sich von Beginn an am geplanten Endprodukt. Die `.mrc`- und `.als`-Dateien, `System.dat` und `Translation.dat` liegen im Projekt-Hauptordner. Spielercharaktere werden in `characters/` und Monsterdefinitionen in `monsters/` gespeichert. Weitere Verzeichnisse aus dem Endversion-Helfer (`bosses/`, `zapped/`, `npcs/`, `summons/` und `help-files/`) gehören bereits zum vorgesehenen Hauptordner-Layout, auch wenn V0.1 ihre jeweiligen Funktionen nicht implementiert oder die Verzeichnisse noch nicht befüllt.
 
 Es wird kein zusätzlicher `scripts/`- oder `data/`-Ordner eingeführt, der beim Ausbau zur Endversion wieder verlassen werden müsste. Damit sollen Datei- und Ordnerumzüge bei späteren Versionsschritten vermieden werden. Nur die Funktionen, Module und Daten, die V0.1 benötigt, werden tatsächlich umgesetzt.
+
+## Verbindliche System.dat-Einstellungen für Version 0.1
+
+Die folgenden fünf Einstellungen sind für Version 0.1 festgelegt. Es werden ausschließlich offizielle Wiki-Schlüsselnamen verwendet. Die Endversion-Wiki beschreibt weiterhin das angestrebte Endprodukt; die hier genannten Wertebereiche und die prototypspezifische Verwendung gelten für Version 0.1.
+
+
+### Inaktivität im Kampf
+
+In Version 0.1 wird die Inaktivität über den gesamten Kampf gezählt. Nach dem ersten abgelaufenen Zuglimit wird der Spielerzug übersprungen und das Monster kann erneut angreifen. Erst wenn der Spieler zum zweiten Mal (bei `MaxIdleTurns=2`) keine Aktion ausführt, scheidet er aus. Ein zwischenzeitlich ausgeführter Angriff setzt den Zähler verpasster Züge nicht zurück. Da V0.1 nur einen Spieler pro Kampf zulässt, endet der Kampf dann als Niederlage ohne Belohnung.
+
+### Belohnung und Wiki-Bedeutung
+
+Das offizielle Wiki beschreibt `MaxOrbReward` als Obergrenze der möglichen Kugelbelohnung vor späteren Modifikatoren wie Skills und Accessoires. Version 0.1 verwendet denselben offiziellen Schlüssel prototypspezifisch für eine feste Belohnung von 10 roten Kugeln bei einem Sieg, sofern der Spieler überlebt. Skills, Styles, Accessoires und weitere Belohnungsmodifikatoren sind in V0.1 nicht vorhanden. Bei Niederlage oder Ausscheiden wegen Inaktivität gibt es keine Belohnung.
+
+### Prüfung der Werte
+
+Zeitwerte müssen ganze Zahlen innerhalb der für den jeweiligen Schlüssel angegebenen Grenzen sein. `MaxIdleTurns` muss eine ganze Zahl zwischen 1 und 10 sein. In Version 0.1 ist `MaxOrbReward` auf 10 festgelegt. Vorhandene ungültige Werte werden nicht automatisch überschrieben: Die Diagnose nennt Schlüssel, gefundenen Wert und erwarteten Bereich; die abhängige Funktion bleibt deaktiviert, bis der Nutzer den Wert korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Fehlende Einstellungen dürfen mit den festgelegten Standardwerten ergänzt werden.
 
 ## Verbindliche System.dat-Einstellungen für Version 0.1
 
