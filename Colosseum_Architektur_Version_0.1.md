@@ -209,16 +209,16 @@ Die Anmeldesitzung endet, sobald die Verbindung zum IRC-Netzwerk abbricht oder d
 
 In Version 0.1 dienen die Einstellungen in `System.dat` als Quelle der konfigurierbaren Laufzeitwerte. Beim Initialisieren werden sie geprüft und in globale mIRC-Variablen geschrieben. Die Fachmodule verwenden anschließend die Variablen, nicht selbst fest codierte Zahlenwerte. Dieses Muster lehnt sich an den vorhandenen Helfer der Endversion an, etwa `TimeToEnter` → `%timeToEnter`.
 
-| Zweck | Konfigurationsschlüssel (vorläufig) | Zielwert v0.1 | Globale Variable (vorläufig) |
+| Zweck | Schlüssel in `System.dat` | Standardwert V0.1 | Globale Variable |
 |---|---|---:|---|
 | Erste Schlachtankündigung nach erfolgreicher Startprüfung | `TimeBeforeFirstBattle` | `180` Sekunden | `%timeBeforeFirstBattle` |
 | Beitrittsfenster | `TimeToEnter` | `120` Sekunden | `%timeToEnter` |
-| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` | laut v0.1-Planung `180` Sekunden | `%timeBetweenBattles` |
+| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` | `180` Sekunden | `%timeBetweenBattles` |
 | Zeitlimit für den Spielerzug | `TimeForIdle` | `180` Sekunden | `%timeForIdle` |
 | Maximal übersprungene Spielerzüge | `MaxIdleTurns` | `2` | `%maxIdleTurns` |
 | Rote Kugeln als Siegesbelohnung | `VictoryOrbReward` | `10` | `%victoryOrbReward` |
 
-Schlüsselnamen für neu ergänzte Einstellungen sind Vorschläge und werden vor der Implementierung bestätigt. Der bestehende Endversion-Helfer setzt `TimeBetweenBattles` derzeit auf `120`; die v0.1-Planung sieht nach einer leeren Beitrittsphase oder einem Kampfende dagegen den nächsten Ankündigungs-Countdown nach `180` Sekunden vor. Diese Differenz ist vor der Umsetzung aufzulösen.
+Die sechs Schlüssel, globalen Variablen und Standardwerte in der Tabelle sind für V0.1 bestätigt. Der Endversion-Helfer setzt `TimeBetweenBattles` derzeit auf `120`; für V0.1 ist ausdrücklich `180` Sekunden vorgesehen. Dieser Unterschied ist beabsichtigt, da der Helfer der Endversion nicht unverändert kopiert wird.
 
 ### Lade-, Prüf- und Standardwertverhalten
 
