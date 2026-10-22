@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für den Timer-Start bei IRC-Verbindung: planning/connect-timer-2026-10-22.
+- Aktueller Arbeitsbranch für Systemprüfung und Anmeldesitzung: planning/startup-check-login-session-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
@@ -34,7 +34,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 
 - Pro IRC-Nickname ist genau ein Charakterkonto erlaubt.
 - Das Konto bleibt an den bei der Registrierung verwendeten Nickname gebunden. Ein Nickwechsel überträgt es nicht auf den neuen Nick; die Charakterdatei wird durch den Nickwechsel nicht automatisch gelöscht.
-- Noch offen: Was passiert, wenn der Nutzer später zum ursprünglichen Nickname zurückkehrt?
+- Eine Anmeldesitzung endet bei Netzwerk-Trennung oder Nickname-Änderung. Bei Rückkehr zum ursprünglichen Nick kann der Spieler sich erneut mit seinem bisherigen Passwort anmelden.
 - Befehle: !registrieren, !anmelden mit Passwort, !abmelden, !passwort mit altem und neuem Passwort sowie !werte.
 - !registrieren funktioniert im Kanal oder per privater Nachricht; der Befehl enthält kein Passwort.
 - Das automatisch erzeugte Startpasswort wird nur privat gesendet. Bei einem erkennbaren Zustellfehler wird der Spieler informiert, die Registrierung abgebrochen und der Datensatz entfernt. Das Passwort darf niemals öffentlich ausgegeben werden. IRC liefert nicht für jede Nichtzustellung ein verlässliches Fehlerereignis.
@@ -46,7 +46,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 ### Kampfablauf
 
 - Es gibt höchstens eine aktive Kampfinstanz. Version 0.1 nimmt pro Kampf höchstens einen Spieler auf; Mehrspieler-Unterstützung ist für später geplant.
-- Nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) und bestandener Pflichtdateiprüfung startet der Schlacht-Timer. Die erste Ankündigung erfolgt nach drei Minuten; nicht bereits beim Laden/Starten des Skripts.
+- Nach erfolgreichem IRC-Verbindungsereignis (`on CONNECT`) wird `$system_default_check` aufgerufen. Der Schlacht-Timer startet nur, wenn alle Pflichtprüfungen erfolgreich sind; die erste Ankündigung folgt drei Minuten danach.
 - Der automatische Schlachtzyklus kündigt eine Schlacht an; die Beitrittsfrist beträgt 120 Sekunden.
 - Nach leerer Beitrittsphase oder nach Kampfende kündigt der Bot die nächste Schlacht in drei Minuten an.
 - Pro Kampf wird genau ein zufälliges normales Monster ausgewählt. Mindestens fünf eigene Monster sind vorgesehen; Bosse gehören nicht zu Version 0.1.
@@ -67,8 +67,8 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Character.mrc verantwortet Charakterfunktionen einschließlich charakterbezogener Speicherung; Characters.als enthält zugehörige wiederverwendbare Helfer. Eine separate Storage.mrc ist nicht vorgesehen.
 - Allgemeine, sichtbare Botmeldungen werden aus data/Translation.dat geladen. Die Datei hat Abschnitte und eindeutige Schlüssel im Format Schlüssel=Text. Schlüssel links vom Gleichheitszeichen, Platzhalter wie %user% und mIRC-Formatierungsbestandteile wie $chr(3), $chr(15), $chr(2) und $+ bleiben bei Übersetzungen unverändert.
 - Texte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden getrennt über den vorgesehenen Datenmechanismus verarbeitet, nicht als allgemeine Translation-Schlüssel behandelt.
-- Beim Start werden alle Pflichtmodule und Translation.dat geprüft. Bei Fehlern startet kein Schlacht-Timer; eine technische Diagnose erscheint im mIRC-Statusfenster.
-- System.dat und der Helfer $system_default_check sind Zukunftsfunktionen. In Version 0.1 werden Zeitwerte fest im Code vorgegeben.
+- `$system_default_check` prüft nach `on CONNECT` die `System.dat`, `Translation.dat`, Pflichtmodule sowie vorhandene/gültige Datenbestände für Monster, Waffen, Techniken, Skills usw. Jeder Fehler verhindert den Schlacht-Timerstart; eine technische Diagnose erscheint im mIRC-Statusfenster.
+- `System.dat` und `$system_default_check` sind bereits für die Startprüfung von Version 0.1 vorgesehen. Der Helfer liest gültige Werte in globale Variablen. Noch festzulegen ist, welche Einstellungen Version 0.1 aktiv nutzt und welche Zeitwerte vorerst fest bleiben.
 - Die vollständige Charaktervorlage dient als Grundlage; Version 0.1 liest und verändert nur die benötigten Felder.
 
 ## Noch offen
@@ -80,7 +80,8 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 5. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
 6. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
 7. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-8. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
+8. Welche System.dat-Schlüssel und Werte müssen in Version 0.1 vorhanden und gültig sein, und welche davon steuern bereits die Laufzeit?
+9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
 
@@ -99,9 +100,16 @@ Ein Konto wird nicht auf einen geänderten Nickname übertragen und bei einem Ni
 
 ## Neue bestätigte Entscheidung: Timer-Start
 
-Der Schlacht-Timer startet erst nach dem erfolgreichen IRC-Verbindungsereignis (`on CONNECT`) und erfolgreicher Prüfung der Pflichtmodule sowie `Translation.dat`. Drei Minuten nach diesem Verbindungsereignis erscheint die erste Schlachtankündigung. Das Skript-Laden allein startet den Zyklus nicht. Bei Disconnect werden die Timer bereinigt; nach Wiederverbindung darf nur ein sauber neu gestarteter Zyklus laufen.
+Nach erfolgreichem `on CONNECT` ruft der Startablauf `$system_default_check` auf. Nur bei erfolgreicher Prüfung von `System.dat`, `Translation.dat`, Pflichtmodulen und benötigten Datenbeständen (Monster, Waffen, Techniken, Skills usw.) startet der Dreiminuten-Timer. Bei Fehlern startet kein Timer; Disconnect bereinigt laufende Timer.
 
 
 ## Verbindliche Ablaufregel: Verbindung und erster Timer
 
-Der erste Schlacht-Timer startet erst nach dem erfolgreichen IRC-Verbindungsereignis (`on CONNECT`) und nachdem Pflichtmodule sowie `Translation.dat` geprüft wurden. Die erste Ankündigung folgt drei Minuten später. Bei Disconnect werden laufende Timer bereinigt, sodass eine spätere Verbindung den Zyklus ohne doppelte Timer neu starten kann.
+Der erste Schlacht-Timer startet erst nach `on CONNECT` und nachdem `$system_default_check` alle Pflichtprüfungen (einschließlich `System.dat`, `Translation.dat` und benötigter Spieldaten) erfolgreich abgeschlossen hat. Die erste Ankündigung folgt drei Minuten später. Bei Disconnect werden laufende Timer bereinigt; nach Wiederverbindung darf ein einzelner neuer Zyklus beginnen.
+
+
+## Neue bestätigte Entscheidungen: Systemprüfung und Anmeldung
+
+- Nach erfolgreichem `on CONNECT` wird `$system_default_check` ausgeführt. Er prüft `System.dat`, `Translation.dat`, Pflichtmodule und die erforderlichen Datenbestände (Monster, Waffen, Techniken, Skills usw.). Jeder fehlgeschlagene Check verhindert den Start des Schlacht-Timers.
+- Bei erfolgreicher Prüfung liest der Helfer gültige Systemwerte aus `System.dat` in globale Variablen, die weitere Module verwenden können. Die konkrete Liste der Schlüssel und welche Werte in Version 0.1 tatsächlich dynamisch angewendet werden, ist noch festzulegen.
+- Die Anmeldesitzung endet bei Netzwerk-Trennung oder Nickname-Änderung. Das Konto wird nicht übertragen; eine Rückkehr zum ursprünglichen Nick erlaubt eine neue Anmeldung mit dem bisherigen Passwort.
