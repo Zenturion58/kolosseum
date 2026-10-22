@@ -283,3 +283,17 @@ Bei einem zwischenzeitlichen Nickwechsel wird das Konto nicht auf den neuen Nick
 - Die Prüfung umfasst `System.dat`, `Translation.dat`, erforderliche Module und die vorhandenen/lesbaren/validen Datenbestände für Monster, Waffen, Techniken, Skills und weitere registrierte Spielinhalte. Welche dieser Bestände als konkrete Dateien bzw. Datenlisten organisiert werden, wird bei der Datenstrukturplanung festgelegt.
 - Bei fehlender Datei, ungültigen Einstellungen, fehlenden Pflichtdaten oder einem negativen Prüfergebnis wird eine technische Meldung im mIRC-Statusfenster ausgegeben. Es startet kein Schlacht-Timer.
 - Eine Anmeldung bleibt bis zur Trennung vom IRC-Netzwerk oder bis zu einer Nickname-Änderung bestehen. Der jeweilige Vorgang beendet die Sitzung. Kehrt der Spieler später zum ursprünglichen Nickname zurück, kann er sich mit dem bisherigen Passwort erneut anmelden.
+
+
+## Vorschlag zur Prüfung: Konfiguration über System.dat
+
+Noch nicht endgültig freigegeben ist der Vorschlag, folgende bereits besprochene Zahlenwerte in Version 0.1 über `System.dat` einzustellen:
+
+- Erste Schlachtankündigung nach erfolgreicher Startprüfung: `180` Sekunden.
+- Beitrittsfenster: `120` Sekunden.
+- Nächste Schlachtankündigung nach leerer Beitrittsphase bzw. Kampfende: `180` Sekunden.
+- Spieler-Zeitlimit pro Zug: `180` Sekunden.
+- Höchstzahl übersprungener Spielerzüge vor Niederlage: `2`.
+- Belohnung für einen Sieg mit überlebendem Spieler: `10` rote Kugeln.
+
+Wenn dieser Vorschlag angenommen wird, sind alle zugehörigen Einträge Pflichtwerte von `System.dat`. Fehlt ein Wert oder ist er nicht eindeutig, nicht numerisch oder außerhalb des erlaubten Bereichs, schlägt die Startprüfung fehl und es startet kein Schlacht-Timer. Es soll keine stillschweigende Rückfalleinstellung geben. Die konkreten Schlüsselnamen, Wertebereiche, das Dateiformat und der Umgang mit zusätzlichen Schlüsseln bleiben offen, bis wir die Konfiguration gemeinsam bestätigen.

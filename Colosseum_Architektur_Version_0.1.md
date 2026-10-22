@@ -203,3 +203,21 @@ Nach erfolgreichem `on CONNECT` ruft der Initialisierungsablauf `$system_default
 ## Bestätigte Ablaufregel: Anmeldesitzung
 
 Die Anmeldesitzung endet, sobald die Verbindung zum IRC-Netzwerk abbricht oder der Nickname geändert wird. Das Konto selbst bleibt an den ursprünglichen Nick gebunden und wird bei einem Nickwechsel nicht übertragen oder gelöscht. Nach der Rückkehr zum ursprünglichen Nick kann der Spieler sich mit dem bisherigen Passwort neu anmelden.
+
+
+## Vorschlag zur Prüfung: Laufzeitwerte aus System.dat
+
+Die genaue Konfigurationsschnittstelle ist noch nicht freigegeben. Als Arbeitsvorschlag sollen die folgenden bereits vereinbarten Regeln in Version 0.1 aus `System.dat` gelesen und nach erfolgreicher Validierung in globalen Variablen für die jeweiligen Module bereitgestellt werden:
+
+| Schlüssel (vorläufig) | Startwert | Verbraucher |
+|---|---:|---|
+| `battle.first_announcement_delay_seconds` | `180` | System-/Timersteuerung |
+| `battle.join_window_seconds` | `120` | Kampfsteuerung |
+| `battle.next_announcement_delay_seconds` | `180` | System-/Timersteuerung |
+| `battle.player_turn_timeout_seconds` | `180` | Kampfsteuerung |
+| `battle.max_skipped_player_turns` | `2` | Kampfsteuerung |
+| `battle.victory_red_orbs` | `10` | Belohnungslogik |
+
+Die Werte spiegeln den aktuellen Plan wider; ihre Konfigurierbarkeit ist noch zu bestätigen. Schlüsselnamen, Dateisyntax, Zeichencodierung, zulässige Wertebereiche und die Behandlung unbekannter Schlüssel bleiben vor der Implementierung offen.
+
+Falls freigegeben, prüft `$system_default_check` vor dem ersten Timer alle sechs Einträge auf Vorhandensein, Eindeutigkeit, numerische Gültigkeit und Wertebereich. Ein Fehler verhindert den Start des Schlachtzyklus. Fehlende Pflichtwerte dürfen nicht unbemerkt durch im Code hinterlegte Ersatzwerte ersetzt werden. Die Prüfung dieser Werte ist von den Dateiprüfungen für Module und Spieldaten getrennt.
