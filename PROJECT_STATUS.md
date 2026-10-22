@@ -137,7 +137,7 @@ Die sechs Schlüssel, globalen Variablen und Standardwerte in dieser Tabelle sin
 - Bei erfolgreicher Prüfung stellt der Helfer die Werte in globalen Variablen bereit. Die Fachmodule lesen anschließend die Variablen statt eigene feste Laufzeitwerte zu verwenden.
 - Fehlt `System.dat`, legt der V0.1-Helfer die Datei mit Standardwerten an. Fehlen einzelne Einträge, werden sie ebenfalls mit den vorgesehenen Standardwerten ergänzt.
 - Die Ergänzung von Standardwerten soll sich am bestehenden Endversion-Prinzip mit `SystemDatVersion` orientieren. Die konkrete Versionsmigration wird für V0.1 vereinfacht und vor der Implementierung spezifiziert.
-- Bereits vorhandene, aber ungültige Werte werden durch den jeweiligen Standardwert ersetzt. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert; anschließend wird die Startprüfung fortgesetzt. Kann die Korrektur nicht geschrieben oder erfolgreich validiert werden, startet kein Schlacht-Timer.
+- Bereits vorhandene, aber ungültige Werte bleiben unverändert. Der Systemhelfer meldet den Schlüssel, den vorhandenen Inhalt und den erwarteten Datentyp bzw. Wertebereich im mIRC-Statusfenster. Die vom Wert abhängige Funktion wird deaktiviert, bis der Nutzer den Eintrag korrigiert und die Konfiguration erneut erfolgreich geprüft wurde; unabhängige Botfunktionen dürfen weiterlaufen.
 - Kann die Datei nicht angelegt, geschrieben, erneut gelesen oder erfolgreich validiert werden, startet kein Schlacht-Timer.
 
 
@@ -145,12 +145,12 @@ Die sechs Schlüssel, globalen Variablen und Standardwerte in dieser Tabelle sin
 
 Abweichend von der ursprünglichen Planung muss `System.dat` bei einer frischen Installation nicht bereits vorhanden sein. Der Helfer für Version 0.1 legt sie selbst mit den vorgesehenen Standardwerten an. Fehlen einzelne Einstellungen in einer vorhandenen Datei, ergänzt er ebenfalls die dafür vorgesehenen Standardwerte. Anschließend liest und validiert er die resultierende Konfiguration und stellt die Werte in globalen Variablen bereit. Erst nach erfolgreicher Gesamtprüfung startet der Schlacht-Timer.
 
-Diese automatische Anlage gilt nur für `System.dat`. Fehlende Pflichtmodule, `Translation.dat` oder notwendige und ungültige Spieldaten bleiben Fehler der Startprüfung. Bereits vorhandene ungültige Einstellungswerte werden auf ihre vorgesehenen Standardwerte zurückgesetzt, die Korrektur wird im mIRC-Statusfenster gemeldet und die aktualisierte Datei wird gespeichert. Danach setzt der Helfer die Prüfung fort. Scheitert das Schreiben oder die anschließende Validierung, startet kein Schlacht-Timer.
+Diese automatische Anlage gilt nur für `System.dat`. Fehlende Pflichtmodule, `Translation.dat` oder notwendige und ungültige Spieldaten bleiben Fehler der Startprüfung. Bereits vorhandene ungültige Einstellungswerte bleiben unverändert. Der Helfer meldet den konkreten Fehler und deaktiviert die abhängige Funktion, bis der Nutzer den Eintrag korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Scheitert das Schreiben oder die anschließende Validierung, startet kein Schlacht-Timer.
 
 
-## Bestätigte Entscheidung: ungültige System.dat-Werte reparieren
+## Bestätigte Entscheidung: vorhandene ungültige System.dat-Werte nicht verändern
 
-Wenn ein vorhandener Eintrag in `System.dat` einen ungültigen Wert enthält, ersetzt der V0.1-Helfer diesen Wert durch den für den Eintrag vorgesehenen Standardwert. Die Korrektur wird im mIRC-Statusfenster gemeldet und in `System.dat` gespeichert. Danach setzt der Helfer die Startprüfung fort und prüft die korrigierte Konfiguration erneut. Nur wenn die Konfiguration und alle übrigen Pflichtmodule und Spieldaten erfolgreich geprüft wurden, startet der Schlacht-Timer. Kann die Korrektur nicht dauerhaft geschrieben oder validiert werden, bleibt der Start abgebrochen.
+Wenn ein vorhandener Eintrag in `System.dat` einen ungültigen Wert enthält, bleibt dieser Eintrag unverändert. Der V0.1-Helfer meldet den Schlüsselnamen, den gefundenen Inhalt und den erwarteten Datentyp bzw. Wertebereich im mIRC-Statusfenster. Die jeweilige Funktion bleibt deaktiviert, bis der Nutzer den Wert selbst korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Unabhängige Botfunktionen dürfen weiterarbeiten. Ein Schlacht-Timer oder Kampfablauf startet nur, wenn die dafür erforderlichen Einstellungen gültig sind.
 
 
 ## Bestätigte Abgrenzung: Endversion-Helfer und V0.1-Helfer
@@ -187,7 +187,7 @@ Auf der obersten Projektebene sind die Verzeichnisse `characters/`, `bosses/`, `
 
 Die vier Zeitangaben in `System.dat` dürfen höchstens eine Stunde betragen. `TimeBeforeFirstBattle`, `TimeToEnter`, `TimeBetweenBattles` und `TimeForIdle` müssen deshalb ganze Sekundenwerte zwischen `1` und `3600` einschließlich sein. Eine Stunde entspricht `3600` Sekunden; Wartezeiten von mehreren Tagen oder Wochen sind ungültig.
 
-Dezimalzahlen, nicht numerische Werte sowie Zeitwerte außerhalb des zulässigen Bereichs gelten als ungültig. Der V0.1-Systemhelfer ersetzt einen vorhandenen ungültigen Eintrag durch den zugehörigen Standardwert, meldet die Korrektur im mIRC-Statusfenster und speichert den korrigierten Wert in `System.dat`. Kann die Datei danach nicht erfolgreich gespeichert, erneut eingelesen oder validiert werden, startet kein Schlacht-Timer.
+Dezimalzahlen, nicht numerische Werte sowie Zeitwerte außerhalb des zulässigen Bereichs gelten als ungültig. Der Systemhelfer verändert den vorhandenen Eintrag nicht. Er meldet den gefundenen Wert, den gültigen Wertebereich und welche Funktion deshalb deaktiviert bleibt. Der Nutzer korrigiert die Datei selbst; erst nach einer erneuten erfolgreichen Prüfung wird die abhängige Funktion wieder aktiviert.
 
 Die übrigen beiden Laufzeitwerte werden ebenfalls typgeprüft: `MaxIdleTurns` muss eine ganze Zahl von mindestens `1` sein; `VictoryOrbReward` muss eine ganze Zahl von mindestens `0` sein. Die sechs Standardwerte bleiben unverändert.
 
@@ -196,6 +196,15 @@ Die übrigen beiden Laufzeitwerte werden ebenfalls typgeprüft: `MaxIdleTurns` m
 
 `System.dat` bleibt eine normale, unverschlüsselte Textdatei. Es wird kein verschlüsseltes Dateiformat und kein spezieller automatischer Bereinigungsmechanismus für manuell eingefügte doppelte Schlüsselzeilen eingeführt. Der Nutzer kann die Datei bearbeiten, muss dabei jedoch den dokumentierten Aufbau, die Abschnitts- und Schlüsselnamen sowie die zulässigen Wertebereiche beachten.
 
-Der Systemhelfer prüft weiterhin die sechs bestätigten V0.1-Einstellungen. Ungültige Werte werden gemäß der bestehenden Regeln durch ihre vorgesehenen Standardwerte ersetzt und in der Datei gespeichert; scheitert die erforderliche Validierung oder Speicherung, startet kein Schlacht-Timer. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
+Der Systemhelfer prüft weiterhin die sechs bestätigten V0.1-Einstellungen. Vorhandene ungültige Werte werden nicht automatisch ersetzt oder in der Datei geändert. Die betroffene Funktion wird deaktiviert und eine Diagnose erklärt den Fehler sowie den erwarteten Wert bzw. Wertebereich. Erst nach einer manuellen Korrektur und erneuten erfolgreichen Prüfung wird die Funktion wieder aktiviert. Unbekannte Schlüssel werden von V0.1 nicht verwendet und nicht automatisch gelöscht.
 
 Doppelte Schlüssel, falsch geschriebene Abschnitte oder andere manuelle Strukturänderungen werden nicht durch eine eigene Reparaturroutine bereinigt. Solche Änderungen können bewirken, dass die Konfiguration fehlerhaft ist oder das Skript nicht wie vorgesehen funktioniert. Eine ausführliche Dokumentation wird später erklären, wie `System.dat` korrekt bearbeitet wird und dass manuelle Änderungen in der Verantwortung des Nutzers liegen.
+
+
+## Bestätigte Entscheidung: ungültige Laufzeitwerte lassen und betroffene Funktion deaktivieren
+
+Enthält ein vorhandener Eintrag in `System.dat` einen ungültigen Wert, verändert Colosseum diesen Eintrag nicht. Stattdessen meldet der Systemhelfer im mIRC-Statusfenster den Schlüsselnamen, den gefundenen Inhalt und den erwarteten Datentyp bzw. zulässigen Wertebereich. Die Funktion, die diesen Wert benötigt, bleibt deaktiviert, bis der Nutzer die Datei selbst korrigiert und die Konfiguration erneut erfolgreich geprüft wurde. Unabhängige Botfunktionen dürfen weiterlaufen.
+
+Die bereits beschlossene automatische Anlage einer fehlenden `System.dat` und das Ergänzen tatsächlich fehlender Einträge mit Standardwerten bleiben bestehen. Davon klar getrennt ist ein vorhandener, aber ungültiger Wert: Dieser wird niemals stillschweigend überschrieben. Die automatische Bereinigung manuell eingefügter doppelter Schlüsselzeilen ist weiterhin nicht vorgesehen.
+
+Für den Schlachtzyklus gilt: Ohne gültige Werte für die jeweils benötigten Ablauf- und Zugzeiten dürfen die abhängigen Timer bzw. Kampfabläufe nicht starten. Die konkrete erneute Prüfung nach einer manuellen Änderung während einer laufenden Verbindung wird vor der Implementierung festgelegt.
