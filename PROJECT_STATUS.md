@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für den Stand dieser Planung: planning/colosseum-state-2026-10-22.
+- Aktueller Arbeitsbranch für die Nickname-Entscheidung: planning/nickname-binding-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
@@ -72,16 +72,15 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 
 ## Noch offen
 
-1. Soll die Rückkehr zum ursprünglichen IRC-Nickname nach zwischenzeitlichem Nickwechsel den Zugriff auf das bestehende Konto wiederherstellen?
-2. Erfolgt die erste Schlachtankündigung sofort beim Botstart oder erst nach dem ersten Drei-Minuten-Intervall?
-3. Welche konkreten Argon2id-Parameter verwenden wir? Dies muss bei der Implementierung mit mIRC 7.84 getestet werden.
-4. Welches genaue Format, welche Zeichencodierung und welche Validierung benötigt Translation.dat? Wie behandeln wir fehlende oder doppelte Schlüssel?
-5. Welche endgültigen Argumente und Fehlermeldungen gelten für die Charakterbefehle?
-6. Wie lautet die endgültige Schadensformel, und welche Werte erhalten die fünf eigenen Startmonster?
-7. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
-8. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
-9. Wie werden Nickname-Schreibweise und IRC-Netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-10. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
+1. Erfolgt die erste Schlachtankündigung sofort beim Botstart oder erst nach dem ersten Drei-Minuten-Intervall?
+2. Welche konkreten Argon2id-Parameter verwenden wir? Dies muss bei der Implementierung mit mIRC 7.84 getestet werden.
+3. Welches genaue Format, welche Zeichencodierung und welche Validierung benötigt Translation.dat? Wie behandeln wir fehlende oder doppelte Schlüssel?
+4. Welche endgültigen Argumente und Fehlermeldungen gelten für die Charakterbefehle?
+5. Wie lautet die endgültige Schadensformel, und welche Werte erhalten die fünf eigenen Startmonster?
+6. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
+7. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
+8. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
+9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
 
@@ -91,3 +90,8 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 4. Diese Planung über einen Pull Request prüfen.
 5. Erst nach ausreichender Planungsfreigabe die produktiven Dateien anlegen.
 6. Bootstrap und Registrierung testen, danach einen vollständigen einfachen Monsterkampf implementieren.
+
+
+## Neue bestätigte Entscheidung: Nickname-Rückkehr
+
+Ein Konto wird nicht auf einen geänderten Nickname übertragen und bei einem Nickwechsel nicht automatisch gelöscht. Kehrt der Nutzer zum ursprünglichen Nickname zurück, kann er sich mit dem bisherigen Passwort anmelden. Die genaue IRC-Case-Mapping-Behandlung bleibt vor der Implementierung zu prüfen.
