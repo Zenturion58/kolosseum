@@ -1,32 +1,43 @@
 # Colosseum – Architekturentwurf für Version 0.1
 
 **Status:** Grundstruktur, Dateinamen und Zuständigkeiten sind gemeinsam bestätigt; technische Details und Schnittstellen bleiben noch festzulegen.  
-**Ziel:** Kleine, modulare mIRC-Script-Architektur. Fachliche Befehle/Ereignisse gehören in zuständige `.mrc`-Dateien; wiederverwendbare Helfer-Aliases liegen in `.als`-Dateien. Alle sichtbaren Bottexte stammen aus `data/Translation.dat`.
+**Ziel:** Kleine, modulare mIRC-Script-Architektur. Fachliche Befehle/Ereignisse gehören in zuständige `.mrc`-Dateien; wiederverwendbare Helfer-Aliases liegen in `.als`-Dateien. Alle sichtbaren Bottexte stammen aus der zentralen `Translation.dat` im Projekt-Hauptordner.
 
 ## 1. Vorgeschlagene Repository-Struktur
 
+Die Verzeichnisstruktur wird bereits in V0.1 an das geplante Endprodukt angelehnt. Die `.mrc`- und `.als`-Dateien liegen im Hauptordner, ebenso die zentralen Konfigurations- und Übersetzungsdateien. Datenverzeichnisse, die erst spätere Versionen nutzen, werden im Layout bereits berücksichtigt, aber in V0.1 noch nicht mit entsprechenden Spielfunktionen befüllt.
+
 ```text
-Colosseum/
-├── Colosseum.mrc
-├── scripts/
-│   ├── System.mrc
-│   ├── Character.mrc
-│   ├── Battle.mrc
-│   └── aliases/
-│       ├── SystemAliases.als
-│       ├── Characters.als
-│       ├── BattleControl.als
-│       ├── BattleFormula.als
-│       ├── Monsters.als
-│       ├── BattleRewards.als
-│       └── TranslationAliases.als
-├── data/
-│   ├── Translation.dat
-│   ├── characters/
-│   └── monsters/
+kolosseum/                       (Projekt-Hauptordner)
+├── Colosseum.mrc                (einziger manuell zu ladender Einstieg)
+├── System.mrc
+├── Character.mrc
+├── Battle.mrc
+├── SystemAliases.als
+├── Characters.als
+├── BattleControl.als
+├── BattleFormula.als
+├── Monsters.als
+├── BattleRewards.als
+├── TranslationAliases.als
+├── System.dat
+├── Translation.dat
+├── characters/                  (Spielercharaktere)
+├── bosses/                      (spätere Versionen)
+├── monsters/                    (Monsterdefinitionen für V0.1 und später)
+├── zapped/                      (späteres System)
+├── npcs/                        (spätere Versionen)
+├── summons/                     (spätere Versionen)
+├── help-files/                  (spätere Versionen bzw. spätere Hilfeausweitung)
 ├── README.md
 └── LICENSE
 ```
+
+Die Ordnernamen folgen den im gezeigten Endversion-Helfer vorgesehenen Standardpfaden (characters, bosses, monsters, zapped, npcs, summons und help-files). Die Ordner werden im Endprodukt nicht erst nachträglich umbenannt oder unter einen neuen data-Ordner verschoben. V0.1 verwendet davon nur die Bereiche, die der Prototyp tatsächlich benötigt, insbesondere characters und monsters; spätere Ordner können zunächst leer bleiben.
+
+Auch die neuen V0.1-Module und Alias-Dateien liegen im Hauptordner, passend zum Ladeprinzip des Endversion-Helfers, der Module per Dateinamen aus dem aktuellen Skriptpfad lädt. Die Namen der V0.1-Dateien bleiben gemäß der bereits bestätigten Modulaufteilung bestehen; die Endversion-Ladeliste wird nicht einfach kopiert.
+
+`System.dat` und `Translation.dat` liegen auf derselben Ebene wie die Einstiegsdatei. Die Übersetzungsdatei wird daher im Text und in den Modulen als `Translation.dat` referenziert, nicht als `Translation.dat`.
 
 `README.md` und `LICENSE` sind Repository-Dateien, keine Laufzeitmodule. Die Lizenz wird vor der Veröffentlichung separat geklärt.
 
@@ -45,9 +56,9 @@ Colosseum/
 | `Monsters.als` | Monsterdefinitionen lesen/prüfen, gültiges Monster auswählen und Werte liefern | Spielerbefehle; für v0.1 kein eigenes `Monster.mrc` nötig, solange es keine monsterbezogenen Befehle/Ereignisse gibt |
 | `BattleRewards.als` | Ergebnisregel, 10 rote Kugeln bei Sieg + Überleben und Anforderung der Grundwert-Rücksetzung | IRC-Handler |
 | `TranslationAliases.als` | Translation.dat laden/nachschlagen und Platzhalter einsetzen | fest codierte Nachrichtentexte in Kampf-/Charakterlogik |
-| `data/Translation.dat` | Übersetzbare allgemeine Botmeldungen; Deutsch als Standardsprache. Werte dürfen definierte mIRC-Formatierungsausdrücke und Platzhalter enthalten. | Schlüssel, Platzhalter und Formatierungsausdrücke verändern oder übersetzen |
-| `data/characters/` | dauerhafte Spielerdatensätze; Format an der Wiki-`.chr`-Vorlage orientiert | Alias- oder Eventlogik |
-| `data/monsters/` | mindestens fünf eigene normale Monster; Monsterformat nach Prüfung der Wiki-Vorlage | Kampfsteuerung |
+| `Translation.dat` im Projekt-Hauptordner | Übersetzbare allgemeine Botmeldungen; Deutsch als Standardsprache. Werte dürfen definierte mIRC-Formatierungsausdrücke und Platzhalter enthalten. | Schlüssel, Platzhalter und Formatierungsausdrücke verändern oder übersetzen |
+| `characters/` | dauerhafte Spielerdatensätze; Format an der Wiki-`.chr`-Vorlage orientiert | Alias- oder Eventlogik |
+| `monsters/` | mindestens fünf eigene normale Monster; Monsterformat nach Prüfung der Wiki-Vorlage | Kampfsteuerung |
 
 ### Grundsatz zu Befehlen und Ereignissen
 
@@ -91,7 +102,7 @@ Für Version 0.1 ist verbindlich vorgesehen, dass Nutzer nur `Colosseum.mrc` man
 1. Nutzer lädt `Colosseum.mrc`.
 2. Der Bootstrap lädt die `.als`-Dateien, damit alle Helper-Aliase vor der Initialisierung verfügbar sind.
 3. Der Bootstrap lädt `System.mrc`, `Character.mrc` und `Battle.mrc` als Remote-Skripte.
-4. Erst nach dem vollständigen Laden beginnt die Startprüfung. Für Version 0.1 ist `data/Translation.dat` erforderlich; wird sie vermisst oder kann sie nicht gelesen bzw. vorbereitet werden, wird der Start kontrolliert abgebrochen.
+4. Erst nach dem vollständigen Laden beginnt die Startprüfung. Für Version 0.1 ist `Translation.dat` erforderlich; wird sie vermisst oder kann sie nicht gelesen bzw. vorbereitet werden, wird der Start kontrolliert abgebrochen.
 5. Der Schlachtzyklus wird erst gestartet, wenn alle für diese Version erforderlichen Module und Daten erfolgreich geprüft und initialisiert wurden.
 
 **Fehlerbehandlung beim Start:** Bei einer fehlenden oder fehlerhaften Pflichtdatei startet Colosseum keine Schlacht-Timer und gibt eine technische Diagnose im mIRC-Statusfenster aus. `System.dat` ist die Ausnahme beim Fehlen: Diese Datei wird mit Standardwerten automatisch angelegt. Kann das nicht gelingen oder bleibt die Konfiguration ungültig, wird der Start abgebrochen. Die Diagnose muss auch dann möglich sein, wenn `Translation.dat` selbst fehlt; dafür darf eine minimale technische Statusmeldung direkt im Bootstrap stehen. Das ist keine Spieler-Nachricht im IRC-Kanal.
@@ -119,13 +130,13 @@ Vorgeschlagen ist ein gemeinsames Präfix `col_` für alle eigenen Aliases/Ident
 ## 7. Datenformate
 
 - Spielerdateien sollen sich an der dokumentierten `.chr`-Vorlage orientieren. Version 0.1 liest und verändert nur notwendige Felder; nicht benötigte Felder müssen nicht verstanden oder ausgewertet werden.
-- Monsterdefinitionen liegen einzeln in `data/monsters/`. Die Wiki beschreibt Monsterdateien mit `.char`; vor Implementierung prüfen wir, welche Felder die eigene v0.1-Monsterdefinition wirklich benötigt und ob das bestehende Format unverändert passt.
+- Monsterdefinitionen liegen einzeln in `monsters/`. Die Wiki beschreibt Monsterdateien mit `.char`; vor Implementierung prüfen wir, welche Felder die eigene v0.1-Monsterdefinition wirklich benötigt und ob das bestehende Format unverändert passt.
 - `Translation.dat` enthält allgemeine System-, Charakter-, Schlacht- und Belohnungsmeldungen in Sektionen wie `[system]`, `[character]`, `[Battle]` und `[Rewards]`. Jede Zeile hat die Form `Schlüssel=Textvorlage`; beim Übersetzen wird nur der Teil rechts vom `=` verändert.
 - Schlüssel links vom `=`, Platzhalter wie `%user%` oder `%file` sowie mIRC-Formatierungsbestandteile wie `$chr(3)`, `$chr(15)`, `$chr(2)` und `$+` müssen exakt erhalten bleiben.
 - Texte, die zu einer Angriffsfähigkeit bzw. Angriffsdefinition gehören, werden nicht als allgemeiner Translation-Schlüssel behandelt, sondern über den dafür vorgesehenen Mechanismus für Angriffs-/Fähigkeitsdaten gelesen. Für den Faustangriff in v0.1 ist dieser konkrete Datenweg noch festzulegen.
 - Da die Werte mIRC-Ausdrücke enthalten können, muss der Übersetzungshelfer diese gezielt und kontrolliert verarbeiten; wir evaluieren nicht blind beliebigen Dateiinhalt als mIRC-Code.
 - Doppelte Schlüssel müssen vor Implementierung aufgelöst werden. Im vorgelegten Beispiel ist `ALREADY_OCCUPIED` zweimal vorhanden; wir behalten nur einen Eintrag oder vergeben für eine tatsächlich andere Meldung einen eigenen eindeutigen Schlüssel.
-- `System.dat` wird bereits in v0.1 geprüft und eingelesen. Ob einzelne Timerwerte in v0.1 schon dynamisch aus der Datei übernommen oder noch fest vorgegeben werden, wird vor Implementierung ausdrücklich festgelegt.
+- `System.dat` wird in V0.1 bei Bedarf mit Standardwerten angelegt; fehlende Einstellungen werden ergänzt und ungültige Werte durch Standardwerte ersetzt. Die sechs bestätigten Laufzeitwerte werden in globale Variablen eingelesen.
 
 ## 8. Noch gemeinsam festzulegen
 
@@ -167,7 +178,7 @@ Die Dateinamen, Hauptzuständigkeiten und das Prinzip einer einzigen manuell zu 
 - `Battle.mrc` enthält Kampf-/Schlachtbefehle und zugehörige Ereignisse. Die Kampfabwicklung wird von Helfern in `BattleControl.als`, `BattleFormula.als`, `Monsters.als` und `BattleRewards.als übernommen.
 - `System.mrc` enthält systembezogene Befehle/Ereignisse; allgemeine Systemhelfer liegen in `SystemAliases.als`.
 - Eine zentrale `Events.mrc` und eine separate `Storage.mrc` sind nicht vorgesehen.
-- `TranslationAliases.als` lädt und verarbeitet allgemeine Nachrichten aus `data/Translation.dat`. Die Datendatei nutzt Abschnittsüberschriften und eindeutige Schlüssel im Format `Schlüssel=Text`. Schlüssel, Platzhalter und mIRC-Formatierungsausdrücke müssen beim Übersetzen unverändert bleiben. Es darf nicht blind beliebiger Dateiinhalt als mIRC-Code ausgewertet werden.
+- `TranslationAliases.als` lädt und verarbeitet allgemeine Nachrichten aus `Translation.dat` im Projekt-Hauptordner. Die Datendatei nutzt Abschnittsüberschriften und eindeutige Schlüssel im Format `Schlüssel=Text`. Schlüssel, Platzhalter und mIRC-Formatierungsausdrücke müssen beim Übersetzen unverändert bleiben. Es darf nicht blind beliebiger Dateiinhalt als mIRC-Code ausgewertet werden.
 
 ### Bootstrap und Konfiguration
 
@@ -264,3 +275,9 @@ Die folgenden sechs Einträge sind für V0.1 freigegeben. `$system_default_check
 | `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln | Siegesbelohnung bei Überleben des Spielers |
 
 Die getrennten Einstellungen `TimeBeforeFirstBattle` und `TimeBetweenBattles` bleiben bewusst eigenständig, obwohl beide zunächst `180` Sekunden betragen. Sie regeln unterschiedliche Phasen des Zyklus. Der Wert `TimeBetweenBattles = 180` ist eine ausdrückliche Abweichung vom Endversion-Helfer, der aktuell `120` verwendet.
+
+## Bestätigte Entscheidung: Ordnerstruktur am Endprodukt ausrichten
+
+Die Ordnerstruktur für V0.1 wird von Beginn an an das vorgesehene Endprodukt angelehnt. Es gibt keinen separaten `scripts/`- oder `data/`-Ordner für die V0.1-Module bzw. die hier beschriebenen Daten. Die Einstiegsdatei, Fachmodule, Alias-Dateien, `System.dat` und `Translation.dat` liegen im Projekt-Hauptordner. Die Datenordner `characters/`, `bosses/`, `monsters/`, `zapped/`, `npcs/`, `summons/` und `help-files/` werden auf der obersten Projektebene vorgesehen, entsprechend den im Endversion-Helfer gezeigten Pfadnamen.
+
+V0.1 nutzt insbesondere `characters/` und `monsters/`. Die übrigen Ordner dürfen für spätere Funktionen vorhanden bzw. im endgültigen Layout vorgesehen sein, ohne dass ihre Endversion-Funktionen bereits implementiert werden. Dadurch sollen spätere Datei- und Ordnerumzüge vermieden werden.
