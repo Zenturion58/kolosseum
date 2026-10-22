@@ -73,14 +73,14 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 
 ## Noch offen
 
-2. Welche konkreten Argon2id-Parameter verwenden wir? Dies muss bei der Implementierung mit mIRC 7.84 getestet werden.
-3. Welches genaue Format, welche Zeichencodierung und welche Validierung benötigt Translation.dat? Wie behandeln wir fehlende oder doppelte Schlüssel?
-4. Welche endgültigen Argumente und Fehlermeldungen gelten für die Charakterbefehle?
-5. Wie lautet die endgültige Schadensformel, und welche Werte erhalten die fünf eigenen Startmonster?
-6. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
-7. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
-8. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
-9. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
+1. Welche konkreten Argon2id-Parameter verwenden wir? Dies muss bei der Implementierung mit mIRC 7.84 getestet werden.
+2. Welches genaue Format, welche Zeichencodierung und welche Validierung benötigt Translation.dat? Wie behandeln wir fehlende oder doppelte Schlüssel?
+3. Welche endgültigen Argumente und Fehlermeldungen gelten für die Charakterbefehle?
+4. Wie lautet die endgültige Schadensformel, und welche Werte erhalten die fünf eigenen Startmonster?
+5. Welche Felder der Charaktervorlage werden in Version 0.1 konkret gelesen oder geändert?
+6. Wie verhält sich der Bot bei einem Neustart während einer aktiven Kampfinstanz?
+7. Wie werden Nickname-Schreibweise und IRC-netzwerk-spezifische Case-Mapping-Regeln konkret behandelt?
+8. Lizenz und Herkunft vorhandener Dokumentationsinhalte prüfen, bevor das daraus abgeleitete Projekt öffentlich veröffentlicht wird.
 
 ## Nächste Arbeitsschritte
 
@@ -100,3 +100,8 @@ Ein Konto wird nicht auf einen geänderten Nickname übertragen und bei einem Ni
 ## Neue bestätigte Entscheidung: Timer-Start
 
 Der Schlacht-Timer startet erst nach dem erfolgreichen IRC-Verbindungsereignis (`on CONNECT`) und erfolgreicher Prüfung der Pflichtmodule sowie `Translation.dat`. Drei Minuten nach diesem Verbindungsereignis erscheint die erste Schlachtankündigung. Das Skript-Laden allein startet den Zyklus nicht. Bei Disconnect werden die Timer bereinigt; nach Wiederverbindung darf nur ein sauber neu gestarteter Zyklus laufen.
+
+
+## Verbindliche Ablaufregel: Verbindung und erster Timer
+
+Der erste Schlacht-Timer startet erst nach dem erfolgreichen IRC-Verbindungsereignis (`on CONNECT`) und nachdem Pflichtmodule sowie `Translation.dat` geprüft wurden. Die erste Ankündigung folgt drei Minuten später. Bei Disconnect werden laufende Timer bereinigt, sodass eine spätere Verbindung den Zyklus ohne doppelte Timer neu starten kann.
