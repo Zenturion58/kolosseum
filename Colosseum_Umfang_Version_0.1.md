@@ -8,6 +8,8 @@
 - Es gibt noch keinen vorhandenen Quellcode. Die Implementierung wird neu entworfen und selbst geschrieben.
 - Der Bot und alle für Spieler sichtbaren Nachrichten, Hilfetexte und Fehlermeldungen sollen standardmäßig auf Deutsch sein.
 - Alle sichtbaren Texte werden von Anfang an aus `Translation.dat` geladen; sie werden nicht direkt in die Spiellogik eingebaut. So können Nutzer später Übersetzungen ändern oder weitere Sprachen hinzufügen, ohne den Quellcode zu bearbeiten.
+- Beim Start wird geprüft, ob `Translation.dat` vorhanden und lesbar ist. Bei einem Fehler wird die Initialisierung kontrolliert abgebrochen; insbesondere dürfen keine Schlacht-Timer starten, solange Pflichtdateien oder erforderliche Module nicht bereit sind.
+- `System.dat` gehört nicht zum Umfang von Version 0.1. Der Start prüft diese Datei daher noch nicht; die Zeiten bleiben für diese Version fest vorgegeben. Sobald `System.dat` später eingeführt wird, müssen die Einstellungen vor dem Start des Schlachtzyklus geprüft und in globale Variablen übertragen werden.
 - Die vollständige Charaktervorlage aus der Dokumentation darf als Grundlage verwendet werden. Version 0.1 liest und verarbeitet aber nur die Felder, die sie tatsächlich benötigt.
 - Funktionen, die nicht ausdrücklich zum Umfang von Version 0.1 gehören, bleiben für spätere Versionen vorgemerkt.
 - Änderungen am Umfang werden gemeinsam besprochen und bestätigt, bevor sie implementiert werden.
