@@ -118,16 +118,16 @@ Der erste Schlacht-Timer startet erst nach `on CONNECT` und nachdem `$system_def
 
 In Version 0.1 werden die bereits besprochenen sechs Laufzeitwerte aus `System.dat` eingelesen und in globalen mIRC-Variablen gespeichert. Die Spiel- und Timerlogik verwendet diese Variablen; die Zahlenwerte werden nicht zusätzlich in den einzelnen Modulen fest codiert. Beispiel aus dem vorhandenen Endversion-Helfer: `TimeToEnter` wird aus der Konfiguration gelesen und in einer globalen Variable wie `%timeToEnter` bereitgestellt.
 
-### Vorläufige Zuordnung von Einstellungen und Variablen
+### Bestätigte Zuordnung von Einstellungen und Variablen
 
-| Zweck | Schlüssel in `System.dat` (Arbeitsname) | Wert für Version 0.1 | Globale Variable (Arbeitsname) |
+| Zweck | Schlüssel in `System.dat` | Standardwert für Version 0.1 | Globale Variable |
 |---|---|---:|---|
-| Erste Schlachtankündigung nach erfolgreicher Verbindung und Prüfung | `TimeBeforeFirstBattle` (neu vorgeschlagen) | `180` Sekunden | `%timeBeforeFirstBattle` |
-| Beitrittsfenster | `TimeToEnter` (bereits im Endversion-Helfer vorhanden) | `120` Sekunden | `%timeToEnter` |
-| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` (bereits vorhanden; Wert abzugleichen) | laut bisheriger v0.1-Planung `180` Sekunden | `%timeBetweenBattles` |
-| Zeitlimit eines Spielerzugs | `TimeForIdle` (bereits im Endversion-Helfer vorhanden) | `180` Sekunden | `%timeForIdle` |
-| Übersprungene Spielerzüge bis zur Niederlage | `MaxIdleTurns` (bereits im Endversion-Helfer vorhanden) | `2` | `%maxIdleTurns` |
-| Belohnung für einen Sieg mit überlebendem Spieler | `VictoryOrbReward` (neu vorgeschlagen) | `10` rote Kugeln | `%victoryOrbReward` |
+| Erste Schlachtankündigung nach erfolgreicher Verbindung und Prüfung | `TimeBeforeFirstBattle` | `180` Sekunden | `%timeBeforeFirstBattle` |
+| Beitrittsfenster | `TimeToEnter` | `120` Sekunden | `%timeToEnter` |
+| Abstand bis zur nächsten Ankündigung nach leerer Beitrittsphase oder Kampfende | `TimeBetweenBattles` | `180` Sekunden | `%timeBetweenBattles` |
+| Zeitlimit eines Spielerzugs | `TimeForIdle` | `180` Sekunden | `%timeForIdle` |
+| Übersprungene Spielerzüge bis zur Niederlage | `MaxIdleTurns` | `2` | `%maxIdleTurns` |
+| Belohnung für einen Sieg mit überlebendem Spieler | `VictoryOrbReward` | `10` rote Kugeln | `%victoryOrbReward` |
 
 Die sechs Schlüssel, globalen Variablen und Standardwerte in dieser Tabelle sind für Version 0.1 bestätigt. Der übergebene Endversion-Helfer verwendet für `TimeBetweenBattles` den Wert `120`; für den Prototyp gilt ausdrücklich `180` Sekunden.
 
