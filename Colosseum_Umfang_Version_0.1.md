@@ -104,44 +104,60 @@ Diese Liste bedeutet nicht, dass die Funktionen aus dem Zielprodukt gestrichen w
 
 ## 9. Architektur-Anforderungen
 
-Auch wenn die Funktionen zunächst einfach bleiben, soll das Grundgerüst modular sein. Nicht alles soll in einer einzigen `.mrc`-Datei wachsen.
+Auch wenn die Funktionen zunächst einfach bleiben, soll das Grundgerüst modular sein. Nicht alles soll in einer einzigen `.mrc`-Datei wachsen. Dabei unterscheiden wir bewusst zwischen **fachlichen `.mrc`-Modulen**, die für ihre jeweiligen Befehle/Ereignisse verantwortlich sind, und **`.als`-Dateien**, in denen die wiederverwendbaren Helfer-Aliase nach Aufgaben gebündelt werden.
 
-### Trennung von Ereignissen und Helfer-Aliasen
+### Befehle und Ereignisse gehören in das zuständige Fachmodul
 
-- IRC-Ereignis-Handler wie `on TEXT` und `on ACTION` gehören in eine zentrale Ereignis-/Steuerungsschicht, beispielsweise `Events.mrc`.
-- Diese Handler sollen eingehende Nachrichten erkennen und an passende Befehls- oder Spielfunktionen weiterleiten.
-- Module wie `Combat.mrc`, `Monster.mrc` und `Rewards.mrc` enthalten Helfer-Aliase und Fachlogik, aber keine eigenen `on TEXT`- oder `on ACTION`-Handler. Andere Module können ihre Helfer aufrufen.
-- `Battle.mrc` verwaltet den Schlachtablauf über klar definierte Helfer-Aliase; die eigentlichen IRC-Ereignisse bleiben zentral.
-- Die Hauptdatei `Colosseum.mrc` dient als Einstiegspunkt und lädt beziehungsweise initialisiert die benötigten Module.
+- Charakterbezogene Befehle und Ereignisse werden in `Character.mrc` behandelt, zum Beispiel Charakter erstellen, Passwort ändern, anmelden/abmelden, Beschreibung festlegen, Geschlecht ändern und Charakterinformationen oder Statistiken abrufen.
+- Kampf- und Schlachtbefehle werden in `Battle.mrc` behandelt, zum Beispiel `!enter` und die für den Kampf vorgesehenen Spieleraktionen.
+- Weitere Fachbereiche erhalten ebenfalls ihre eigenen `.mrc`-Module, wenn sie später hinzukommen.
+- Befehle werden **nicht pauschal in einer zentralen `Events.mrc` abgefangen**. Die Zuständigkeit liegt beim jeweiligen Fachmodul. Eine zentrale Ereignisdatei wird für Version 0.1 daher nicht als Voraussetzung eingeplant.
+- IRC-Ereignis-Handler wie `on TEXT` oder `on ACTION` dürfen in dem `.mrc`-Modul stehen, das für den betreffenden Befehls- oder Ereignisbereich zuständig ist. Die Fachmodule sollen aber nicht mit allen internen Helfern und Berechnungen überladen werden.
+
+### Wiederverwendbare Helfer liegen in `.als`-Dateien
+
+Die Helfer-Aliase werden nicht wahllos in die jeweilige `.mrc`-Datei geschrieben. Stattdessen werden sie nach Zuständigkeit in eigenständigen `.als`-Dateien gebündelt. Beispiele für die geplante Aufteilung:
+
+- `SystemAliases.als`: gemeinsame Systemhelfer und allgemeine Funktionen.
+- `Characters.als`: Helfer für Charakterverwaltung und Charakterdaten, soweit diese als wiederverwendbare Aliase benötigt werden.
+- `BattleControl.als`: Helfer für den Ablauf und die Steuerung von Kämpfen.
+- `BattleFormula.als`: Berechnung des Schadens und weitere kampfbezogene Formeln.
+- Weitere Alias-Dateien können folgen, wenn ein Bereich genügend eigene Helfer benötigt.
+
+Ein `.mrc`-Fachmodul ruft bei Bedarf einen passenden Helfer aus einer `.als`-Datei auf. Beispielsweise kann ein Charakterbefehl in `Character.mrc` einen Charakterstatus-Helfer aus einer Alias-Datei aufrufen; ein Kampfhandler in `Battle.mrc` kann die Zugreihenfolge oder Schadensberechnung über `BattleControl.als` beziehungsweise `BattleFormula.als` anfordern.
 
 ### Vorgeschlagene Modulaufteilung
 
-- `Colosseum.mrc`: Hauptdatei und Initialisierung.
-- `Events.mrc`: zentrale mIRC-Ereignis-Handler und Weiterleitung eingehender Ereignisse.
-- `Commands.mrc`: Erkennung und Weiterleitung unterstützter Bot-Befehle.
-- `System.mrc`: Systemstart, globaler Zustand, Timer und zunächst fest vorgegebene Einstellungen.
-- `Character.mrc`: Registrierungs-, Anmelde- und Charakter-Helfer.
-- `Storage.mrc`: Laden und Speichern von Charakterdaten.
-- `Battle.mrc`: Schlachtzyklus, Beitrittsfenster und Verwaltung der einzelnen Kampfinstanz.
-- `Combat.mrc`: reine Kampffunktionen wie Zugreihenfolge, Angriff und Schadensberechnung; keine IRC-Ereignis-Handler.
-- `Monster.mrc`: Monsterdaten laden, zufällig auswählen und Monsteraktionen ausführen; keine IRC-Ereignis-Handler.
-- `Rewards.mrc`: Berechnung und Vergabe der Kampfbelohnung.
-- `Translation.mrc`: Helfer zum Laden und Abrufen übersetzbarer Texte.
-- `data/Translation.dat`: vom Quellcode getrennte, bearbeitbare Nachrichten und Textvorlagen.
+- `Colosseum.mrc`: Hauptdatei, lädt beziehungsweise initialisiert die benötigten Skript- und Alias-Dateien und startet Colosseum.
+- `System.mrc`: systembezogene Befehle/Ereignisse und Ablaufsteuerung, etwa Start des Bots und Schlacht-Timer. Wiederverwendbare Systemhelfer liegen in `SystemAliases.als`.
+- `Character.mrc`: fachliche Zuständigkeit für Charakterbefehle und -ereignisse: Registrierung, Passwortgenerierung und -änderung, Anmeldung/Abmeldung, Charakterbeschreibung, Geschlecht und Charakterinformationen. Das Modul veranlasst auch das Laden und Speichern der Charakterdateien und ruft dafür gegebenenfalls Helfer aus Alias-Dateien auf.
+- `Battle.mrc`: fachliche Zuständigkeit für Schlacht- und Kampfbefehle/Ereignisse, darunter Beitritt, Beginn und Interaktion mit dem laufenden Kampf.
+- `Combat.mrc`: optionales Fachmodul für die Koordination kampfbezogener Abläufe, falls es bei der Implementierung sinnvoll ist; enthält keine Sammlung unabhängiger Hilfsaliase, die stattdessen in `.als`-Dateien gehören.
+- `Monster.mrc`: zuständig für monsterbezogene Befehle/Ereignisse, falls benötigt, und die fachliche Nutzung der Monsterdaten. Wiederverwendbare Monsterhelfer können in einer separaten Alias-Datei liegen.
+- `Rewards.mrc`: zuständig für den fachlichen Abschluss/Belohnungsablauf, soweit ein eigenes Modul in Version 0.1 tatsächlich sinnvoll ist; Hilfsaliase dafür werden getrennt gehalten.
+- `Translation.mrc` oder ein passendes zuständiges Modul: lädt/verarbeitet Übersetzungstexte, falls hierfür Ereignisse oder Modulsteuerung nötig sind. Die Helfer zum Abrufen formatierter Texte können separat in einer Alias-Datei liegen.
+- `data/Translation.dat`: vom Quellcode getrennte, bearbeitbare Bot-Nachrichten und Textvorlagen.
 - `data/monsters/`: Datendateien für die normalen Monster.
-- `data/characters/` oder ein separat festgelegter Spieler-Datenordner: dauerhafte Charakterdateien.
+- `data/characters/` oder ein separat festgelegter Spieler-Datenordner: dauerhafte Charakterdateien. Die Charakterverwaltung bleibt fachlich in `Character.mrc`; allgemeine wiederverwendbare Dateihelfer können bei Bedarf in einer Alias-Datei liegen.
 
-Die Namen und genaue Anzahl der Dateien sind ein Architekturvorschlag und können bei der konkreten Implementierung noch angepasst werden. Die verbindlichen Grundsätze sind die Trennung der Zuständigkeiten, zentrale Ereignisverarbeitung und externe Übersetzungstexte.
+Die Namen und genaue Anzahl der Dateien sind ein Architekturentwurf. Besonders `Combat.mrc`, `Monster.mrc` und `Rewards.mrc` bleiben davon abhängig, ob sie als eigenständige Fachmodule tatsächlich gebraucht werden. Die verbindlichen Grundsätze sind: Befehle und Ereignisse gehören zum jeweiligen Fachbereich; wiederverwendbare Helfer-Aliase werden getrennt in passenden `.als`-Dateien organisiert; sichtbare Texte liegen in `Translation.dat`.
+
+### Zuständigkeit des Charaktermoduls
+
+- `Character.mrc` besitzt die fachliche Verantwortung für sämtliche charakterbezogenen Vorgänge einschließlich Passwortgenerierung, Anmeldung, Abmeldung, Charakterbefehlen, Beschreibung, Geschlecht sowie dem Laden und Speichern des Charakterdatensatzes.
+- Charakterbezogene Befehle/Ereignisse werden im Charaktermodul behandelt, nicht zentral in einer `Events.mrc`.
+- `Character.mrc` kann Helfer aus anderen Alias-Dateien aufrufen, etwa für Statusabfragen, gemeinsame Systemfunktionen oder das Übersetzen einer Nachricht. Die Charakterbefehle und die Steuerung des charakterbezogenen Ablaufs bleiben jedoch in `Character.mrc`.
+- Eine separate `Storage.mrc` ist für Version 0.1 nicht vorgesehen. Die fachliche Verantwortung für Charakterdateien bleibt in `Character.mrc`; wiederverwendbare, allgemeine Datei- oder Datenhelfer können separat in `.als`-Dateien organisiert werden.
 
 ### Weitere Leitlinien
 
 - Die vollständige Charaktervorlage aus der Dokumentation dient als Grundlage; Version 0.1 liest und verarbeitet nur die dafür nötigen Felder.
-- Die Angriffsverarbeitung für IRC-Aktion und `!angriff` muss dieselbe interne Kampfaktion aufrufen.
-- Kampfablauf, Schadensberechnung, Kampfende und Belohnungsvergabe werden in klar abgegrenzte Funktionen aufgeteilt.
+- Die IRC-Aktionsmethode und der deutsche Angriffs-Befehl müssen dieselbe interne Kampfaktion auslösen; die wiederverwendbare Kampflogik liegt in passenden Alias-Dateien.
+- Kampfablauf, Schadensberechnung, Kampfende und Belohnungsvergabe werden in klar abgegrenzte Fachbereiche und Hilfsaliase aufgeteilt.
 - Spielerdaten bleiben dauerhaft gespeichert.
 - Passwörter dürfen nicht öffentlich ausgegeben oder in allgemein sichtbaren Nachrichten gespeichert werden; eine geeignete sichere Speicherung legen wir vor der Implementierung fest.
 - Monster werden aus einer Datenliste ausgewählt, damit neue Monster später ergänzt werden können, ohne die Kampflogik umzuschreiben.
-- Sichtbare Meldungen werden über Schlüssel aus `Translation.dat` geladen. Die Datei soll von Anfang an so gestaltet werden, dass spätere weitere Sprachen möglich sind.
+- Sichtbare Meldungen werden über Schlüssel aus `Translation.dat` geladen. Die Datei soll von Anfang an so gestaltet sein, dass spätere weitere Sprachen möglich sind.
 - Spätere Erweiterungen sollen nicht durch unnötige Annahmen in der ersten Implementierung erschwert werden.
 
 ## 10. Noch offen vor der Implementierung
@@ -173,7 +189,7 @@ Version 0.1 ist erst spielbar, wenn:
 - ausschließlich ein überlebender Sieger 10 rote Kugeln erhält;
 - Kampfwerte nach jedem beendeten Kampf auf Grundwerte zurückgesetzt werden;
 - alle sichtbaren Bottexte über `Translation.dat` bereitgestellt werden und standardmäßig auf Deutsch erscheinen;
-- IRC-Ereignis-Handler zentral in der Ereignis-/Steuerungsschicht liegen und die Fachmodule nur aufrufbare Helfer-Aliase enthalten;
+- Befehle/Ereignisse in den jeweils zuständigen Fachmodulen behandelt werden und wiederverwendbare Helfer-Aliase in aufgabenbezogenen `.als`-Dateien liegen;
 - Shop und andere zurückgestellte Systeme nicht für den Basiskampf vorausgesetzt werden.
 
 ## 12. Verhältnis zur Wiki
