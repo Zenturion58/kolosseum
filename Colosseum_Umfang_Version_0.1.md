@@ -123,7 +123,7 @@ Die Skriptstruktur trennt **fachliche Module (`.mrc`)** von **wiederverwendbaren
 - `Battle.mrc` behandelt Schlacht- und Kampfbefehle sowie relevante `TEXT`-/`ACTION`-Ereignisse.
 - Wiederverwendbare Helfer-Aliases liegen in eigenen `.als`-Dateien, gruppiert nach Aufgabe.
 - Die `.mrc`-Module orchestrieren den fachlichen Ablauf und rufen Helfer aus den `.als`-Dateien auf. Hilfsberechnungen werden nicht wahllos in Ereignishandler kopiert.
-- Allgemeine Spielertexte werden aus `data/Translation.dat` bezogen. `TranslationAliases.als` stellt Lade- und Abruffunktionen sowie die kontrollierte Verarbeitung von Platzhaltern und erlaubten Formatierungsausdrücken bereit. Textvorlagen, die unmittelbar zu einer Angriffs-/Fähigkeitsdefinition gehören, werden über den dafür vorgesehenen Datenweg gelesen und sind keine allgemeinen Translation-Schlüssel.
+- Allgemeine Spielertexte werden aus `Translation.dat` im Projekt-Hauptordner bezogen. `TranslationAliases.als` stellt Lade- und Abruffunktionen sowie die kontrollierte Verarbeitung von Platzhaltern und erlaubten Formatierungsausdrücken bereit. Textvorlagen, die unmittelbar zu einer Angriffs-/Fähigkeitsdefinition gehören, werden über den dafür vorgesehenen Datenweg gelesen und sind keine allgemeinen Translation-Schlüssel.
 - Die Charakterverwaltung bleibt fachlich in `Character.mrc`; eine separate `Storage.mrc` wird für Version 0.1 nicht benötigt. Charakterbezogene Lade-/Speicher-Helfer gehören in `Characters.als`.
 - Eine `Combat.mrc` oder `Monster.mrc` wird in Version 0.1 nur angelegt, falls dort tatsächlich fachliche Befehle/Ereignisse unterzubringen sind. Reine Kampf- und Monster-Helfer gehören in `.als`-Dateien.
 
@@ -142,15 +142,15 @@ Die Skriptstruktur trennt **fachliche Module (`.mrc`)** von **wiederverwendbaren
 - `BattleFormula.als`: Berechnung des Schadens und weitere Kampfmathematik. Die genaue Formel wird separat festgelegt.
 - `Monsters.als`: Laden/Validieren der Monsterdefinitionen, zufällige Auswahl eines gültigen normalen Monsters und Bereitstellung seiner Werte.
 - `BattleRewards.als`: Prüfung der Kampfresultate, Vergabe der zehn roten Kugeln bei einem Sieg mit überlebendem Spieler sowie Anforderung der Rücksetzung der Kampfwerte.
-- `TranslationAliases.als`: Laden und Nachschlagen der Textschlüssel aus `data/Translation.dat`, einschließlich Platzhaltern für Nicknames, Monster- und Zahlenwerte.
+- `TranslationAliases.als`: Laden und Nachschlagen der Textschlüssel aus `Translation.dat` im Projekt-Hauptordner, einschließlich Platzhaltern für Nicknames, Monster- und Zahlenwerte.
 
 Dateinamen und Alias-Signaturen sind ein Entwurf für Version 0.1 und werden vor der Implementierung gemeinsam freigegeben. Ein Präfix wie `col_` soll für interne Aliasnamen verwendet werden, um Namenskonflikte zu reduzieren.
 
 ### Datenordner
 
-- `data/Translation.dat`: externe, bearbeitbare allgemeine Bottexte im Abschnitt-/Schlüssel-Format; Deutsch ist die Standardsprache. Schlüssel, Platzhalter und mIRC-Formatierungssyntax bleiben bei Übersetzungen unverändert. Angriffsfähigkeits-/Angriffsdefinitionstexte werden getrennt behandelt.
-- `data/characters/`: gespeicherte Spielercharaktere im dokumentierten `.chr`-Format, vorbehaltlich der abschließenden Formatprüfung.
-- `data/monsters/`: mindestens fünf eigene normale Monsterdefinitionen. Die Wiki verwendet für Monster Vorlagen mit der Endung `.char`; wir prüfen vor dem Code, ob wir dieses Format unverändert übernehmen oder für Version 0.1 ein minimales kompatibles Profil definieren.
+- `Translation.dat` im Projekt-Hauptordner: externe, bearbeitbare allgemeine Bottexte im Abschnitt-/Schlüssel-Format; Deutsch ist die Standardsprache. Schlüssel, Platzhalter und mIRC-Formatierungssyntax bleiben bei Übersetzungen unverändert. Angriffsfähigkeits-/Angriffsdefinitionstexte werden getrennt behandelt.
+- `characters/`: gespeicherte Spielercharaktere im dokumentierten `.chr`-Format, vorbehaltlich der abschließenden Formatprüfung.
+- `monsters/`: mindestens fünf eigene normale Monsterdefinitionen. Die Wiki verwendet für Monster Vorlagen mit der Endung `.char`; wir prüfen vor dem Code, ob wir dieses Format unverändert übernehmen oder für Version 0.1 ein minimales kompatibles Profil definieren.
 
 ### Vorgeschlagene Abhängigkeiten
 
@@ -258,7 +258,7 @@ Dieser Nachtrag hält Entscheidungen fest, die nach der bisherigen Fassung gemei
 - Die Hauptdatei `Colosseum.mrc` ist der einzige Einstiegspunkt, den Nutzer manuell laden sollen.
 - Fachbefehle und zugehörige IRC-Handler liegen in der jeweils zuständigen `.mrc`-Datei. Es ist keine zentrale `Events.mrc` vorgesehen.
 - Wiederverwendbare Helfer liegen in aufgabenbezogenen `.als`-Dateien. Charakterbezogene Speicherung bleibt fachlich bei `Character.mrc` und den Helfern in `Characters.als`; eine separate `Storage.mrc` ist nicht vorgesehen.
-- Allgemeine Spielertexte werden aus `data/Translation.dat` geladen. Angriffstexte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden separat über den dafür vorgesehenen Datenmechanismus verarbeitet.
+- Allgemeine Spielertexte werden aus `Translation.dat` geladen. Angriffstexte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden separat über den dafür vorgesehenen Datenmechanismus verarbeitet.
 - Der Schlacht-Timer darf ausschließlich nach erfolgreichem `on CONNECT` und erfolgreichem Abschluss von `$system_default_check` starten. Eine fehlende `System.dat` wird automatisch mit Standardwerten angelegt; fehlende Einträge werden ergänzt. Danach werden die Konfiguration, `Translation.dat`, benötigte Module und erforderliche Datenbestände (unter anderem Monster, Waffen, Techniken und Skills) geprüft. Jeder Erzeugungs-, Schreib- oder Prüfungsfehler verhindert den Timerstart.
 - Änderungen an Planung und Spezifikation werden während der Entwicklung in einem separaten GitHub-Branch vorbereitet und über einen Pull Request zur Prüfung vorgelegt. `main` wird nicht ohne Freigabe geändert.
 
@@ -338,3 +338,9 @@ Die folgenden sechs Einstellungen werden getrennt voneinander in `System.dat` ge
 | `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln |
 
 `TimeBeforeFirstBattle` und `TimeBetweenBattles` bleiben zwei getrennte Einstellungen. Der erste Wert steuert die Wartezeit nach erfolgreicher Verbindung und abgeschlossener Startprüfung; der zweite steuert die Pause nach einer leeren Beitrittsphase oder nach einem Kampf. Beide haben für V0.1 zunächst den Standardwert `180` Sekunden. Die Endversions-Vorgabe `TimeBetweenBattles=120` wird in V0.1 nicht übernommen.
+
+## Bestätigte Entscheidung: Ordnerstruktur des Endprodukts bereits in V0.1 verwenden
+
+Die vollständige Grundstruktur orientiert sich von Beginn an am geplanten Endprodukt. Die `.mrc`- und `.als`-Dateien, `System.dat` und `Translation.dat` liegen im Projekt-Hauptordner. Spielercharaktere werden in `characters/` und Monsterdefinitionen in `monsters/` gespeichert. Weitere Verzeichnisse aus dem Endversion-Helfer (`bosses/`, `zapped/`, `npcs/`, `summons/` und `help-files/`) gehören bereits zum vorgesehenen Hauptordner-Layout, auch wenn V0.1 ihre jeweiligen Funktionen nicht implementiert oder die Verzeichnisse noch nicht befüllt.
+
+Es wird kein zusätzlicher `scripts/`- oder `data/`-Ordner eingeführt, der beim Ausbau zur Endversion wieder verlassen werden müsste. Damit sollen Datei- und Ordnerumzüge bei späteren Versionsschritten vermieden werden. Nur die Funktionen, Module und Daten, die V0.1 benötigt, werden tatsächlich umgesetzt.

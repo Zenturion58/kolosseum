@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für die Abgrenzung des V0.1-Systemhelfers: planning/v01-system-default-scope-2026-10-22.
+- Aktueller Arbeitsbranch für die Ausrichtung der Verzeichnisstruktur am Endprodukt: planning/endproduct-folder-layout-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
@@ -65,7 +65,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Fachbefehle und zugehörige IRC-Handler liegen in den zuständigen MRC-Fachmodulen. Es gibt keine zentrale Events.mrc.
 - Wiederverwendbare Helfer liegen in aufgabenbezogenen ALS-Dateien: SystemAliases.als, Characters.als, BattleControl.als, BattleFormula.als, Monsters.als, BattleRewards.als und TranslationAliases.als.
 - Character.mrc verantwortet Charakterfunktionen einschließlich charakterbezogener Speicherung; Characters.als enthält zugehörige wiederverwendbare Helfer. Eine separate Storage.mrc ist nicht vorgesehen.
-- Allgemeine, sichtbare Botmeldungen werden aus data/Translation.dat geladen. Die Datei hat Abschnitte und eindeutige Schlüssel im Format Schlüssel=Text. Schlüssel links vom Gleichheitszeichen, Platzhalter wie %user% und mIRC-Formatierungsbestandteile wie $chr(3), $chr(15), $chr(2) und $+ bleiben bei Übersetzungen unverändert.
+- Allgemeine, sichtbare Botmeldungen werden aus `Translation.dat` im Projekt-Hauptordner geladen. Die Datei hat Abschnitte und eindeutige Schlüssel im Format Schlüssel=Text. Schlüssel links vom Gleichheitszeichen, Platzhalter wie %user% und mIRC-Formatierungsbestandteile wie $chr(3), $chr(15), $chr(2) und $+ bleiben bei Übersetzungen unverändert.
 - Texte, die zu einer Angriffs-/Fähigkeitsdefinition gehören, werden getrennt über den vorgesehenen Datenmechanismus verarbeitet, nicht als allgemeine Translation-Schlüssel behandelt.
 - Nach erfolgreichem `on CONNECT` führt `$system_default_check` die Startprüfung aus. Fehlt `System.dat`, legt der Helfer die Datei mit den vorgesehenen Standardwerten an; fehlende Einstellungen werden ebenfalls ergänzt. Anschließend prüft er die Werte und speichert sie in globalen Variablen. Fehlende Pflichtmodule, fehlerhafte Konfigurationswerte oder ungültige erforderliche Spieldaten verhindern den Schlacht-Timerstart; eine technische Diagnose erscheint im mIRC-Statusfenster.
 - Die vollständige Charaktervorlage dient als Grundlage; Version 0.1 liest und verändert nur die benötigten Felder.
@@ -176,3 +176,9 @@ Die folgende Liste ist nicht mehr nur ein Vorschlag. Alle sechs Einstellungen we
 | `VictoryOrbReward` | `%victoryOrbReward` | `10` rote Kugeln | Belohnung für einen Sieg, sofern der Spieler überlebt |
 
 **Abweichung zur Endversion:** Der gezeigte Endversion-Helfer setzt `TimeBetweenBattles` auf `120` Sekunden. Für Colosseum V0.1 ist der Standardwert verbindlich `180` Sekunden. Diese V0.1-Entscheidung darf nicht durch den Endversion-Wert ersetzt werden.
+
+## Bestätigte Entscheidung: Ordnerstruktur schon in V0.1 am Endprodukt ausrichten
+
+Die Verzeichnisstruktur wird nicht nur auf den Prototyp zugeschnitten. V0.1 verwendet von Anfang an das geplante Endprodukt-Layout, damit später keine Datenordner verschoben oder umbenannt werden müssen. Die Einstiegsdatei `Colosseum.mrc`, die Fachmodule, die Alias-Dateien sowie `System.dat` und `Translation.dat` liegen im Projekt-Hauptordner. Ein separater `scripts/`- oder `data/`-Ordner wird für diese Dateien nicht eingeführt.
+
+Auf der obersten Projektebene sind die Verzeichnisse `characters/`, `bosses/`, `monsters/`, `zapped/`, `npcs/`, `summons/` und `help-files/` vorgesehen, angelehnt an die Standardpfade aus dem Endversion-Helfer. V0.1 benötigt insbesondere `characters/` und `monsters/`; die übrigen Ordner stehen für spätere Funktionen und werden in V0.1 noch nicht mit diesen Funktionen implementiert. Die Übersetzungsdatei heißt weiterhin `Translation.dat`, liegt aber im Projekt-Hauptordner statt unter `data/Translation.dat`.
