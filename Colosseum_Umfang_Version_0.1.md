@@ -17,8 +17,11 @@
 ## 2. Version 0.1: Charakter und Anmeldung
 
 - Spieler können einen neuen Charakter erstellen und sich gegenüber dem Bot authentifizieren.
+- Die Spielerbefehle sind deutschsprachig. Der derzeitige Befehlsentwurf umfasst `!registrieren`, `!anmelden <Passwort>`, `!abmelden`, `!passwort <altesPasswort> <neuesPasswort>` und `!werte`. Die genaue Syntax und die zulässigen Ausführungskontexte werden vor Implementierung noch einmal verbindlich geprüft.
 - Bei der Registrierung wird ein zufälliges Passwort erzeugt und dem Spieler privat mitgeteilt.
+- Passwörter dürfen nicht öffentlich im IRC-Kanal eingegeben oder ausgegeben werden; Anmeldung und Passwortänderung erfolgen privat mit dem Bot.
 - Ein Passwortwechsel ist vorgesehen.
+- `!werte` zeigt dem Spieler seine aktuellen HP und TP sowie die vier Kernattribute Stärke, Verteidigung, Intelligenz und Schnelligkeit. Die Ausgabe erfolgt privat.
 - Charakterdaten bleiben nach einem Bot-Neustart erhalten.
 - Die Charaktervorlage orientiert sich an der Dokumentation; nicht benötigte Felder dürfen zunächst ungenutzt bleiben.
 - Neue Charaktere beginnen mit bloßen Fäusten.
@@ -177,7 +180,7 @@ mIRC unterscheidet technisch zwischen Alias-Dateien und Remote-Skriptdateien; di
 
 1. Die genaue Schadensformel und konkrete Schadenswerte.
 2. Auswahl und Werte der mindestens fünf Startmonster aus der Dokumentation.
-3. Exakte Schreibweise und Aliase aller Registrierungs-, Login-, Passwort- und Statusbefehle.
+3. Endgültige Schreibweise, Argumente und zulässige Ausführungskontexte der deutschen Registrierungs-, Login-, Logout-, Passwort- und Wertebefehle.
 4. Einzelheiten der Charaktervorlage, die für Version 0.1 tatsächlich gelesen oder verändert werden müssen.
 5. Technische Zielumgebung (mIRC-Version/IRC-Verhalten) und konkretes Speicherformat der Charakterdateien.
 6. Exakter Wortlaut und Kanal-/Privatnachrichten-Verteilung der deutschen Botmeldungen. Meldungen, die ein Passwort enthalten (z. B. `%newpass`), dürfen ausschließlich privat an den betreffenden Spieler gesendet werden.
