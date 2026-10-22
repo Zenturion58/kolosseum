@@ -25,7 +25,7 @@ Colosseum ist ein geplanter deutschsprachiger, rundenbasierter mIRC-IRC-Kampfsim
 - Wichtige Entscheidungen werden in den Planungsdokumenten festgehalten und in einem separaten GitHub-Branch als Pull Request zur Prüfung vorbereitet. So kann eine neue Unterhaltung anhand dieses Dokuments und der Spezifikationen weiterarbeiten.
 - Der Hauptbranch main wird nicht ohne Prüfung und Freigabe geändert.
 - Der frühere Verbindungstest wurde aufgeräumt: Die Testdatei ist entfernt und der Test-Branch wurde vom Nutzer gelöscht.
-- Aktueller Arbeitsbranch für die Nickname-Entscheidung: planning/nickname-binding-2026-10-22.
+- Aktueller Arbeitsbranch für den Timer-Start bei IRC-Verbindung: planning/connect-timer-2026-10-22.
 - Dieser Branch enthält nur Planungsdokumentation und Statusnotizen, keinen produktiven Spielcode.
 
 ## Bestätigte Anforderungen für Version 0.1
